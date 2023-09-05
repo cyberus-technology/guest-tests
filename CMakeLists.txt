@@ -1,0 +1,60 @@
+cmake_minimum_required(VERSION 3.15)
+
+
+# Let cmake try to build a static library to check if the compiler is working.
+# The default method is to compile a complete app for the chosen architecture,
+# which might fail when cross-compiling (e.g., on mac). For our purposes,
+# checking if static libraries can be built is sufficient.
+# Note: This has to be set _before_ calling project(), because it influences the
+#       behavior.
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+
+# The cmake documentation says: Call the project() command near the top of the
+# top-level CMakeLists.txt, but after calling cmake_minimum_required(). It is
+# important to establish version and policy settings before invoking other
+# commands whose behavior they may affect. Do not place any settings above this
+# point unless absolutely necessary and justified.
+project(supernova CXX C ASM)
+
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+set(default_build_type "Develop")
+
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(
+          STATUS
+          "Setting build type to '${default_build_type}' as none was specified."
+  )
+  set(CMAKE_BUILD_TYPE
+          "${default_build_type}"
+          CACHE STRING "Choose the type of build." FORCE
+  )
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Develop" "Release")
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
+else()
+  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION OFF)
+endif()
+
+# build type specific settings which are applied globally
+set(CMAKE_CXX_FLAGS_DEVELOP "${CMAKE_CXX_FLAGS_DEVELOP} -O2 -g")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DRELEASE -O2")
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Path to standalone library directory
+set(STANDALONE_LIB_DIR ${PROJECT_SOURCE_DIR}/standalone/lib)
+set(STANDALONE_CONTRIB_DIR ${PROJECT_SOURCE_DIR}/standalone/contrib)
+
+option(BUILD_DEPGRAPH "Build a dependency graph of all components" ON)
+include(depgraph)
+
+include(nostd-build)
+include(prep_and_use_linker_script)
+
+add_subdirectory(contrib)
+add_subdirectory(lib)
+add_subdirectory(tests)

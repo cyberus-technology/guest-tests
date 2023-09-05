@@ -1,0 +1,6 @@
+[submodule "contrib/first-fit-heap"]
+	path = contrib/first-fit-heap/first-fit-heap
+	url = git@gitlab.vpn.cyberus-technology.de:open-source/first-fit-heap.git
+[submodule "contrib/optionparser"]
+	path = contrib/optionparser/optionparser
+	url = git@gitlab.vpn.cyberus-technology.de:supernova-core/optionparser.git

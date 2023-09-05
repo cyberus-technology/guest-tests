@@ -1,0 +1,6 @@
+# We disable serial output, because Hedron spams the console when threads die.
+hedron_args = "novga iommu"
+supernova_args = "--slvm"
+boot_on = [ "supernova" ]
+hardware_independent = true
+cacheable = true

@@ -1,0 +1,4 @@
+supernova_args = "--slvm"
+boot_on = [ "supernova" ]
+hardware_independent = true
+cacheable = true
