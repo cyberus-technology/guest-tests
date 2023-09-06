@@ -5,7 +5,7 @@
 #include <idt.hpp>
 #include <irq_handler.hpp>
 #include <irqinfo.hpp>
-#include <literals.hpp>
+#include <cbl/literals.hpp>
 #include <trace.hpp>
 #include <x86asm.hpp>
 
@@ -13,7 +13,7 @@
 #include <cr0_guard.hpp>
 #include <mm.hpp>
 #include <page_guard.hpp>
-#include <page_pool.hpp>
+#include <cbl/page_pool.hpp>
 #include <pd.hpp>
 #include <pdpt.hpp>
 #include <pml4.hpp>

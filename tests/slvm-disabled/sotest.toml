@@ -1,5 +1,0 @@
-# SLVM is disabled by default, so there's no reason to set any
-# SuperNOVA arguments here.
-boot_on = [ "supernova" ]
-hardware_independent = true
-cacheable = true

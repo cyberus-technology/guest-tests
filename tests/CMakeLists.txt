@@ -69,34 +69,14 @@ add_guesttest(debugport)
 #add_guesttest(
 #  emulator-syscall EXTRA_LIBS sotest EXTRA_SOURCES emulator-syscall/compat.S
 #  )
-#add_guesttest(exceptions EXTRA_LIBS sotest)
-#add_guesttest(fpu)
-#add_guesttest(lapic-modes EXTRA_SOURCES lapic-modes/x2apic_test_tools.cpp)
-#add_guesttest(lapic-priority EXTRA_SOURCES lapic-priority/benchmark.cpp)
-#add_guesttest(lapic-timer)
-#add_guesttest(msr)
-#add_guesttest(pagefaults)
+add_guesttest(exceptions EXTRA_LIBS sotest)
+add_guesttest(fpu)
+add_guesttest(lapic-modes EXTRA_SOURCES lapic-modes/x2apic_test_tools.cpp)
+add_guesttest(lapic-priority EXTRA_SOURCES lapic-priority/benchmark.cpp)
+add_guesttest(lapic-timer)
+add_guesttest(msr)
+add_guesttest(pagefaults)
 add_guesttest(sgx)
 add_guesttest(sgx-launch-control)
-#add_guesttest(
-#  slvm
-#  EXTRA_SOURCES
-#  slvm/vcpu.cpp
-#  slvm/compiles_with_c.c
-#  EXTRA_LIBS
-#  slvm-api
-#  test-helpers-hedron-userland
-#  )
-#add_guesttest(slvm-disabled EXTRA_LIBS slvm-api)
-#add_guesttest(slvm-log EXTRA_LIBS slvm-api)
-#add_guesttest(
-#  slvm-resources
-#  EXTRA_LIBS
-#  slvm-api
-#  EXTRA_SOURCES
-#  slvm-resources/vm_create_destroy.cpp
-#  slvm-resources/vcpu_create.cpp
-#  slvm-resources/memory_map.cpp
-#  )
 add_guesttest(tsc)
-#add_guesttest(vmx)
+add_guesttest(vmx)

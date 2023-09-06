@@ -5,6 +5,7 @@ project(tstickle CXX ASM)
 find_package(x86 REQUIRED)
 
 add_library(tstickle STATIC
+        entry.S
         ioapic.cpp
         irq_handler.cpp
         lapic_test_tools.cpp
