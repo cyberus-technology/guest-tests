@@ -15,10 +15,10 @@
 #include "cbl/order_range.hpp"
 #include <compiler.hpp>
 #include <config.hpp>
-#include <multiboot/multiboot.hpp>
-#include <multiboot2/multiboot2.hpp>
+#include <toyos/multiboot/multiboot.hpp>
+#include <toyos/multiboot2/multiboot2.hpp>
 #include "toyos/optionparser.hpp"
-#include "pci/bus.hpp"
+#include "toyos/pci/bus.hpp"
 #include "memory/simple_buddy.hpp"
 #include "toyos/xen-pvh.hpp"
 

@@ -7,7 +7,7 @@
 #include "bdf.hpp"
 #include "capabilities.hpp"
 #include "msix_entry.hpp"
-#include "pci.hpp"
+#include "toyos/pci/pci.hpp"
 
 #include <arch.hpp>
 #include "cbl/math.hpp"

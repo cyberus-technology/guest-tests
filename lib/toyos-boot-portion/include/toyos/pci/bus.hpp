@@ -4,7 +4,7 @@
 #pragma once
 
 #include "device.hpp"
-#include "pci.hpp"
+#include "toyos/pci/pci.hpp"
 
 #include <arch.hpp>
 

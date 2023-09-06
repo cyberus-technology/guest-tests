@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "pci.hpp"
+#include "toyos/pci/pci.hpp"
 
 #include <arch.hpp>
 #include "cbl/math.hpp"

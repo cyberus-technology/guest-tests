@@ -44,10 +44,7 @@ set(as_subproject
     first-fit-heap
     libcxx
     libc-tiny
-    multiboot
-    multiboot2
     memory
-    pci
     tstickle
     x86
     toyos
@@ -94,10 +91,7 @@ add_subdirectory(decoder)
 add_subdirectory(first-fit-heap)
 add_subdirectory(libcxx)
 add_subdirectory(libc-tiny)
-add_subdirectory(multiboot)
-add_subdirectory(multiboot2)
 add_subdirectory(memory)
-add_subdirectory(pci)
 add_subdirectory(tstickle)
 add_subdirectory(x86)
 add_subdirectory(toyos)
