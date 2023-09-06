@@ -9,7 +9,6 @@
 
 #include <cpuid.hpp>
 #include <debugport_interface.h>
-#include <logger/trace.hpp>
 #include <x86asm.hpp>
 #include <x86fpu.hpp>
 

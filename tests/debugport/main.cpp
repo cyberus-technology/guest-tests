@@ -7,11 +7,10 @@
 #include <vector>
 
 #include <debugport_interface.h>
-#include <logger/trace.hpp>
 #include <x86asm.hpp>
 
 #include <baretest/baretest.hpp>
-#include <statistics/statistics.hpp>
+#include <cbl/statistics.hpp>
 
 #ifdef RELEASE
 TEST_CASE(debugport_should_never_exist_in_release_build)

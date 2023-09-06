@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "logger/trace.hpp"
-
 #include "algorithm"
 #include "optional"
 

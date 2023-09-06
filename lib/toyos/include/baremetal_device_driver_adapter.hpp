@@ -9,7 +9,6 @@
 #include <cbl/device_driver_adapter.hpp>
 #include <hpet.hpp>
 #include <memory/splitting_buddy.hpp>
-#include <logger/trace.hpp>
 #include <x86asm.hpp>
 
 /**

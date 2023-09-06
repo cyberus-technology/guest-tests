@@ -3,7 +3,6 @@
 
 #include <arch.hpp>
 #include <decoder/gdt.hpp>
-#include <logger/trace.hpp>
 
 using x86::mmreg;
 using x86::segment_register;

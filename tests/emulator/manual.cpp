@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <array>
 
-#include <logger/trace.hpp>
+
 
 #include <baretest/baretest.hpp>
 #include <debugport_interface.h>

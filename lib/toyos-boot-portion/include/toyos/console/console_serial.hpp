@@ -7,7 +7,6 @@
 #include "string"
 
 #include <stdint.h>
-#include "logger/trace.hpp"
 
 #include "cbl/algorithm.hpp"
 #include "arch.hpp"

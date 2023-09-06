@@ -2,7 +2,6 @@
  *        All rights reserved        */
 
 #include <stdint.h>
-#include <logger/trace.hpp>
 
 #include <vector>
 

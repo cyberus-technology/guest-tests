@@ -6,7 +6,6 @@
 #include <config.h>
 #include "cbl/math.hpp"
 #include <stdio.h>
-#include <logger/trace.hpp>
 #include <type_traits>
 
 static_assert((STATIC_TLS_SIZE % sizeof(uint64_t)) == 0, "TLS size must be a multiple of 8");

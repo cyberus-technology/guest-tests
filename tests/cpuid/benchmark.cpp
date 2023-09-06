@@ -4,7 +4,7 @@
 #include <cstdint>
 
 #include <baretest/baretest.hpp>
-#include <statistics/statistics.hpp>
+#include <cbl/statistics.hpp>
 #include <x86asm.hpp>
 
 TEST_CASE(benchmark_cycles)

@@ -4,7 +4,7 @@
 #pragma once
 
 #if defined(__cplusplus) && !defined(NDEBUG)
-#    include <logger/trace.hpp>
+#    include <cbl/trace.hpp>
 #    define assert(x) ASSERT(x, "Assertion failed")
 #else
 #    define assert(x)                                                                                                  \

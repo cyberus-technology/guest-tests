@@ -12,7 +12,7 @@
 #include <irqinfo.hpp>
 #include <lapic_test_tools.hpp>
 #include <pic.hpp>
-#include <logger/trace.hpp>
+#include <cbl/trace.hpp>
 #include <x86asm.hpp>
 
 using namespace lapic_test_tools;

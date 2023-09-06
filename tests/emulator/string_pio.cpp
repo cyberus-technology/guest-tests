@@ -5,7 +5,7 @@
 #include <cassert>
 #include <debugport_interface.h>
 #include <string>
-#include <logger/trace.hpp>
+
 
 TEST_CASE(string_pio_respects_address_override)
 {

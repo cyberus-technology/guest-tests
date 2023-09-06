@@ -6,8 +6,6 @@
 #include <idt.hpp>
 #include <x86asm.hpp>
 
-#include <logger/trace.hpp>
-
 idt global_idt;
 static irq_handler_t irq_handler_fn = nullptr;
 

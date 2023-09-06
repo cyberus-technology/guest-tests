@@ -6,7 +6,6 @@
 #include <cbl/interval.hpp>
 #include <cbl/order_range.hpp>
 #include "cbl/math.hpp"
-#include <logger/trace.hpp>
 
 #include <optional>
 #include <set>

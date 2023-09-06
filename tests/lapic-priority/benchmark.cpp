@@ -8,7 +8,7 @@
 #include <irq_handler.hpp>
 #include <irqinfo.hpp>
 #include <lapic_test_tools.hpp>
-#include <statistics/statistics.hpp>
+#include <cbl/statistics.hpp>
 #include <x86asm.hpp>
 
 using namespace lapic_test_tools;

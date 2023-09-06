@@ -4,7 +4,6 @@
 #pragma once
 
 #include <decoder/instructions.hpp>
-#include <logger/trace.hpp>
 #include <udis86.h>
 #include <x86defs.hpp>
 

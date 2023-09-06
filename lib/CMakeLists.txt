@@ -39,21 +39,16 @@ set(CMAKE_CXX_STANDARD 17)
 # set(as_subproject LibA LibB LibC)
 
 set(as_subproject
-    baretest
-    baretest-config
     cbl
     decoder
     first-fit-heap
     libcxx
     libc-tiny
-    logger
     multiboot
     multiboot2
     memory
     pci
     printf
-    pprintpp
-    sotest
     tstickle
     x86
     toyos
@@ -95,21 +90,16 @@ macro(find_package)
   endif()
 endmacro()
 
-add_subdirectory(baretest)
-add_subdirectory(baretest-config)
 add_subdirectory(cbl)
 add_subdirectory(decoder)
 add_subdirectory(first-fit-heap)
 add_subdirectory(libcxx)
 add_subdirectory(libc-tiny)
-add_subdirectory(logger)
 add_subdirectory(multiboot)
 add_subdirectory(multiboot2)
 add_subdirectory(memory)
 add_subdirectory(pci)
 add_subdirectory(printf)
-add_subdirectory(pprintpp)
-add_subdirectory(sotest)
 add_subdirectory(tstickle)
 add_subdirectory(x86)
 add_subdirectory(toyos)

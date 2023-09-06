@@ -5,7 +5,6 @@
 
 #include <functional>
 #include <idt.hpp>
-#include <logger/trace.hpp>
 
 extern idt global_idt;
 

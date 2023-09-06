@@ -6,7 +6,7 @@
 #include <irq_handler.hpp>
 #include <irqinfo.hpp>
 #include <lapic_test_tools.hpp>
-#include <logger/trace.hpp>
+#include <cbl/trace.hpp>
 
 #define TEST_CASE_VMX(NAME, EXCEPTION, FUNCTION)                                                                       \
     TEST_CASE(NAME)                                                                                                    \

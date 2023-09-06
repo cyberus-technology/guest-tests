@@ -36,10 +36,7 @@ function(add_guesttest test_name)
     PRIVATE libc-tiny
             libcxx
             printf
-            pprintpp
             toyos-boot-portion
-            baretest-config
-            baretest
             ${GUESTTEST_ARGS_EXTRA_LIBS}
     )
 
@@ -67,9 +64,9 @@ add_guesttest(
   decoder
   )
 add_guesttest(
-  emulator-syscall EXTRA_LIBS sotest EXTRA_SOURCES emulator-syscall/compat.S
+  emulator-syscall EXTRA_SOURCES emulator-syscall/compat.S
   )
-add_guesttest(exceptions EXTRA_LIBS sotest)
+add_guesttest(exceptions)
 add_guesttest(fpu)
 add_guesttest(lapic-modes EXTRA_SOURCES lapic-modes/x2apic_test_tools.cpp)
 add_guesttest(lapic-priority EXTRA_SOURCES lapic-priority/benchmark.cpp)

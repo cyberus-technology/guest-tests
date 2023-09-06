@@ -9,7 +9,7 @@
 #include <baretest/baretest.hpp>
 #include <compiler.hpp>
 #include <cpuid.hpp>
-#include <logger/trace.hpp>
+
 #include <x86asm.hpp>
 
 template <typename SIZE_TYPE>

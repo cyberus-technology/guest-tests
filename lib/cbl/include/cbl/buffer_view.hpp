@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include <logger/trace.hpp>
-
 namespace cbl
 {
 

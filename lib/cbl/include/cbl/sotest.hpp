@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <logger/trace.hpp>
+#include <cbl/trace.hpp>
 
 namespace test_protocol
 {

@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include <logger/trace.hpp>
-
 #include "cbl/math.hpp"
 #include <x86asm.hpp>
 

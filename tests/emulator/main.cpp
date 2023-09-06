@@ -2,7 +2,7 @@
  *        All rights reserved        */
 
 #include <debugport_interface.h>
-#include <logger/trace.hpp>
+
 
 #include <baretest/baretest.hpp>
 #include <compiler.hpp>

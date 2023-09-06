@@ -9,7 +9,7 @@
 #include <lapic_lvt_guard.hpp>
 #include <lapic_test_tools.hpp>
 #include <speculation.hpp>
-#include <logger/trace.hpp>
+#include <cbl/trace.hpp>
 #include <x86asm.hpp>
 
 #include <array>

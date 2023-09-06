@@ -14,7 +14,6 @@
 #include <decoder/operand.hpp>
 #include <emulator.hpp>
 #include <emulator/syscall.hpp>
-#include <logger/trace.hpp>
 #include <x86defs.hpp>
 
 using namespace x86;

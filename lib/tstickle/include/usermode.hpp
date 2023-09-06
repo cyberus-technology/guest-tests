@@ -6,7 +6,6 @@
 #include <compiler.hpp>
 #include <debugport_interface.h>
 #include <segmentation.hpp>
-#include <logger/trace.hpp>
 #include <x86asm.hpp>
 #include <x86defs.hpp>
 

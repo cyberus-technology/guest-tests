@@ -3,20 +3,25 @@ cmake_minimum_required(VERSION 3.10)
 project(cbl CXX)
 set(CMAKE_CXX_STANDARD 17)
 
-add_library(cbl INTERFACE)
+add_library(cbl STATIC
+        src/baretest_config.cpp
+        src/baretest/baretest.cpp
+        src/baretest/print.cpp
+)
 
 find_package(libcxx REQUIRED)
-find_package(logger REQUIRED)
 find_package(memory REQUIRED)
 
 target_include_directories(
-  cbl INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  cbl PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                 $<INSTALL_INTERFACE:include>
   )
 
-target_compile_options(cbl INTERFACE -Wall -Wextra)
+target_compile_options(cbl PUBLIC -Wall -Wextra
+        -Wno-ignored-qualifiers # silence pprintpp code
+)
 
-target_link_libraries(cbl INTERFACE logger memory libcxx)
+target_link_libraries(cbl PUBLIC memory libcxx)
 
 install(
   TARGETS cbl
@@ -34,13 +39,7 @@ install(
   DESTINATION lib/cmake/cbl
   )
 
-install(DIRECTORY
-        ${CMAKE_CURRENT_LIST_DIR}/include/
-        DESTINATION include)
-
-install(FILES
-        include/cbl/algorithm.hpp
-        DESTINATION include)
+install(DIRECTORY include/ DESTINATION include)
 
 # In order to make interface libraries discoverable via find_package
 # we have to separate a *Config.cmake file and export the lib.

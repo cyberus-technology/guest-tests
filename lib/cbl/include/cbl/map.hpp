@@ -5,7 +5,6 @@
 
 #include <map>
 #include <optional>
-#include <logger/trace.hpp>
 #include <vector>
 
 namespace cbl

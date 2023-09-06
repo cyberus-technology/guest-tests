@@ -7,7 +7,7 @@
 #include <idt.hpp>
 #include <irq_handler.hpp>
 #include <irqinfo.hpp>
-#include <logger/trace.hpp>
+#include <cbl/trace.hpp>
 #include <x86asm.hpp>
 #include <x86fpu.hpp>
 

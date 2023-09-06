@@ -8,7 +8,6 @@
 #include "vector"
 
 #include "optionparser.h"
-#include "logger/trace.hpp"
 
 #include "cbl/algorithm.hpp"
 

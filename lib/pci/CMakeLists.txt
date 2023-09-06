@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.10)
 project(pci CXX)
 
 find_package(cbl REQUIRED)
-find_package(logger REQUIRED)
 
 add_library(pci INTERFACE)
 
@@ -14,7 +13,7 @@ target_include_directories(
 
 target_compile_options(pci INTERFACE -Wall -Wextra)
 
-target_link_libraries(pci INTERFACE cbl logger)
+target_link_libraries(pci INTERFACE cbl)
 
 install(
         TARGETS pci

@@ -3,7 +3,7 @@
 
 #include <map>
 
-#include <logger/trace.hpp>
+#include <cbl/trace.hpp>
 
 #include <cbl/cast_helpers.hpp>
 #include <cpuid.hpp>

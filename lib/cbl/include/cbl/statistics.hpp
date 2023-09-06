@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include <logger/trace.hpp>
 #include "x86asm.hpp"
 
 #include "algorithm"
