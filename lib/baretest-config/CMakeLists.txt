@@ -13,7 +13,7 @@ target_link_libraries(baretest-config PUBLIC libsn sotest)
 
 install(
   TARGETS baretest-config
-  EXPORT baretestTargets
+  EXPORT baretest-configTargets
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION lib
@@ -22,8 +22,8 @@ install(
   )
 
 install(
-  EXPORT baretestTargets
-  FILE baretestTargets.cmake
+  EXPORT baretest-configTargets
+  FILE baretest-configTargets.cmake
   DESTINATION lib/cmake/baretest-config
   )
 
@@ -31,6 +31,6 @@ install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/ DESTINATION include)
 
 # In order to make interface libraries discoverable via find_package
 # we have to separate a *Config.cmake file and export the lib.
-install(FILES baretestConfig.cmake DESTINATION lib/cmake/baretest-config)
+install(FILES baretest-configConfig.cmake DESTINATION lib/cmake/baretest-config)
 
-export(TARGETS baretest-config FILE baretestTargets.cmake)
+export(TARGETS baretest-config FILE baretest-configTargets.cmake)

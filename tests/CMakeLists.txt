@@ -52,8 +52,8 @@ function(add_guesttest test_name)
 endfunction()
 
 add_guesttest(cpuid EXTRA_SOURCES cpuid/benchmark.cpp)
-#add_guesttest(cxx EXTRA_SOURCES cxx/setjmp.cpp)
-#add_guesttest(debugport)
+add_guesttest(cxx EXTRA_SOURCES cxx/setjmp.cpp)
+add_guesttest(debugport)
 #add_guesttest(
 #  emulator
 #  EXTRA_SOURCES
@@ -76,8 +76,8 @@ add_guesttest(cpuid EXTRA_SOURCES cpuid/benchmark.cpp)
 #add_guesttest(lapic-timer)
 #add_guesttest(msr)
 #add_guesttest(pagefaults)
-#add_guesttest(sgx)
-#add_guesttest(sgx-launch-control)
+add_guesttest(sgx)
+add_guesttest(sgx-launch-control)
 #add_guesttest(
 #  slvm
 #  EXTRA_SOURCES
@@ -98,5 +98,5 @@ add_guesttest(cpuid EXTRA_SOURCES cpuid/benchmark.cpp)
 #  slvm-resources/vcpu_create.cpp
 #  slvm-resources/memory_map.cpp
 #  )
-#add_guesttest(tsc)
+add_guesttest(tsc)
 #add_guesttest(vmx)

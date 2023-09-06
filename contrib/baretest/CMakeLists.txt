@@ -9,7 +9,7 @@ target_include_directories(
                       $<INSTALL_INTERFACE:include>
   )
 
-target_link_libraries(baretest-contrib PUBLIC libcxx)
+target_link_libraries(baretest-contrib PUBLIC libcxx baretest-config)
 
 install(
   TARGETS baretest-contrib
