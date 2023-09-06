@@ -13,7 +13,6 @@ add_library(toyos-boot-portion STATIC
         src/xhci/device.cpp
 )
 
-find_package(printf REQUIRED)
 find_package(multiboot REQUIRED)
 find_package(multiboot2 REQUIRED)
 find_package(first-fit-heap REQUIRED)
@@ -27,7 +26,7 @@ target_include_directories(
 
 target_compile_options(toyos-boot-portion PRIVATE -Wall -Wextra)
 
-target_link_libraries(toyos-boot-portion PUBLIC printf first-fit-heap multiboot multiboot2 pci toyos tstickle)
+target_link_libraries(toyos-boot-portion PUBLIC first-fit-heap multiboot multiboot2 pci toyos tstickle)
 
 install(
   TARGETS toyos-boot-portion

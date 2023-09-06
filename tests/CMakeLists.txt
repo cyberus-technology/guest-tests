@@ -35,7 +35,6 @@ function(add_guesttest test_name)
     ${test_name}_guesttest
     PRIVATE libc-tiny
             libcxx
-            printf
             toyos-boot-portion
             ${GUESTTEST_ARGS_EXTRA_LIBS}
     )

@@ -48,7 +48,6 @@ set(as_subproject
     multiboot2
     memory
     pci
-    printf
     tstickle
     x86
     toyos
@@ -99,7 +98,6 @@ add_subdirectory(multiboot)
 add_subdirectory(multiboot2)
 add_subdirectory(memory)
 add_subdirectory(pci)
-add_subdirectory(printf)
 add_subdirectory(tstickle)
 add_subdirectory(x86)
 add_subdirectory(toyos)

@@ -7,6 +7,8 @@ add_library(cbl STATIC
         src/baretest_config.cpp
         src/baretest/baretest.cpp
         src/baretest/print.cpp
+        src/printf/backend.cpp
+        src/printf/xprintf.c
 )
 
 find_package(libcxx REQUIRED)
