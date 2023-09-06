@@ -3,30 +3,30 @@
 
 #include <printf/backend.hpp>
 #include <segmentation.hpp>
-#include <serial/console_serial.hpp>
+#include <console-serial/console_serial.hpp>
 #include <xhci/debug_device.hpp>
 
 #include <heap.hpp>
 
-#include <algorithm.hpp>
+#include <cbl/algorithm.hpp>
 #include <arch.hpp>
-#include <buddy.hpp>
+#include <memory/buddy.hpp>
 #include <cbl/interval.hpp>
 #include <cbl/order_range.hpp>
 #include <compiler.hpp>
 #include <config.hpp>
 #include <multiboot/multiboot.hpp>
 #include <multiboot2/multiboot2.hpp>
-#include <optionparser.hpp>
+#include <optionparser/optionparser.hpp>
 #include <pci/bus.hpp>
-#include <simple_buddy.hpp>
-#include <xen-pvh.hpp>
+#include <memory/simple_buddy.hpp>
+#include <xen-pvh/xen-pvh.hpp>
 
 #include <acpi.hpp>
 #include <boot_cmdline.hpp>
 #include <lapic_test_tools.hpp>
 #include <pic.hpp>
-#include <xhci_console.hpp>
+#include <toyos/xhci_console.hpp>
 
 #include <codecvt>
 #include <locale>

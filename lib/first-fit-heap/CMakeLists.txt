@@ -37,7 +37,7 @@ install(
   DESTINATION lib/cmake/first-fit-heap
   )
 
-install(FILES include/heap_freestanding.hpp DESTINATION include)
+install(FILES include/first-fit-heap/heap_freestanding.hpp DESTINATION include)
 
 # In order to make interface libraries discoverable via find_package
 # we have to separate a *Config.cmake file and export the lib.

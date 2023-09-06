@@ -32,7 +32,7 @@ install(
   DESTINATION lib/cmake/optionparser
   )
 
-install(FILES include/optionparser.hpp DESTINATION include)
+install(FILES include/optionparser/optionparser.hpp DESTINATION include)
 
 # In order to make interface libraries discoverable via find_package
 # we have to separate a *Config.cmake file and export the lib.

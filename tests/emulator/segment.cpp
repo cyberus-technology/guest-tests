@@ -8,7 +8,7 @@
 
 #include <baretest/baretest.hpp>
 #include <compiler.hpp>
-#include <trace.hpp>
+#include <logger/trace.hpp>
 
 TEST_CASE(mov_from_segment)
 {

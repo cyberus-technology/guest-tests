@@ -1,8 +1,8 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <baretest_config.hpp>
-#include <sotest.hpp>
+#include <baretest/baretest_config.hpp>
+#include <sotest/sotest.hpp>
 
 namespace baretest
 {

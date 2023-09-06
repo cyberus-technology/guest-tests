@@ -4,7 +4,7 @@
 #pragma once
 
 #include <decoder_vcpu.hpp>
-#include <virtual_msr_access_result.hpp>
+#include "virtual_msr_access_result.hpp"
 
 namespace emulator
 {

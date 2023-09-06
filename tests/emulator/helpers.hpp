@@ -5,7 +5,7 @@
 
 #include <compiler.hpp>
 #include <debugport_interface.h>
-#include <trace.hpp>
+#include <logger/trace.hpp>
 
 static constexpr const uint16_t SEL_DATA {0x10};
 

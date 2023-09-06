@@ -6,7 +6,7 @@
 #include "pci.hpp"
 
 #include <arch.hpp>
-#include <math.hpp>
+#include <math/math.hpp>
 
 #include <cstdint>
 

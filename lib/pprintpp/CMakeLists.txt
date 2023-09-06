@@ -30,10 +30,10 @@ install(
   DESTINATION lib/cmake/pprintpp
   )
 
-install(FILES include/charlist.hpp
-        include/pprintpp.hpp
-        include/stl_symbols.hpp
-        include/typelist.hpp
+install(FILES include/pprintpp/charlist.hpp
+        include/pprintpp/pprintpp.hpp
+        include/pprintpp/stl_symbols.hpp
+        include/pprintpp/typelist.hpp
         DESTINATION include
   )
 

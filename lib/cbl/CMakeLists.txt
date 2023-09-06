@@ -41,7 +41,7 @@ install(DIRECTORY
         DESTINATION include)
 
 install(FILES
-        ${CMAKE_CURRENT_LIST_DIR}/include/algorithm.hpp
+        include/cbl/algorithm.hpp
         DESTINATION include)
 
 # In order to make interface libraries discoverable via find_package

@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include <stdint.h>
+#include "stdint.h"
 
-#include <atomic>
+#include "atomic"
 
-#include <cbl/cast_helpers.hpp>
-#include <heap.hpp>
-#include <math.hpp>
+#include "cbl/cast_helpers.hpp"
+#include "heap.hpp"
+#include <math/math.hpp>
 
 /**
  * A simple heap that can only allocate memory.

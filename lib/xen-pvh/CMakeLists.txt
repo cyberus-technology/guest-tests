@@ -27,7 +27,7 @@ install(
   DESTINATION lib/cmake/xen-pvh
   )
 
-install(FILES include/xen-pvh.hpp DESTINATION include)
+install(FILES include/xen-pvh/xen-pvh.hpp DESTINATION include)
 
 # In order to make interface libraries discoverable via find_package
 # we have to separate a *Config.cmake file and export the lib.

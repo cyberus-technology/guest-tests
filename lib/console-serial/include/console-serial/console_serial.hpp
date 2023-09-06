@@ -7,9 +7,9 @@
 #include <string>
 
 #include <stdint.h>
-#include <trace.hpp>
+#include <logger/trace.hpp>
 
-#include <algorithm.hpp>
+#include <cbl/algorithm.hpp>
 #include <arch.hpp>
 #include <cbl/interval.hpp>
 #include <config.hpp>

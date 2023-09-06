@@ -1,7 +1,7 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <serial/console_serial.hpp>
+#include <console-serial/console_serial.hpp>
 #include <x86asm.hpp>
 
 static console* active_console {nullptr};

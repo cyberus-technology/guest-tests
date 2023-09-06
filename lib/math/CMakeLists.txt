@@ -27,7 +27,7 @@ install(
   DESTINATION lib/cmake/math
   )
 
-install(FILES include/math.hpp DESTINATION include)
+install(FILES include/math/math.hpp DESTINATION include)
 
 # In order to make interface libraries discoverable via find_package
 # we have to separate a *Config.cmake file and export the lib.

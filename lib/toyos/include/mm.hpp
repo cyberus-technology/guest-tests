@@ -4,7 +4,7 @@
 #pragma once
 
 #include <arch.hpp>
-#include <math.hpp>
+#include <math/math.hpp>
 #include <pd.hpp>
 #include <pdpt.hpp>
 #include <pml4.hpp>

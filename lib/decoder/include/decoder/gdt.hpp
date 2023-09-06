@@ -6,9 +6,9 @@
 #include <segmentation.hpp>
 
 #include <arch.hpp>
-#include <math.hpp>
+#include <math/math.hpp>
 
-#include <decoder.hpp>
+#include "decoder.hpp"
 
 namespace decoder
 {

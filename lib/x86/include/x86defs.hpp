@@ -8,7 +8,7 @@
 
 #include <cbl/interval.hpp>
 #include <compiler.hpp>
-#include <math.hpp>
+#include <math/math.hpp>
 #include <segmentation.hpp>
 
 namespace x86

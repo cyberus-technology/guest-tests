@@ -6,7 +6,7 @@
 #include <irq_handler.hpp>
 #include <irqinfo.hpp>
 #include <cbl/literals.hpp>
-#include <trace.hpp>
+#include <logger/trace.hpp>
 #include <x86asm.hpp>
 
 #include <cbl/cast_helpers.hpp>

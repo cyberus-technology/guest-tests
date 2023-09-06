@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <trace.hpp>
+#include <logger/trace.hpp>
 
-#include <math.hpp>
+#include <math/math.hpp>
 #include <x86asm.hpp>
 
 /**

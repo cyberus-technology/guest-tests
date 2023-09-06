@@ -8,8 +8,8 @@
 #include <cbl/interval.hpp>
 #include <device_driver/adapter.hpp>
 #include <hpet.hpp>
-#include <splitting_buddy.hpp>
-#include <trace.hpp>
+#include <memory/splitting_buddy.hpp>
+#include <logger/trace.hpp>
 #include <x86asm.hpp>
 
 /**

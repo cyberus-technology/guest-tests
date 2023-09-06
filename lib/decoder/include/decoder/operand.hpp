@@ -6,8 +6,8 @@
 #include <optional>
 
 #include <arch.hpp>
-#include <decoder.hpp>
-#include <math.hpp>
+#include "decoder.hpp"
+#include <math/math.hpp>
 #include <x86defs.hpp>
 
 namespace decoder

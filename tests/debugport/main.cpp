@@ -7,7 +7,7 @@
 #include <vector>
 
 #include <debugport_interface.h>
-#include <trace.hpp>
+#include <logger/trace.hpp>
 #include <x86asm.hpp>
 
 #include <baretest/baretest.hpp>

@@ -6,7 +6,7 @@
 #include <idt.hpp>
 #include <int_guard.hpp>
 #include <lapic_test_tools.hpp>
-#include <trace.hpp>
+#include <logger/trace.hpp>
 #include <x86asm.hpp>
 
 using x86::msr;

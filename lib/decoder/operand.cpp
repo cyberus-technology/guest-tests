@@ -3,7 +3,7 @@
 
 #include <decoder/gdt.hpp>
 #include <decoder/operand.hpp>
-#include <trace.hpp>
+#include <logger/trace.hpp>
 
 using namespace decoder;
 using namespace x86;

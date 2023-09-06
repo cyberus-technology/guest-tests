@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include <decoder.hpp>
+#include "decoder.hpp"
 #include <decoder/operand.hpp>
 #include <udis86.h>
 #include <x86defs.hpp>

@@ -4,9 +4,9 @@
 #pragma once
 
 #include <arch.h>
-#include <buddy.hpp>
+#include <memory/buddy.hpp>
 #include <cbl/cast_helpers.hpp>
-#include <math.hpp>
+#include <math/math.hpp>
 
 #include <algorithm>
 #include <functional>

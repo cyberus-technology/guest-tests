@@ -9,7 +9,7 @@
 #include <idt.hpp>
 #include <irq_handler.hpp>
 #include <irqinfo.hpp>
-#include <trace.hpp>
+#include <logger/trace.hpp>
 #include <usermode.hpp>
 
 #include <tuple>

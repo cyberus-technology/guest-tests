@@ -4,11 +4,11 @@
 #pragma once
 
 #include <decoder.hpp>
-#include <emulator_vcpu.hpp>
-#include <trace.hpp>
-#include <x86defs.hpp>
+#include "emulator_vcpu.hpp"
+#include <logger/trace.hpp>
+#include "x86defs.hpp"
 
-#include <optional>
+#include "optional"
 
 namespace emulator
 {

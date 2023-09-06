@@ -23,10 +23,10 @@
  */
 #pragma once
 
-#include <cstddef>
+#include "cstddef"
 
 #ifndef PPRINTPP_AVOID_STL
-#include <type_traits>
+#include "type_traits"
 #endif
 #include "typelist.hpp"
 

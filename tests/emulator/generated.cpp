@@ -6,7 +6,7 @@
 #include <baretest/baretest.hpp>
 #include <compiler.hpp>
 #include <debugport_interface.h>
-#include <trace.hpp>
+#include <logger/trace.hpp>
 
 using namespace x86;
 

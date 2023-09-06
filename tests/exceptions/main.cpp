@@ -9,8 +9,8 @@
 #include <lapic_enabler.hpp>
 #include <lapic_test_tools.hpp>
 #include <pic.hpp>
-#include <sotest.hpp>
-#include <trace.hpp>
+#include <sotest/sotest.hpp>
+#include <logger/trace.hpp>
 #include <usermode.hpp>
 #include <x86asm.hpp>
 

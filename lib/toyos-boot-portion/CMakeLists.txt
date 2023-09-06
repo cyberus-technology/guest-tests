@@ -35,7 +35,7 @@ install(
   DESTINATION include
   )
 
-install(FILES include/elfnote.hpp include/xhci_console.hpp DESTINATION include)
+install(FILES include/toyos/elfnote.hpp include/toyos/xhci_console.hpp DESTINATION include)
 
 install(
   EXPORT toyos-boot-portionTargets

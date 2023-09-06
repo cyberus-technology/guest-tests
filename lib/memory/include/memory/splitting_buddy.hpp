@@ -4,10 +4,10 @@
 #pragma once
 
 #include <arch.h>
-#include <buddy.hpp>
+#include <memory/buddy.hpp>
 #include <cbl/interval.hpp>
 #include <cbl/order_range.hpp>
-#include <math.hpp>
+#include <math/math.hpp>
 
 #include <optional>
 

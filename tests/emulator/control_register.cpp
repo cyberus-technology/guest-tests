@@ -1,7 +1,7 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <trace.hpp>
+#include <logger/trace.hpp>
 
 #include <baretest/baretest.hpp>
 #include <lapic_test_tools.hpp>

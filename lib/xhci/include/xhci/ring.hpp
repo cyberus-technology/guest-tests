@@ -10,7 +10,7 @@
 #include <functional>
 
 #include <cbl/cast_helpers.hpp>
-#include <trace.hpp>
+#include <logger/trace.hpp>
 
 #include <atomic>
 #include <cstring>
