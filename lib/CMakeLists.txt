@@ -51,7 +51,7 @@ set(as_subproject
     device-driver
     first-fit-heap
     libcxx
-    libsn
+    libc-tiny
     logger
     multiboot
     multiboot2
@@ -116,7 +116,7 @@ add_subdirectory(device-driver)
 add_subdirectory(decoder)
 add_subdirectory(first-fit-heap)
 add_subdirectory(libcxx)
-add_subdirectory(libsn)
+add_subdirectory(libc-tiny)
 add_subdirectory(logger)
 add_subdirectory(multiboot)
 add_subdirectory(multiboot2)

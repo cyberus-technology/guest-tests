@@ -9,7 +9,7 @@ target_include_directories(
                    $<INSTALL_INTERFACE:include>
   )
 
-target_link_libraries(baretest-config PUBLIC libsn sotest)
+target_link_libraries(baretest-config PUBLIC libc-tiny sotest)
 
 install(
   TARGETS baretest-config

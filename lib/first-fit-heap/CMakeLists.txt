@@ -4,7 +4,7 @@ project(first-fit-heap CXX)
 
 add_library(first-fit-heap INTERFACE)
 
-find_package(libsn REQUIRED)
+find_package(libc-tiny REQUIRED)
 
 target_include_directories(
   first-fit-heap INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
@@ -19,7 +19,7 @@ target_compile_options(
         first-fit-heap INTERFACE -Wno-unused-parameter
 )
 
-target_link_libraries(first-fit-heap INTERFACE first-fit-heap-contrib libsn)
+target_link_libraries(first-fit-heap INTERFACE first-fit-heap-contrib libc-tiny)
 
 install(
   TARGETS first-fit-heap

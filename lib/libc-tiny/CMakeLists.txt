@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(libsn CXX ASM)
+project(libc-tiny CXX ASM)
 
-add_library(libsn INTERFACE)
+add_library(libc-tiny INTERFACE)
 
 target_include_directories(
-        libsn INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        libc-tiny INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
 
 install(
-        TARGETS libsn
-        EXPORT libsnTargets
+        TARGETS libc-tiny
+        EXPORT libc-tinyTargets
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
         RUNTIME DESTINATION lib
@@ -22,15 +22,15 @@ install(
 install(DIRECTORY include/ DESTINATION include)
 
 install(
-        EXPORT libsnTargets
-        FILE libsnTargets.cmake
-        DESTINATION lib/cmake/libsn
+        EXPORT libc-tinyTargets
+        FILE libc-tinyTargets.cmake
+        DESTINATION lib/cmake/libc-tiny
 )
 
 # In order to make interface libraries discoverable via find_package
 # we have to separate a *Config.cmake file and export the lib.
-install(FILES libsnConfig.cmake
-        DESTINATION lib/cmake/libsn
+install(FILES libc-tinyConfig.cmake
+        DESTINATION lib/cmake/libc-tiny
 )
 
-export(TARGETS libsn FILE libsnTargets.cmake)
+export(TARGETS libc-tiny FILE libc-tinyTargets.cmake)

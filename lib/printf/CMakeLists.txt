@@ -4,7 +4,7 @@ project(printf CXX)
 
 # TODO julian: ich brauch den ganzen find_package kram net
 find_package(compiler)
-find_package(libsn)
+find_package(libc-tiny)
 find_package(libcxx)
 
 add_library(printf STATIC backend.cpp xprintf.c)
@@ -16,7 +16,7 @@ target_include_directories(
 
 target_compile_options(printf PRIVATE -Wall -Wextra)
 
-target_link_libraries(printf PUBLIC compiler libsn libcxx)
+target_link_libraries(printf PUBLIC compiler libc-tiny libcxx)
 
 install(
         TARGETS printf
