@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.10)
 project(printf CXX)
 
 # TODO julian: ich brauch den ganzen find_package kram net
-find_package(compiler)
 find_package(libc-tiny)
 find_package(libcxx)
 
@@ -16,7 +15,7 @@ target_include_directories(
 
 target_compile_options(printf PRIVATE -Wall -Wextra)
 
-target_link_libraries(printf PUBLIC compiler libc-tiny libcxx)
+target_link_libraries(printf PUBLIC libc-tiny libcxx)
 
 install(
         TARGETS printf

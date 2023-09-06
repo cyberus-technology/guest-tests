@@ -7,7 +7,6 @@ add_library(
   )
 
 find_package(cbl REQUIRED)
-find_package(compiler REQUIRED)
 find_package(logger REQUIRED)
 find_package(pprintpp REQUIRED)
 
@@ -21,7 +20,7 @@ target_include_directories(
 target_link_libraries(
   x86
   PUBLIC cbl
-  PRIVATE compiler logger pprintpp
+  PRIVATE logger pprintpp
   )
 
 target_compile_options(x86 INTERFACE -Wall -Wextra)

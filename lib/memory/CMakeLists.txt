@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.10)
 project(memory CXX)
 
 find_package(cbl REQUIRED)
-find_package(config REQUIRED)
 find_package(logger REQUIRED)
 find_package(x86 REQUIRED)
 
@@ -16,7 +15,7 @@ target_include_directories(
 
 target_compile_options(memory INTERFACE -Wall -Wextra)
 
-target_link_libraries(memory INTERFACE cbl config logger x86)
+target_link_libraries(memory INTERFACE cbl logger x86)
 
 install(
   TARGETS memory

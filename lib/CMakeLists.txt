@@ -44,8 +44,6 @@ set(as_subproject
     cbl
     console
     console-serial
-    compiler
-    config
     decoder
     first-fit-heap
     libcxx
@@ -54,7 +52,6 @@ set(as_subproject
     multiboot
     multiboot2
     memory
-    optionparser
     pci
     printf
     pprintpp
@@ -106,8 +103,6 @@ add_subdirectory(baretest-config)
 add_subdirectory(cbl)
 add_subdirectory(console)
 add_subdirectory(console-serial)
-add_subdirectory(compiler)
-add_subdirectory(config)
 add_subdirectory(decoder)
 add_subdirectory(first-fit-heap)
 add_subdirectory(libcxx)
@@ -116,7 +111,6 @@ add_subdirectory(logger)
 add_subdirectory(multiboot)
 add_subdirectory(multiboot2)
 add_subdirectory(memory)
-add_subdirectory(optionparser)
 add_subdirectory(pci)
 add_subdirectory(printf)
 add_subdirectory(pprintpp)

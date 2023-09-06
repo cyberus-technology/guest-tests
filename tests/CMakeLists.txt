@@ -33,8 +33,7 @@ function(add_guesttest test_name)
 
   target_link_libraries(
     ${test_name}_guesttest
-    PRIVATE config
-            libc-tiny
+    PRIVATE libc-tiny
             libcxx
             printf
             pprintpp

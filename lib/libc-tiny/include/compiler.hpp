@@ -4,7 +4,7 @@
 #pragma once
 
 #include <compiler.h>
-#include <stdint.h>
+#include "stdint.h"
 
 struct uncopyable
 {

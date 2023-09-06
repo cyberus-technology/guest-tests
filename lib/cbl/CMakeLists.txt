@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_library(cbl INTERFACE)
 
-find_package(compiler REQUIRED)
 find_package(libcxx REQUIRED)
 find_package(logger REQUIRED)
 find_package(memory REQUIRED)
@@ -17,7 +16,7 @@ target_include_directories(
 
 target_compile_options(cbl INTERFACE -Wall -Wextra)
 
-target_link_libraries(cbl INTERFACE compiler logger memory libcxx)
+target_link_libraries(cbl INTERFACE logger memory libcxx)
 
 install(
   TARGETS cbl

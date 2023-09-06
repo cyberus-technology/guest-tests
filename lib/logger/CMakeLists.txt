@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.10)
 
 project(logger CXX)
 
-find_package(compiler REQUIRED)
 find_package(pprintpp REQUIRED)
 find_package(libcxx REQUIRED)
 
@@ -15,7 +14,7 @@ target_include_directories(
 
 target_compile_options(logger INTERFACE -Wall -Wextra)
 
-target_link_libraries(logger INTERFACE compiler libcxx pprintpp)
+target_link_libraries(logger INTERFACE libcxx pprintpp)
 
 install(
   TARGETS logger
