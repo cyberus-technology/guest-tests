@@ -20,7 +20,7 @@ target_include_directories(
 
 target_compile_options(decoder PRIVATE -Wall -Wextra)
 
-target_link_libraries(decoder PUBLIC cbl first-fit-heap math logger udis86 x86)
+target_link_libraries(decoder PUBLIC cbl first-fit-heap math logger udis86-contrib x86)
 
 install(
   TARGETS decoder

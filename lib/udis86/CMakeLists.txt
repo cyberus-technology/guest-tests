@@ -1,73 +1,38 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(udis86)
+project(utis86 CXX)
 
-set(udis86-itab-path ${CMAKE_CURRENT_BINARY_DIR}/libudis86)
-set(udis86-directory ${CMAKE_CURRENT_SOURCE_DIR}/udis86)
-
-add_custom_command(
-  OUTPUT ${udis86-itab-path}/itab.h ${udis86-itab-path}/itab.c
-  MAIN_DEPENDENCY ${udis86-directory}/docs/x86/optable.xml
-  COMMAND ${CMAKE_COMMAND} ARGS -E make_directory ${udis86-itab-path}
-  COMMAND python3 ARGS -B ${udis86-directory}/scripts/ud_itab.py
-          ${udis86-directory}/docs/x86/optable.xml ${udis86-itab-path}
-  )
-
-add_library(
-  udis86 STATIC
-  ${udis86-directory}/libudis86/decode.c
-  ${udis86-directory}/libudis86/syn-att.c
-  ${udis86-directory}/libudis86/syn.c
-  ${udis86-directory}/libudis86/syn-intel.c
-  ${udis86-directory}/libudis86/udis86.c
-  ${udis86-itab-path}/itab.c
-  )
-
-target_compile_features(udis86 PUBLIC cxx_std_17)
-target_compile_definitions(udis86 PUBLIC __UD_STANDALONE__)
-target_compile_options(
-  udis86
-  PUBLIC -iquote ${udis86-itab-path}
-  PRIVATE -Wno-implicit-fallthrough
-  )
+add_library(utis86 INTERFACE)
 
 target_include_directories(
-  udis86
-  PUBLIC $<BUILD_INTERFACE:${udis86-directory}/libudis86/>
-         $<BUILD_INTERFACE:${udis86-directory}>
-         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/>
-         $<BUILD_INTERFACE:${udis86-itab-path}>
-         $<INSTALL_INTERFACE:include>
-  )
+        utis86 INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+)
 
-add_custom_target(
-  udis86-itab-header-generated DEPENDS ${udis86-itab-path}/itab.c
-                                       ${udis86-itab-path}/itab.h
-  )
+target_compile_definitions(
+        utis86 INTERFACE
+)
 
-add_dependencies(udis86 udis86-itab-header-generated)
+target_link_libraries(utis86 INTERFACE utis86-contrib)
 
 install(
-  TARGETS udis86
-  EXPORT udis86Config
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION lib
-  INCLUDES
-  DESTINATION include
-  )
+        TARGETS utis86
+        EXPORT utis86Targets
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION lib
+        INCLUDES
+        DESTINATION include
+)
 
 install(
-  EXPORT udis86Config
-  FILE udis86Config.cmake
-  DESTINATION lib/cmake/udis86
-  )
+        EXPORT utis86Targets
+        FILE utis86Targets.cmake
+        DESTINATION lib/cmake/utis86
+)
 
-install(FILES udis86/udis86.h DESTINATION include/)
-install(
-  FILES udis86/libudis86/decode.h udis86/libudis86/extern.h
-        udis86/libudis86/syn.h udis86/libudis86/types.h udis86/libudis86/udint.h
-        ${udis86-itab-path}/itab.h DESTINATION include/libudis86
-  )
+# In order to make interface libraries discoverable via find_package
+# we have to separate a *Config.cmake file and export the lib.
+install(FILES utis86Config.cmake DESTINATION lib/cmake/utis86)
 
-export(TARGETS udis86 FILE udis86Config.cmake)
+export(TARGETS utis86 FILE utis86Targets.cmake)

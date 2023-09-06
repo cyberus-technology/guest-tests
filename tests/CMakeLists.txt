@@ -54,21 +54,23 @@ endfunction()
 add_guesttest(cpuid EXTRA_SOURCES cpuid/benchmark.cpp)
 add_guesttest(cxx EXTRA_SOURCES cxx/setjmp.cpp)
 add_guesttest(debugport)
-#add_guesttest(
-#  emulator
-#  EXTRA_SOURCES
-#  emulator/control_register.cpp
-#  emulator/controlflow.cpp
-#  emulator/generated.cpp
-#  emulator/manual.cpp
-#  emulator/movbe.cpp
-#  emulator/segment.cpp
-#  emulator/stack.cpp
-#  emulator/string_pio.cpp
-#  )
-#add_guesttest(
-#  emulator-syscall EXTRA_LIBS sotest EXTRA_SOURCES emulator-syscall/compat.S
-#  )
+add_guesttest(
+  emulator
+  EXTRA_SOURCES
+  emulator/control_register.cpp
+  emulator/controlflow.cpp
+  emulator/generated.cpp
+  emulator/manual.cpp
+  emulator/movbe.cpp
+  emulator/segment.cpp
+  emulator/stack.cpp
+  emulator/string_pio.cpp
+  EXTRA_LIBS
+  decoder
+  )
+add_guesttest(
+  emulator-syscall EXTRA_LIBS sotest EXTRA_SOURCES emulator-syscall/compat.S
+  )
 add_guesttest(exceptions EXTRA_LIBS sotest)
 add_guesttest(fpu)
 add_guesttest(lapic-modes EXTRA_SOURCES lapic-modes/x2apic_test_tools.cpp)

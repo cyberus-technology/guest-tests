@@ -47,6 +47,7 @@ set(as_subproject
     console-serial
     compiler
     config
+    decoder
     device-driver
     first-fit-heap
     #elf
@@ -70,6 +71,7 @@ set(as_subproject
     x86
     toyos
     toyos-boot-portion
+    udis86
     xen-pvh
     xhci
   )
@@ -117,6 +119,7 @@ add_subdirectory(console-serial)
 add_subdirectory(compiler)
 add_subdirectory(config)
 add_subdirectory(device-driver)
+add_subdirectory(decoder)
 add_subdirectory(first-fit-heap)
 #add_subdirectory(elf)
 add_subdirectory(libcxx)
@@ -140,5 +143,6 @@ add_subdirectory(tstickle)
 add_subdirectory(x86)
 add_subdirectory(toyos)
 add_subdirectory(toyos-boot-portion)
+add_subdirectory(udis86)
 add_subdirectory(xen-pvh)
 add_subdirectory(xhci)
