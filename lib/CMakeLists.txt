@@ -48,7 +48,6 @@ set(as_subproject
     compiler
     config
     decoder
-    device-driver
     first-fit-heap
     libcxx
     libc-tiny
@@ -112,7 +111,6 @@ add_subdirectory(console)
 add_subdirectory(console-serial)
 add_subdirectory(compiler)
 add_subdirectory(config)
-add_subdirectory(device-driver)
 add_subdirectory(decoder)
 add_subdirectory(first-fit-heap)
 add_subdirectory(libcxx)

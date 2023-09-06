@@ -5,7 +5,6 @@
 
 #include "debug_device.hpp"
 
-#include <device_driver/adapter.hpp>
 
 #include <arch.hpp>
 #include <cbl/interval.hpp>

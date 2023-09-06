@@ -6,7 +6,7 @@
 #include <arch.hpp>
 #include <cbl/cast_helpers.hpp>
 #include <cbl/interval.hpp>
-#include <device_driver/adapter.hpp>
+#include <cbl/device_driver_adapter.hpp>
 #include <hpet.hpp>
 #include <memory/splitting_buddy.hpp>
 #include <logger/trace.hpp>
