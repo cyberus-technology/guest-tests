@@ -1,37 +1,37 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <printf/backend.hpp>
-#include <segmentation.hpp>
-#include <console-serial/console_serial.hpp>
-#include <xhci/debug_device.hpp>
+#include "printf/backend.hpp"
+#include "segmentation.hpp"
+#include "console-serial/console_serial.hpp"
+#include "xhci/debug_device.hpp"
 
-#include <heap.hpp>
+#include "heap.hpp"
 
-#include <cbl/algorithm.hpp>
-#include <arch.hpp>
-#include <memory/buddy.hpp>
-#include <cbl/interval.hpp>
-#include <cbl/order_range.hpp>
-#include <compiler.hpp>
-#include <config.hpp>
-#include <multiboot/multiboot.hpp>
-#include <multiboot2/multiboot2.hpp>
-#include <optionparser/optionparser.hpp>
-#include <pci/bus.hpp>
-#include <memory/simple_buddy.hpp>
-#include <xen-pvh/xen-pvh.hpp>
+#include "cbl/algorithm.hpp"
+#include "arch.hpp"
+#include "memory/buddy.hpp"
+#include "cbl/interval.hpp"
+#include "cbl/order_range.hpp"
+#include "compiler.hpp"
+#include "config.hpp"
+#include "multiboot/multiboot.hpp"
+#include "multiboot2/multiboot2.hpp"
+#include "optionparser/optionparser.hpp"
+#include "pci/bus.hpp"
+#include "memory/simple_buddy.hpp"
+#include "xen-pvh/xen-pvh.hpp"
 
-#include <acpi.hpp>
-#include <boot_cmdline.hpp>
-#include <lapic_test_tools.hpp>
-#include <pic.hpp>
-#include <toyos/xhci_console.hpp>
+#include "acpi.hpp"
+#include "boot_cmdline.hpp"
+#include "lapic_test_tools.hpp"
+#include "pic.hpp"
+#include "toyos/xhci_console.hpp"
 
-#include <codecvt>
-#include <locale>
-#include <string>
-#include <vector>
+#include "codecvt"
+#include "locale"
+#include "string"
+#include "vector"
 
 extern int main();
 

@@ -60,7 +60,6 @@ set(as_subproject
     pci
     printf
     pprintpp
-    stackprotector
     sotest
     string_backend
     tstickle
@@ -127,7 +126,6 @@ add_subdirectory(optionparser)
 add_subdirectory(pci)
 add_subdirectory(printf)
 add_subdirectory(pprintpp)
-add_subdirectory(stackprotector)
 add_subdirectory(sotest)
 add_subdirectory(string_backend)
 add_subdirectory(tstickle)

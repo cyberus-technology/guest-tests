@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project(toyos-boot-portion CXX ASM)
 
-add_library(toyos-boot-portion STATIC boot.cpp init.S)
+add_library(toyos-boot-portion STATIC src/boot.cpp src/init.S src/stackprotector.c)
 
 find_package(console-serial REQUIRED)
 find_package(config REQUIRED)

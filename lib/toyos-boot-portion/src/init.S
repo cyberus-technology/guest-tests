@@ -12,7 +12,7 @@
  * Multiboot 1/2.
  */
 
-#include <config.h>
+#include "config.h"
 #include <toyos/elfnote.hpp>
 
 .global _startup, __cxa_pure_virtual, _boot_heap_start, __dso_handle, __cxa_atexit, gdt, gdt_tss

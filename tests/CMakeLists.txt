@@ -41,7 +41,6 @@ function(add_guesttest test_name)
             toyos-boot-portion
             baretest-config
             baretest
-            stackprotector
             ${GUESTTEST_ARGS_EXTRA_LIBS}
     )
 
