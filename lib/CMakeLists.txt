@@ -50,7 +50,6 @@ set(as_subproject
     decoder
     device-driver
     first-fit-heap
-    #elf
     hedron
     libcxx
     libsn
@@ -67,7 +66,6 @@ set(as_subproject
     sotest
     string_backend
     tstickle
-    #slvm-info
     x86
     toyos
     toyos-boot-portion
@@ -121,7 +119,6 @@ add_subdirectory(config)
 add_subdirectory(device-driver)
 add_subdirectory(decoder)
 add_subdirectory(first-fit-heap)
-#add_subdirectory(elf)
 add_subdirectory(libcxx)
 add_subdirectory(libsn)
 add_subdirectory(logger)
@@ -137,8 +134,6 @@ add_subdirectory(pprintpp)
 add_subdirectory(stackprotector)
 add_subdirectory(sotest)
 add_subdirectory(string_backend)
-#add_subdirectory(vcpu)
-#add_subdirectory(vmmu)
 add_subdirectory(tstickle)
 add_subdirectory(x86)
 add_subdirectory(toyos)
