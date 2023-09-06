@@ -6,7 +6,7 @@
 #include <cbl/cast_helpers.hpp>
 #include <cbl/interval.hpp>
 
-#include <acpi/tables.hpp>
+#include "acpi_tables.hpp"
 
 #include <compiler.hpp>
 

@@ -39,7 +39,6 @@ set(CMAKE_CXX_STANDARD 17)
 # set(as_subproject LibA LibB LibC)
 
 set(as_subproject
-    acpi
     baretest
     baretest-config
     cbl
@@ -103,7 +102,6 @@ macro(find_package)
   endif()
 endmacro()
 
-add_subdirectory(acpi)
 add_subdirectory(baretest)
 add_subdirectory(baretest-config)
 add_subdirectory(cbl)

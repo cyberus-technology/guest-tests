@@ -4,7 +4,6 @@ project(toyos CXX)
 
 add_library(toyos STATIC mm.cpp pd.cpp pdpt.cpp pml4.cpp pt.cpp)
 
-find_package(acpi REQUIRED)
 find_package(cbl REQUIRED)
 find_package(console-serial REQUIRED)
 find_package(printf REQUIRED)
@@ -18,7 +17,7 @@ target_include_directories(
 
 target_compile_options(toyos PRIVATE -Wall -Wextra)
 
-target_link_libraries(toyos PUBLIC acpi cbl x86 xhci)
+target_link_libraries(toyos PUBLIC cbl x86 xhci)
 target_link_libraries(toyos PRIVATE console-serial printf)
 
 install(

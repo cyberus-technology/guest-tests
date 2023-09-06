@@ -9,7 +9,6 @@ add_library(xhci STATIC
         device.cpp
 )
 
-find_package(acpi REQUIRED)
 find_package(console REQUIRED)
 find_package(memory REQUIRED)
 find_package(printf REQUIRED)
@@ -21,7 +20,7 @@ target_include_directories(
 
 target_compile_options(xhci PRIVATE -Wall -Wextra)
 
-target_link_libraries(xhci PUBLIC acpi console memory printf)
+target_link_libraries(xhci PUBLIC console memory printf)
 
 install(
         TARGETS xhci
