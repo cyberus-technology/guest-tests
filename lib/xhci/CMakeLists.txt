@@ -12,7 +12,6 @@ add_library(xhci STATIC
 find_package(acpi REQUIRED)
 find_package(console REQUIRED)
 find_package(device-driver REQUIRED)
-find_package(hedron REQUIRED)
 find_package(memory REQUIRED)
 find_package(printf REQUIRED)
 
@@ -23,7 +22,7 @@ target_include_directories(
 
 target_compile_options(xhci PRIVATE -Wall -Wextra)
 
-target_link_libraries(xhci PUBLIC acpi console device-driver hedron memory printf)
+target_link_libraries(xhci PUBLIC acpi console device-driver memory printf)
 
 install(
         TARGETS xhci

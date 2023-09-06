@@ -10,7 +10,7 @@
 #include <arch.hpp>
 #include <cbl/interval.hpp>
 #include <console/console.hpp>
-#include <mutex.hpp>
+#include <cbl/mutex.hpp>
 
 #include <chrono>
 #include <memory>

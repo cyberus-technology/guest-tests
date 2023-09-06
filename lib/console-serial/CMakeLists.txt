@@ -15,7 +15,7 @@ target_include_directories(
 
 target_compile_options(console-serial PRIVATE -Wall -Wextra)
 
-target_link_libraries(console-serial PUBLIC console logger libcxx)
+target_link_libraries(console-serial PUBLIC cbl console logger libcxx)
 
 install(
   TARGETS console-serial

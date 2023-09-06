@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.10)
 project(console CXX)
 
 find_package(compiler REQUIRED)
-find_package(hedron REQUIRED)
 
 add_library(console INTERFACE)
 
@@ -15,7 +14,6 @@ target_include_directories(
 target_compile_options(console INTERFACE -Wall -Wextra)
 
 target_link_libraries(console INTERFACE compiler)
-target_link_libraries(console INTERFACE hedron)
 
 install(
   TARGETS console

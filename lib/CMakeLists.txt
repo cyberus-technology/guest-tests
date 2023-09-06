@@ -50,7 +50,6 @@ set(as_subproject
     decoder
     device-driver
     first-fit-heap
-    hedron
     libcxx
     libsn
     logger
@@ -122,7 +121,6 @@ add_subdirectory(first-fit-heap)
 add_subdirectory(libcxx)
 add_subdirectory(libsn)
 add_subdirectory(logger)
-add_subdirectory(hedron)
 add_subdirectory(math)
 add_subdirectory(multiboot)
 add_subdirectory(multiboot2)

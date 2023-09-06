@@ -7,7 +7,7 @@
 #include <string>
 
 #include "console.hpp"
-#include <mutex.hpp>
+#include <cbl/mutex.hpp>
 
 template <typename OUT_FN>
 class buffered_console : public console
