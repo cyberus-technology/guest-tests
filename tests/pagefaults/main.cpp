@@ -1,7 +1,7 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <baretest/baretest.hpp>
+#include <cbl/baretest/baretest.hpp>
 #include <idt.hpp>
 #include <irq_handler.hpp>
 #include <irqinfo.hpp>
@@ -13,7 +13,7 @@
 #include <cr0_guard.hpp>
 #include <mm.hpp>
 #include <page_guard.hpp>
-#include <cbl/page_pool.hpp>
+#include "../../lib/toyos/include/toyos/page_pool.hpp"
 #include <pd.hpp>
 #include <pdpt.hpp>
 #include <pml4.hpp>

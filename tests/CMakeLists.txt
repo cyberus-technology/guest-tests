@@ -33,10 +33,7 @@ function(add_guesttest test_name)
 
   target_link_libraries(
     ${test_name}_guesttest
-    PRIVATE libc-tiny
-            libcxx
-            toyos-boot-portion
-            ${GUESTTEST_ARGS_EXTRA_LIBS}
+    PRIVATE toyos ${GUESTTEST_ARGS_EXTRA_LIBS}
     )
 
   target_sources(${test_name}_guesttest PRIVATE ${GUESTTEST_ARGS_EXTRA_SOURCES})

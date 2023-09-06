@@ -11,7 +11,7 @@
 #include <x86asm.hpp>
 #include <x86fpu.hpp>
 
-#include <baretest/baretest.hpp>
+#include <cbl/baretest/baretest.hpp>
 
 using namespace x86;
 

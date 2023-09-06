@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-#include <baretest/baretest.hpp>
+#include <cbl/baretest/baretest.hpp>
 #include <cbl/statistics.hpp>
 #include <x86asm.hpp>
 

@@ -15,7 +15,7 @@
 #include <x86asm.hpp>
 #include <x86defs.hpp>
 
-#include <baretest/baretest.hpp>
+#include <cbl/baretest/baretest.hpp>
 
 #include "x2apic_test_tools.hpp"
 

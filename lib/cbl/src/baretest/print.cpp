@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-#include <baretest/print.hpp>
+#include <cbl/baretest/print.hpp>
 #include "cstdint"
 #include "cstdio"
 

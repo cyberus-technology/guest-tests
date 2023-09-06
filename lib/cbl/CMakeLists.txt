@@ -12,7 +12,6 @@ add_library(cbl STATIC
 )
 
 find_package(libcxx REQUIRED)
-find_package(memory REQUIRED)
 
 target_include_directories(
   cbl PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
@@ -23,7 +22,7 @@ target_compile_options(cbl PUBLIC -Wall -Wextra
         -Wno-ignored-qualifiers # silence pprintpp code
 )
 
-target_link_libraries(cbl PUBLIC memory libcxx)
+target_link_libraries(cbl PUBLIC libcxx)
 
 install(
   TARGETS cbl

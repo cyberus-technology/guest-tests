@@ -1,7 +1,7 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <baretest/baretest.hpp>
+#include <cbl/baretest/baretest.hpp>
 #include <cassert>
 #include <debugport_interface.h>
 #include <string>

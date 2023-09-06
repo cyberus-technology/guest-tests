@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <arch.hpp>
+#include <toyos/x86/arch.hpp>
 
 namespace cbl
 {

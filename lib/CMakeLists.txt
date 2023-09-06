@@ -44,12 +44,7 @@ set(as_subproject
     first-fit-heap
     libcxx
     libc-tiny
-    memory
-    tstickle
-    x86
     toyos
-    toyos-boot-portion
-    udis86
   )
 
 # Globally define following compile options used for all sub-projects.
@@ -87,13 +82,7 @@ macro(find_package)
 endmacro()
 
 add_subdirectory(cbl)
-add_subdirectory(decoder)
 add_subdirectory(first-fit-heap)
 add_subdirectory(libcxx)
 add_subdirectory(libc-tiny)
-add_subdirectory(memory)
-add_subdirectory(tstickle)
-add_subdirectory(x86)
 add_subdirectory(toyos)
-add_subdirectory(toyos-boot-portion)
-add_subdirectory(udis86)

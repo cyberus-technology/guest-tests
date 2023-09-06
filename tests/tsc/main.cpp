@@ -1,7 +1,7 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <baretest/baretest.hpp>
+#include <cbl/baretest/baretest.hpp>
 #include <cpuid.hpp>
 #include <lapic_enabler.hpp>
 #include <lapic_test_tools.hpp>

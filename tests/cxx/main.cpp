@@ -1,6 +1,6 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <baretest/baretest.hpp>
+#include <cbl/baretest/baretest.hpp>
 
 BARETEST_RUN;

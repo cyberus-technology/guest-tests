@@ -12,7 +12,7 @@
 #include <x86asm.hpp>
 #include <x86fpu.hpp>
 
-#include <baretest/baretest.hpp>
+#include <cbl/baretest/baretest.hpp>
 
 template <size_t N>
 void test_cpuid_string(std::array<std::string, N>& valid_cpu_models)

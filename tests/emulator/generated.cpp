@@ -3,7 +3,7 @@
 
 #include <initializer_list>
 
-#include <baretest/baretest.hpp>
+#include <cbl/baretest/baretest.hpp>
 #include <compiler.hpp>
 #include <debugport_interface.h>
 

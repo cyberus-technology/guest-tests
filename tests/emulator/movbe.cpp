@@ -6,7 +6,7 @@
 
 #include <debugport_interface.h>
 
-#include <baretest/baretest.hpp>
+#include <cbl/baretest/baretest.hpp>
 #include <compiler.hpp>
 #include <cpuid.hpp>
 

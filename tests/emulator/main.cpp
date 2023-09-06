@@ -4,9 +4,9 @@
 #include <debugport_interface.h>
 
 
-#include <baretest/baretest.hpp>
+#include <cbl/baretest/baretest.hpp>
 #include <compiler.hpp>
-#include <decoder/gdt.hpp>
+#include <toyos/decoder/gdt.hpp>
 #include <usermode.hpp>
 
 #include "helpers.hpp"

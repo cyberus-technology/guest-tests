@@ -4,7 +4,7 @@
 #include <atomic>
 #include <stdint.h>
 
-#include <baretest/baretest.hpp>
+#include <cbl/baretest/baretest.hpp>
 #include <irq_handler.hpp>
 #include <irqinfo.hpp>
 #include <lapic_test_tools.hpp>

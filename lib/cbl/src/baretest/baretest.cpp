@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-#include <baretest/baretest.hpp>
+#include "cbl/baretest/baretest.hpp"
 #include "vector"
 
 void __attribute__((weak)) prologue() {}

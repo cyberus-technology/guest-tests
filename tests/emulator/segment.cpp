@@ -6,7 +6,7 @@
 
 #include "helpers.hpp"
 
-#include <baretest/baretest.hpp>
+#include <cbl/baretest/baretest.hpp>
 #include <compiler.hpp>
 
 

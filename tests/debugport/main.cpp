@@ -9,7 +9,7 @@
 #include <debugport_interface.h>
 #include <x86asm.hpp>
 
-#include <baretest/baretest.hpp>
+#include <cbl/baretest/baretest.hpp>
 #include <cbl/statistics.hpp>
 
 #ifdef RELEASE
