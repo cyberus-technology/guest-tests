@@ -2,9 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(toyos-boot-portion CXX ASM)
 
-add_library(toyos-boot-portion STATIC src/boot.cpp src/init.S src/stackprotector.c)
+add_library(toyos-boot-portion STATIC src/boot.cpp src/init.S src/stackprotector.c src/console_serial.cpp)
 
-find_package(console-serial REQUIRED)
 find_package(printf REQUIRED)
 find_package(xhci REQUIRED)
 find_package(multiboot REQUIRED)
@@ -20,7 +19,7 @@ target_include_directories(
 
 target_compile_options(toyos-boot-portion PRIVATE -Wall -Wextra)
 
-target_link_libraries(toyos-boot-portion PUBLIC console-serial printf xhci first-fit-heap multiboot multiboot2 pci toyos tstickle)
+target_link_libraries(toyos-boot-portion PUBLIC printf xhci first-fit-heap multiboot multiboot2 pci toyos tstickle)
 
 install(
   TARGETS toyos-boot-portion

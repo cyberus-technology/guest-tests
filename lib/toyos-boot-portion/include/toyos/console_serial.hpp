@@ -12,8 +12,8 @@
 #include <cbl/algorithm.hpp>
 #include <arch.hpp>
 #include <cbl/interval.hpp>
+#include <cbl/console.hpp>
 #include <config.hpp>
-#include <console/console.hpp>
 
 class console_serial_base : public console
 {

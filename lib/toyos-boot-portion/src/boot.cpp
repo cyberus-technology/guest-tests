@@ -3,7 +3,7 @@
 
 #include "printf/backend.hpp"
 #include "segmentation.hpp"
-#include "console-serial/console_serial.hpp"
+#include "toyos/console_serial.hpp"
 #include "xhci/debug_device.hpp"
 
 #include "heap.hpp"

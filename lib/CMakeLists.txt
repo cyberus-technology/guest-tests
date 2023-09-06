@@ -42,8 +42,6 @@ set(as_subproject
     baretest
     baretest-config
     cbl
-    console
-    console-serial
     decoder
     first-fit-heap
     libcxx
@@ -101,8 +99,6 @@ endmacro()
 add_subdirectory(baretest)
 add_subdirectory(baretest-config)
 add_subdirectory(cbl)
-add_subdirectory(console)
-add_subdirectory(console-serial)
 add_subdirectory(decoder)
 add_subdirectory(first-fit-heap)
 add_subdirectory(libcxx)

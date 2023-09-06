@@ -8,7 +8,7 @@
 
 #include <arch.hpp>
 #include <cbl/interval.hpp>
-#include <console/console.hpp>
+#include <cbl/console.hpp>
 #include <cbl/mutex.hpp>
 
 #include <chrono>
