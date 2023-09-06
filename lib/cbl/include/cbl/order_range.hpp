@@ -10,7 +10,7 @@
 
 #include <cbl/interval.hpp>
 #include <cbl/traits.hpp>
-#include <math/math.hpp>
+#include "math.hpp"
 
 namespace cbl
 {

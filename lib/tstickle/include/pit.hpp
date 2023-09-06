@@ -5,7 +5,7 @@
 
 #include <logger/trace.hpp>
 
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 #include <x86asm.hpp>
 
 /**

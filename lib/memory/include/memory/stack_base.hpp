@@ -4,7 +4,7 @@
 #pragma once
 
 #include <config.h>
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 #include <stdio.h>
 #include <logger/trace.hpp>
 #include <type_traits>

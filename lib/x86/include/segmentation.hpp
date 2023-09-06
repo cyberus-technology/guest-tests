@@ -8,7 +8,7 @@
 #include <arch.h>
 #include <cbl/cast_helpers.hpp>
 #include <compiler.hpp>
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 
 namespace x86
 {

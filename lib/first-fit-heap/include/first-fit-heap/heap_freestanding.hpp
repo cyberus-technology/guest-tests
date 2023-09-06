@@ -4,7 +4,7 @@
 #pragma once
 
 #include "algorithm"
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 #include "stdint.h"
 #include "stdio.h"
 #include <logger/trace.hpp>

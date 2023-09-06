@@ -9,7 +9,7 @@
 
 #include "cbl/cast_helpers.hpp"
 #include "heap.hpp"
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 
 /**
  * A simple heap that can only allocate memory.

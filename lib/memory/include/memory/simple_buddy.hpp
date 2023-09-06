@@ -6,7 +6,7 @@
 #include <arch.h>
 #include <memory/buddy.hpp>
 #include <cbl/cast_helpers.hpp>
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 
 #include <algorithm>
 #include <functional>

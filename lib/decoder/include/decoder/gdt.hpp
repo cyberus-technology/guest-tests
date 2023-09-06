@@ -6,7 +6,7 @@
 #include <segmentation.hpp>
 
 #include <arch.hpp>
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 
 #include "decoder.hpp"
 

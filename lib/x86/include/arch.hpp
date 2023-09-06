@@ -5,7 +5,7 @@
 
 #include <cbl/interval.hpp>
 #include <cbl/traits.hpp>
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 #include <logger/trace.hpp>
 #include <x86asm.hpp>
 #include <x86defs.hpp>

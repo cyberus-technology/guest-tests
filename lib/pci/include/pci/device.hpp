@@ -10,7 +10,7 @@
 #include "pci.hpp"
 
 #include <arch.hpp>
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 
 #include <cbl/interval.hpp>
 

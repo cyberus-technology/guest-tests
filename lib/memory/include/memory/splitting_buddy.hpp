@@ -7,7 +7,7 @@
 #include <memory/buddy.hpp>
 #include <cbl/interval.hpp>
 #include <cbl/order_range.hpp>
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 
 #include <optional>
 

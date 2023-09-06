@@ -4,7 +4,7 @@
 #pragma once
 
 #include <compiler.hpp>
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 
 #include <stddef.h>
 

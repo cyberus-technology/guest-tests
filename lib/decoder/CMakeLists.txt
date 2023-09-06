@@ -6,7 +6,6 @@ add_library(decoder STATIC gdt.cpp operand.cpp udis_decoder.cpp)
 
 find_package(cbl REQUIRED)
 find_package(first-fit-heap REQUIRED)
-find_package(math REQUIRED)
 find_package(logger REQUIRED)
 find_package(udis86 REQUIRED)
 find_package(x86 REQUIRED)
@@ -20,7 +19,7 @@ target_include_directories(
 
 target_compile_options(decoder PRIVATE -Wall -Wextra)
 
-target_link_libraries(decoder PUBLIC cbl first-fit-heap math logger udis86-contrib x86)
+target_link_libraries(decoder PUBLIC cbl first-fit-heap logger udis86-contrib x86)
 
 install(
   TARGETS decoder

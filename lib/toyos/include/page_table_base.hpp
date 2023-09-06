@@ -8,7 +8,7 @@
 #include <cbl/cast_helpers.hpp>
 #include <cbl/in_place_atomic.hpp>
 #include <cbl/page_pool.hpp>
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 
 enum class tlb_invalidation : bool
 {

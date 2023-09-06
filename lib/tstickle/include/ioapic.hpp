@@ -5,7 +5,7 @@
 
 #include <arch.hpp>
 #include <cbl/cast_helpers.hpp>
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 
 #include <cbl/interval.hpp>
 

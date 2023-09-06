@@ -55,7 +55,6 @@ set(as_subproject
     logger
     multiboot
     multiboot2
-    math
     memory
     optionparser
     pci
@@ -121,7 +120,6 @@ add_subdirectory(first-fit-heap)
 add_subdirectory(libcxx)
 add_subdirectory(libsn)
 add_subdirectory(logger)
-add_subdirectory(math)
 add_subdirectory(multiboot)
 add_subdirectory(multiboot2)
 add_subdirectory(memory)

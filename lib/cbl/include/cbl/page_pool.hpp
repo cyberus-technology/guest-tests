@@ -5,7 +5,7 @@
 
 #include <arch.hpp>
 #include <memory/buddy.hpp>
-#include <math/math.hpp>
+#include "math.hpp"
 #include <optional>
 
 /* This pool always allocates 4k Bytes of memory.

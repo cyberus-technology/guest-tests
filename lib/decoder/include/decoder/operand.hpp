@@ -7,7 +7,7 @@
 
 #include <arch.hpp>
 #include "decoder.hpp"
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 #include <x86defs.hpp>
 
 namespace decoder

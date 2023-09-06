@@ -12,7 +12,7 @@
 #include <cbl/cast_helpers.hpp>
 #include <compiler.hpp>
 #include <device_driver/adapter.hpp>
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 
 #include <xhci/capability_registers.hpp>
 #include <xhci/legsup_capability.hpp>

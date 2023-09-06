@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 
 #include <algorithm>
 #include <array>

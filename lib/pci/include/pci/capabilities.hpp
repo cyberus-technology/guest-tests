@@ -5,7 +5,7 @@
 
 #include "msix_entry.hpp"
 
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 
 #include <cstdint>
 

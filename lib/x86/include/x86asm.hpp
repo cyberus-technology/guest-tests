@@ -5,7 +5,7 @@
 
 #include <cbl/traits.hpp>
 #include <cpuid.hpp>
-#include <math/math.hpp>
+#include "cbl/math.hpp"
 #include <segmentation.hpp>
 #include <x86defs.hpp>
 

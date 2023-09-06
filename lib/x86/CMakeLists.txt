@@ -9,7 +9,6 @@ add_library(
 find_package(cbl REQUIRED)
 find_package(compiler REQUIRED)
 find_package(logger REQUIRED)
-find_package(math REQUIRED)
 find_package(pprintpp REQUIRED)
 
 target_compile_features(x86 PUBLIC cxx_std_17)
@@ -22,7 +21,7 @@ target_include_directories(
 target_link_libraries(
   x86
   PUBLIC cbl
-  PRIVATE compiler math logger pprintpp
+  PRIVATE compiler logger pprintpp
   )
 
 target_compile_options(x86 INTERFACE -Wall -Wextra)
