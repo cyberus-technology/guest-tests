@@ -1,8 +1,8 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <xhci/config.hpp>
-#include <xhci/device.hpp>
+#include <toyos/xhci/config.hpp>
+#include <toyos/xhci/device.hpp>
 
 void xhci_device::power_cycle_ports()
 {

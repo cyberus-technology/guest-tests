@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include <cbl/lock_free_queue.hpp>
+#include "cbl/lock_free_queue.hpp"
 
-#include <xhci/config.hpp>
-#include <xhci/debug_capability.hpp>
-#include <xhci/debug_structs.hpp>
-#include <xhci/device.hpp>
+#include "config.hpp"
+#include "debug_capability.hpp"
+#include "debug_structs.hpp"
+#include "device.hpp"
 
 /**
  * xHCI debug device

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <xhci/capability.hpp>
+#include "capability.hpp"
 
 struct __PACKED__ xhci_legsup_capability : xhci_capability
 {

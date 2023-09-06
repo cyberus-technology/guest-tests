@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include <chrono>
+#include "chrono"
 
-#include <arch.hpp>
+#include "arch.hpp"
 #include "cbl/math.hpp"
 
-#include <xhci/trb.hpp>
+#include "trb.hpp"
 
 static const char16_t* const MANUFACTURER_STR {u"Cyberus Technology GmbH"};
 static const char16_t* const DEVICE_STR {u"xHCI Console"};

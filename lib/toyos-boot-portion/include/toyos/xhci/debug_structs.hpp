@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include <arch.hpp>
+#include "arch.hpp"
 #include <compiler.hpp>
 
-#include <xhci/debug_contexts.hpp>
-#include <xhci/ring.hpp>
+#include "debug_contexts.hpp"
+#include "ring.hpp"
 
 struct __PACKED__ xhci_debug_structs
 {

@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include <array>
+#include "array"
 
 #include <compiler.hpp>
 #include "cbl/math.hpp"
 
-#include <xhci/usb_strings.hpp>
+#include "usb_strings.hpp"
 
 struct __PACKED__ dbc_info_context
 {

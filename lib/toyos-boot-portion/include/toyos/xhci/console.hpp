@@ -6,15 +6,15 @@
 #include "debug_device.hpp"
 
 
-#include <arch.hpp>
-#include <cbl/interval.hpp>
-#include <cbl/console.hpp>
-#include <cbl/mutex.hpp>
+#include "arch.hpp"
+#include "cbl/interval.hpp"
+#include "../console/console.hpp"
+#include "cbl/mutex.hpp"
 
-#include <chrono>
-#include <memory>
-#include <optional>
-#include <string>
+#include "chrono"
+#include "memory"
+#include "optional"
+#include "string"
 
 class xhci_console_base : public console
 {

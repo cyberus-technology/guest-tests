@@ -3,18 +3,18 @@
 
 #pragma once
 
-#include <xhci/trb.hpp>
+#include "trb.hpp"
 
-#include <atomic>
-#include <cstring>
-#include <functional>
+#include "atomic"
+#include "cstring"
+#include "functional"
 
-#include <cbl/cast_helpers.hpp>
-#include <logger/trace.hpp>
+#include "cbl/cast_helpers.hpp"
+#include "logger/trace.hpp"
 
-#include <atomic>
-#include <cstring>
-#include <functional>
+#include "atomic"
+#include "cstring"
+#include "functional"
 
 /**
  * A class representing the ring buffers employed

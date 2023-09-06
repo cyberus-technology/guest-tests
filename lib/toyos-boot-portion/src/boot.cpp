@@ -3,8 +3,8 @@
 
 #include "printf/backend.hpp"
 #include "segmentation.hpp"
-#include "toyos/console_serial.hpp"
-#include "xhci/debug_device.hpp"
+#include "toyos/console/console_serial.hpp"
+#include "toyos/xhci/debug_device.hpp"
 
 #include "heap.hpp"
 
@@ -26,7 +26,7 @@
 #include "boot_cmdline.hpp"
 #include "lapic_test_tools.hpp"
 #include "pic.hpp"
-#include "toyos/xhci_console.hpp"
+#include "toyos/console/xhci_console.hpp"
 
 #include "codecvt"
 #include "locale"

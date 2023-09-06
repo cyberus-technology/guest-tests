@@ -1,11 +1,19 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(toyos-boot-portion CXX ASM)
+project(toyos-boot-portion CXX C ASM)
 
-add_library(toyos-boot-portion STATIC src/boot.cpp src/init.S src/stackprotector.c src/console_serial.cpp)
+add_library(toyos-boot-portion STATIC
+        src/boot.cpp
+        src/console_serial.cpp
+        src/init.S
+        src/stackprotector.c
+        src/xhci/console_base.cpp
+        src/xhci/debug_device.cpp
+        src/xhci/debug_device_transfers.cpp
+        src/xhci/device.cpp
+)
 
 find_package(printf REQUIRED)
-find_package(xhci REQUIRED)
 find_package(multiboot REQUIRED)
 find_package(multiboot2 REQUIRED)
 find_package(first-fit-heap REQUIRED)
@@ -19,7 +27,7 @@ target_include_directories(
 
 target_compile_options(toyos-boot-portion PRIVATE -Wall -Wextra)
 
-target_link_libraries(toyos-boot-portion PUBLIC printf xhci first-fit-heap multiboot multiboot2 pci toyos tstickle)
+target_link_libraries(toyos-boot-portion PUBLIC printf first-fit-heap multiboot multiboot2 pci toyos tstickle)
 
 install(
   TARGETS toyos-boot-portion
@@ -31,7 +39,7 @@ install(
   DESTINATION include
   )
 
-install(FILES include/toyos/elfnote.hpp include/toyos/xhci_console.hpp DESTINATION include)
+install(FILES include/toyos/elfnote.hpp include/toyos/console/xhci_console.hpp DESTINATION include)
 
 install(
   EXPORT toyos-boot-portionTargets

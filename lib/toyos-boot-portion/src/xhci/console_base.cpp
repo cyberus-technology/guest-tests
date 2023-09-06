@@ -2,7 +2,7 @@
  *        All rights reserved        */
 
 #include <printf/backend.hpp>
-#include <xhci/console.hpp>
+#include <toyos/xhci/console.hpp>
 
 static console* active_console;
 

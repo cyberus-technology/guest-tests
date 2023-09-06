@@ -59,7 +59,6 @@ set(as_subproject
     toyos
     toyos-boot-portion
     udis86
-    xhci
   )
 
 # Globally define following compile options used for all sub-projects.
@@ -116,4 +115,3 @@ add_subdirectory(x86)
 add_subdirectory(toyos)
 add_subdirectory(toyos-boot-portion)
 add_subdirectory(udis86)
-add_subdirectory(xhci)

@@ -5,7 +5,7 @@
 
 #include "cbl/math.hpp"
 
-#include <xhci/device.hpp>
+#include "device.hpp"
 
 struct __PACKED__ xhci_dbc_capability : xhci_device::capability
 {

@@ -3,21 +3,21 @@
 
 #pragma once
 
-#include <logger/trace.hpp>
+#include "logger/trace.hpp"
 
-#include <algorithm>
-#include <optional>
+#include "algorithm"
+#include "optional"
 
-#include <arch.hpp>
-#include <cbl/cast_helpers.hpp>
+#include "arch.hpp"
+#include "cbl/cast_helpers.hpp"
 #include <compiler.hpp>
-#include <cbl/device_driver_adapter.hpp>
-#include <cbl/math.hpp>
+#include "cbl/device_driver_adapter.hpp"
+#include "cbl/math.hpp"
 
-#include <xhci/capability_registers.hpp>
-#include <xhci/legsup_capability.hpp>
+#include "capability_registers.hpp"
+#include "legsup_capability.hpp"
 
-#include <xhci/portsc.hpp>
+#include "portsc.hpp"
 
 /**
  * Generic xHCI device abstraction.

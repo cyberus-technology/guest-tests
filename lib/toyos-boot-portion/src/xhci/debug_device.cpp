@@ -3,7 +3,7 @@
 
 #include <cbl/cast_helpers.hpp>
 
-#include <xhci/debug_device.hpp>
+#include <toyos/xhci/debug_device.hpp>
 
 bool xhci_debug_device::initialize(bool reinit)
 {

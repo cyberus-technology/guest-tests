@@ -5,7 +5,7 @@
 
 #include "baremetal_device_driver_adapter.hpp"
 
-#include "xhci/console.hpp"
+#include "../xhci/console.hpp"
 
 class xhci_console_baremetal final : public xhci_console_base
 {

@@ -1,9 +1,9 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <assert.h>
+#include "assert.h"
 
-#include <xhci/debug_device.hpp>
+#include <toyos/xhci/debug_device.hpp>
 
 void xhci_debug_device::write_byte(unsigned char c)
 {
