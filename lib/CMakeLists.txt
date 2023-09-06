@@ -61,7 +61,6 @@ set(as_subproject
     printf
     pprintpp
     sotest
-    string_backend
     tstickle
     x86
     toyos
@@ -127,7 +126,6 @@ add_subdirectory(pci)
 add_subdirectory(printf)
 add_subdirectory(pprintpp)
 add_subdirectory(sotest)
-add_subdirectory(string_backend)
 add_subdirectory(tstickle)
 add_subdirectory(x86)
 add_subdirectory(toyos)
