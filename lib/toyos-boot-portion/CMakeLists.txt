@@ -7,7 +7,6 @@ add_library(toyos-boot-portion STATIC src/boot.cpp src/init.S src/stackprotector
 find_package(console-serial REQUIRED)
 find_package(config REQUIRED)
 find_package(printf REQUIRED)
-find_package(xen-pvh REQUIRED)
 find_package(xhci REQUIRED)
 find_package(multiboot REQUIRED)
 find_package(multiboot2 REQUIRED)
@@ -23,7 +22,7 @@ target_include_directories(
 
 target_compile_options(toyos-boot-portion PRIVATE -Wall -Wextra)
 
-target_link_libraries(toyos-boot-portion PUBLIC console-serial config printf xen-pvh xhci first-fit-heap multiboot multiboot2 optionparser pci toyos tstickle)
+target_link_libraries(toyos-boot-portion PUBLIC console-serial config printf xhci first-fit-heap multiboot multiboot2 optionparser pci toyos tstickle)
 
 install(
   TARGETS toyos-boot-portion
