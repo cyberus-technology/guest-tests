@@ -12,9 +12,14 @@ add_library(toyos STATIC
         src/pml4.cpp
         src/pt.cpp
         src/stackprotector.c
+        src/baretest/baretest.cpp
+        src/baretest/baretest_config.cpp
+        src/baretest/print.cpp
         src/decoder/gdt.cpp
         src/decoder/operand.cpp
         src/decoder/udis_decoder.cpp
+        src/printf/backend.cpp
+        src/printf/xprintf.c
         src/testhelper/entry.S
         src/testhelper/ioapic.cpp
         src/testhelper/irq_handler.cpp
@@ -38,7 +43,11 @@ target_include_directories(
 
 target_compile_options(toyos PRIVATE -Wall -Wextra)
 
-target_link_libraries(toyos PUBLIC cbl first-fit-heap udis86-contrib)
+target_compile_options(toyos PUBLIC -Wall -Wextra
+        -Wno-ignored-qualifiers # silence pprintpp code
+)
+
+target_link_libraries(toyos PUBLIC first-fit-heap udis86-contrib)
 
 install(
   TARGETS toyos

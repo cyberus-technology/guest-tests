@@ -6,7 +6,7 @@
 #include "toyos/pci/pci.hpp"
 
 #include <toyos/x86/arch.hpp>
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 
 #include <cstdint>
 

@@ -1,15 +1,15 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <cbl/baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 #include <toyos/testhelper/idt.hpp>
 #include <toyos/testhelper/irq_handler.hpp>
 #include <toyos/testhelper/irqinfo.hpp>
-#include <cbl/literals.hpp>
-#include <cbl/trace.hpp>
+#include <toyos/util/literals.hpp>
+#include <toyos/util/trace.hpp>
 #include <toyos/x86/x86asm.hpp>
 
-#include <cbl/cast_helpers.hpp>
+#include <toyos/util/cast_helpers.hpp>
 #include <toyos/testhelper/cr0_guard.hpp>
 #include <toyos/mm.hpp>
 #include <toyos/testhelper/page_guard.hpp>
@@ -18,7 +18,7 @@
 #include <toyos/pdpt.hpp>
 #include <toyos/pml4.hpp>
 
-#include <cbl/in_place_atomic.hpp>
+#include <toyos/util/in_place_atomic.hpp>
 
 using namespace x86;
 

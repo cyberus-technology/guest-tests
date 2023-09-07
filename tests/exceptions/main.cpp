@@ -1,7 +1,7 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <cbl/baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 #include <toyos/testhelper/debugport_interface.h>
 #include <toyos/testhelper/idt.hpp>
 #include <toyos/testhelper/irq_handler.hpp>
@@ -9,8 +9,8 @@
 #include <toyos/testhelper/lapic_enabler.hpp>
 #include <toyos/testhelper/lapic_test_tools.hpp>
 #include <toyos/testhelper/pic.hpp>
-#include <cbl/sotest.hpp>
-#include <cbl/trace.hpp>
+#include <toyos/util/sotest.hpp>
+#include <toyos/util/trace.hpp>
 #include <toyos/testhelper/usermode.hpp>
 #include <toyos/x86/x86asm.hpp>
 

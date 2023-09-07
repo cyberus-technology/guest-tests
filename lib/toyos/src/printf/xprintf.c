@@ -14,7 +14,7 @@
 #include <compiler.h>
 #include <stdint.h>
 
-#include "cbl/printf/xprintf.h"
+#include <toyos/printf/xprintf.h>
 
 static char* const max_ptr = (char*) -1;
 

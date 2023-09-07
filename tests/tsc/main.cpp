@@ -1,7 +1,7 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <cbl/baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 #include <toyos/x86/cpuid.hpp>
 #include <toyos/testhelper/lapic_enabler.hpp>
 #include <toyos/testhelper/lapic_test_tools.hpp>

@@ -9,7 +9,7 @@
 
 #include "optionparser.h"
 
-#include "cbl/algorithm.hpp"
+#include "toyos/util/algorithm.hpp"
 
 /**
  * Wrapper class around the optionparser library.

@@ -4,10 +4,10 @@
 #pragma once
 
 #include <toyos/x86/arch.hpp>
-#include <cbl/cast_helpers.hpp>
-#include "cbl/math.hpp"
+#include <toyos/util/cast_helpers.hpp>
+#include "toyos/util/math.hpp"
 
-#include <cbl/interval.hpp>
+#include <toyos/util/interval.hpp>
 
 /**
  * Simple I/O APIC abstraction.

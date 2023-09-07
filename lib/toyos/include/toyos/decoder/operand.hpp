@@ -6,7 +6,7 @@
 #include "optional"
 
 #include "decoder.hpp"
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 #include "../x86/arch.hpp"
 #include "../x86/x86defs.hpp"
 

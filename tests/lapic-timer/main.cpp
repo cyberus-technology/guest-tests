@@ -1,7 +1,7 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <cbl/baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 #include <toyos/testhelper/irq_handler.hpp>
 #include <toyos/testhelper/irqinfo.hpp>
 #include <toyos/testhelper/lapic_lvt_guard.hpp>

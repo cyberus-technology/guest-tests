@@ -4,7 +4,7 @@
 #pragma once
 
 #include <toyos/x86/arch.hpp>
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 #include "pd.hpp"
 #include "pdpt.hpp"
 #include "pml4.hpp"

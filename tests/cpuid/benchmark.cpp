@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-#include <cbl/baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 #include <toyos/testhelper/statistics.hpp>
 #include <toyos/x86/x86asm.hpp>
 

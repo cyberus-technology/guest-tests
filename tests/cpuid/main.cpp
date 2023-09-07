@@ -12,7 +12,7 @@
 #include <toyos/x86/x86asm.hpp>
 #include <toyos/x86/x86fpu.hpp>
 
-#include <cbl/baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 
 template <size_t N>
 void test_cpuid_string(std::array<std::string, N>& valid_cpu_models)

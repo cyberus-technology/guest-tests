@@ -9,7 +9,7 @@
 #include "cstring"
 #include "functional"
 
-#include "cbl/cast_helpers.hpp"
+#include "toyos/util/cast_helpers.hpp"
 
 #include "atomic"
 #include "cstring"

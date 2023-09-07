@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <cbl/interval.hpp>
-#include <cbl/order_range.hpp>
-#include "cbl/math.hpp"
+#include <toyos/util/interval.hpp>
+#include <toyos/util/order_range.hpp>
+#include "toyos/util/math.hpp"
 
 #include <optional>
 #include <set>

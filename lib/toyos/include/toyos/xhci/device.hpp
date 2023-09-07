@@ -7,10 +7,10 @@
 #include "optional"
 
 #include "../x86/arch.hpp"
-#include "cbl/cast_helpers.hpp"
+#include "toyos/util/cast_helpers.hpp"
 #include <compiler.hpp>
-#include "cbl/device_driver_adapter.hpp"
-#include "cbl/math.hpp"
+#include "toyos/util/device_driver_adapter.hpp"
+#include "toyos/util/math.hpp"
 
 #include "capability_registers.hpp"
 #include "legsup_capability.hpp"

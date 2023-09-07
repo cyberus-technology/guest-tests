@@ -6,7 +6,7 @@
 #include "array"
 
 #include <compiler.hpp>
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 
 #include "usb_strings.hpp"
 

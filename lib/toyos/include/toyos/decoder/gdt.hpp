@@ -5,7 +5,7 @@
 
 #include <toyos/x86/arch.hpp>
 
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 #include "decoder.hpp"
 #include "../x86/segmentation.hpp"
 

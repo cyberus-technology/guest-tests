@@ -6,9 +6,9 @@
 #include <arch.h>
 #include <stdint.h>
 
-#include <cbl/interval.hpp>
+#include <toyos/util/interval.hpp>
 #include <compiler.hpp>
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 #include "segmentation.hpp"
 
 namespace x86

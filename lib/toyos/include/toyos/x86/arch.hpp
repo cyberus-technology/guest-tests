@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <cbl/interval.hpp>
-#include <cbl/traits.hpp>
-#include "cbl/math.hpp"
+#include <toyos/util/interval.hpp>
+#include <toyos/util/traits.hpp>
+#include "toyos/util/math.hpp"
 #include "x86asm.hpp"
 #include "x86defs.hpp"
 

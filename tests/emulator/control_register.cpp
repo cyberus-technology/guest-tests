@@ -3,7 +3,7 @@
 
 
 
-#include <cbl/baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 #include <toyos/testhelper/lapic_test_tools.hpp>
 #include <toyos/x86/x86asm.hpp>
 #include <toyos/x86/x86defs.hpp>

@@ -6,7 +6,7 @@
 #include "chrono"
 
 #include "../x86/arch.hpp"
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 
 #include "trb.hpp"
 

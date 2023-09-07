@@ -4,7 +4,7 @@
 #pragma once
 
 #include <config.h>
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 #include <stdio.h>
 #include <type_traits>
 

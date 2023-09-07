@@ -5,10 +5,10 @@
 
 #include <array>
 #include <atomic>
-#include <cbl/cast_helpers.hpp>
-#include <cbl/in_place_atomic.hpp>
+#include <toyos/util/cast_helpers.hpp>
+#include <toyos/util/in_place_atomic.hpp>
 #include "page_pool.hpp"
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 
 enum class tlb_invalidation : bool
 {

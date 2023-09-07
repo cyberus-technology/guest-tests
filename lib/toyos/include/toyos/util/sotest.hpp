@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <cbl/trace.hpp>
+#include <toyos/util/trace.hpp>
 
 namespace test_protocol
 {

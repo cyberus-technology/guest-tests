@@ -3,7 +3,7 @@
 
 #include <initializer_list>
 
-#include <cbl/baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 #include <compiler.hpp>
 #include <toyos/testhelper/debugport_interface.h>
 

@@ -1,15 +1,15 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include "cbl/printf/backend.hpp"
-#include "cbl/printf/xprintf.h"
+#include <toyos/printf/backend.hpp>
+#include <toyos/printf/xprintf.h>
 
 #include <array>
 
 // The library could be used in context where dynamic memory allocation
 // is unsupported, e.g. in early boot stages.
 // Hence, the number of possible backends is fixed.
-static constexpr std::size_t MAX_BACKENDS {3};
+static constexpr size_t MAX_BACKENDS {3};
 
 static std::array<printf_backend_fn, MAX_BACKENDS> backends;
 

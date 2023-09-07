@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <cbl/interval.hpp>
+#include <toyos/util/interval.hpp>
 #include "../x86/x86asm.hpp"
 
 class pic

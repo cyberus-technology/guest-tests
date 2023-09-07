@@ -5,8 +5,8 @@
 
 #include <functional>
 
-#include <cbl/buffer_view.hpp>
-#include <cbl/traits.hpp>
+#include <toyos/util/buffer_view.hpp>
+#include <toyos/util/traits.hpp>
 
 namespace cbl
 {

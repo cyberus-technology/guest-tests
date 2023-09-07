@@ -4,7 +4,7 @@
 #pragma once
 
 #include "algorithm"
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 #include "stdint.h"
 #include "stdio.h"
 

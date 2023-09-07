@@ -5,7 +5,7 @@
 
 #include "x86/arch.hpp"
 #include "memory/buddy.hpp"
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 #include "optional"
 
 /* This pool always allocates 4k Bytes of memory.

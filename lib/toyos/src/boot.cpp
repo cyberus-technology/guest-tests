@@ -1,18 +1,18 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <cbl/printf/backend.hpp>
+#include <toyos/printf/backend.hpp>
 #include "toyos/x86/segmentation.hpp"
 #include "toyos/console/console_serial.hpp"
 #include "toyos/xhci/debug_device.hpp"
 
 #include "heap.hpp"
 
-#include "cbl/algorithm.hpp"
+#include "toyos/util/algorithm.hpp"
 #include "toyos/x86/arch.hpp"
 #include "toyos/memory/buddy.hpp"
-#include "cbl/interval.hpp"
-#include "cbl/order_range.hpp"
+#include "toyos/util/interval.hpp"
+#include "toyos/util/order_range.hpp"
 #include <compiler.hpp>
 #include <config.hpp>
 #include <toyos/multiboot/multiboot.hpp>

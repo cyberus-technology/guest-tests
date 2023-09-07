@@ -4,9 +4,9 @@
 #pragma once
 
 #include <toyos/x86/arch.hpp>
-#include <cbl/cast_helpers.hpp>
-#include <cbl/interval.hpp>
-#include <cbl/device_driver_adapter.hpp>
+#include <toyos/util/cast_helpers.hpp>
+#include <toyos/util/interval.hpp>
+#include <toyos/util/device_driver_adapter.hpp>
 #include "testhelper/hpet.hpp"
 #include "memory/splitting_buddy.hpp"
 #include "x86/x86asm.hpp"

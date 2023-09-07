@@ -6,9 +6,9 @@
 #include <assert.h>
 
 #include <arch.h>
-#include <cbl/cast_helpers.hpp>
+#include <toyos/util/cast_helpers.hpp>
 #include <compiler.hpp>
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 
 namespace x86
 {

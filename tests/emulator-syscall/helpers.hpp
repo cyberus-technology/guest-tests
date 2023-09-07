@@ -6,7 +6,7 @@
 #include <compiler.hpp>
 #include <toyos/testhelper/debugport_interface.h>
 #include <toyos/x86/segmentation.hpp>
-#include <cbl/trace.hpp>
+#include <toyos/util/trace.hpp>
 #include <toyos/x86/x86asm.hpp>
 #include <toyos/x86/x86defs.hpp>
 

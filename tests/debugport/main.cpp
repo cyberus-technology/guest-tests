@@ -9,7 +9,7 @@
 #include <toyos/testhelper/debugport_interface.h>
 #include <toyos/x86/x86asm.hpp>
 
-#include <cbl/baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 #include <toyos/testhelper/statistics.hpp>
 
 #ifdef RELEASE

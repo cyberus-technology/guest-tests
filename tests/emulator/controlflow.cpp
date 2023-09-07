@@ -4,7 +4,7 @@
 #include <toyos/testhelper/debugport_interface.h>
 
 
-#include <cbl/baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 #include <compiler.hpp>
 #include <toyos/decoder/gdt.hpp>
 #include <toyos/testhelper/usermode.hpp>

@@ -7,7 +7,7 @@
 
 
 #include "../x86/arch.hpp"
-#include "cbl/interval.hpp"
+#include "toyos/util/interval.hpp"
 #include "../console/console.hpp"
 #include "../mutex.hpp"
 

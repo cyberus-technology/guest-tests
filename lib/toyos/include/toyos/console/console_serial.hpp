@@ -8,8 +8,8 @@
 
 #include <stdint.h>
 
-#include "cbl/algorithm.hpp"
-#include "cbl/interval.hpp"
+#include "toyos/util/algorithm.hpp"
+#include "toyos/util/interval.hpp"
 #include "toyos/x86/arch.hpp"
 #include "console.hpp"
 #include <config.hpp>

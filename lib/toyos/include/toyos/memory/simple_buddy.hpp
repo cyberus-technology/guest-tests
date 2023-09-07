@@ -5,8 +5,8 @@
 
 #include <arch.h>
 #include "buddy.hpp"
-#include <cbl/cast_helpers.hpp>
-#include "cbl/math.hpp"
+#include <toyos/util/cast_helpers.hpp>
+#include "toyos/util/math.hpp"
 
 #include <algorithm>
 #include <functional>

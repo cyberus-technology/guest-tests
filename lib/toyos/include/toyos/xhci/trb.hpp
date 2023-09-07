@@ -4,7 +4,7 @@
 #pragma once
 
 #include <compiler.hpp>
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 
 struct __PACKED__ trb
 {

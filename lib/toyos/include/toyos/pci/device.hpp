@@ -10,9 +10,9 @@
 #include "toyos/pci/pci.hpp"
 
 #include <toyos/x86/arch.hpp>
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 
-#include <cbl/interval.hpp>
+#include <toyos/util/interval.hpp>
 
 #include <cstdint>
 

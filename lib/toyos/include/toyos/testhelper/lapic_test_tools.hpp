@@ -5,7 +5,7 @@
 #include <array>
 #include <map>
 
-#include <cbl/interval.hpp>
+#include <toyos/util/interval.hpp>
 #include "int_guard.hpp"
 #include "../x86/x86asm.hpp"
 

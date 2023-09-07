@@ -3,9 +3,9 @@
 
 #include <map>
 
-#include <cbl/trace.hpp>
+#include <toyos/util/trace.hpp>
 
-#include <cbl/cast_helpers.hpp>
+#include <toyos/util/cast_helpers.hpp>
 #include <toyos/x86/cpuid.hpp>
 #include <toyos/testhelper/int_guard.hpp>
 #include <toyos/testhelper/irq_handler.hpp>
@@ -15,7 +15,7 @@
 #include <toyos/x86/x86asm.hpp>
 #include <toyos/x86/x86defs.hpp>
 
-#include <cbl/baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 
 #include "x2apic_test_tools.hpp"
 

@@ -1,7 +1,7 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <cbl/cast_helpers.hpp>
+#include <toyos/util/cast_helpers.hpp>
 
 #include <toyos/xhci/debug_device.hpp>
 

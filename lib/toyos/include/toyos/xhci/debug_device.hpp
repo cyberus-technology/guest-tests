@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "cbl/lock_free_queue.hpp"
+#include "toyos/util/lock_free_queue.hpp"
 
 #include "config.hpp"
 #include "debug_capability.hpp"

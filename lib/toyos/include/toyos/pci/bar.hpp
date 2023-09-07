@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 
 #include <cstdint>
 

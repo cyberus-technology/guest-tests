@@ -7,9 +7,9 @@
 
 #include "atomic"
 
-#include "cbl/cast_helpers.hpp"
+#include "toyos/util/cast_helpers.hpp"
 #include "heap.hpp"
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 
 /**
  * A simple heap that can only allocate memory.

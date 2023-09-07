@@ -6,8 +6,8 @@
 #include <chrono>
 #include <memory>
 
-#include <cbl/cast_helpers.hpp>
-#include <cbl/interval.hpp>
+#include <toyos/util/cast_helpers.hpp>
+#include <toyos/util/interval.hpp>
 #include <config.hpp>
 
 /**

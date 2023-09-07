@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <cbl/traits.hpp>
+#include <toyos/util/traits.hpp>
 #include "cpuid.hpp"
-#include "cbl/math.hpp"
+#include "toyos/util/math.hpp"
 #include "segmentation.hpp"
 #include "x86defs.hpp"
 
