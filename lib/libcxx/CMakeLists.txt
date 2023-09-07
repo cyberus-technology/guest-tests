@@ -2,9 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project(libcxx CXX ASM)
 
-find_package(libsn REQUIRED)
-find_package(compiler REQUIRED)
-find_package(string_backend REQUIRED)
+find_package(libc-tiny REQUIRED)
 
 add_library(libcxx STATIC
         src/c_string.cpp
@@ -24,7 +22,7 @@ target_include_directories(
 
 target_compile_options(libcxx PRIVATE -Wall -Wextra)
 
-target_link_libraries(libcxx PUBLIC compiler libsn string_backend)
+target_link_libraries(libcxx PUBLIC libc-tiny)
 
 install(
         TARGETS libcxx

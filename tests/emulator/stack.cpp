@@ -4,11 +4,11 @@
 #include <initializer_list>
 #include <tuple>
 
-#include <debugport_interface.h>
+#include <toyos/testhelper/debugport_interface.h>
 
-#include <baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 #include <compiler.hpp>
-#include <trace.hpp>
+
 
 TEST_CASE(push_register)
 {

@@ -7,13 +7,12 @@
 #include <string>
 #include <vector>
 
-#include <cpuid.hpp>
-#include <debugport_interface.h>
-#include <trace.hpp>
-#include <x86asm.hpp>
-#include <x86fpu.hpp>
+#include <toyos/x86/cpuid.hpp>
+#include <toyos/testhelper/debugport_interface.h>
+#include <toyos/x86/x86asm.hpp>
+#include <toyos/x86/x86fpu.hpp>
 
-#include <baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 
 template <size_t N>
 void test_cpuid_string(std::array<std::string, N>& valid_cpu_models)

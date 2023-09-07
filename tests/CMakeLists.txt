@@ -33,16 +33,7 @@ function(add_guesttest test_name)
 
   target_link_libraries(
     ${test_name}_guesttest
-    PRIVATE config
-            libsn
-            libcxx
-            printf
-            pprintpp
-            toyos-boot-portion
-            baretest-config
-            baretest
-            stackprotector
-            ${GUESTTEST_ARGS_EXTRA_LIBS}
+    PRIVATE toyos ${GUESTTEST_ARGS_EXTRA_LIBS}
     )
 
   target_sources(${test_name}_guesttest PRIVATE ${GUESTTEST_ARGS_EXTRA_SOURCES})
@@ -65,13 +56,11 @@ add_guesttest(
   emulator/segment.cpp
   emulator/stack.cpp
   emulator/string_pio.cpp
-  EXTRA_LIBS
-  decoder
   )
 add_guesttest(
-  emulator-syscall EXTRA_LIBS sotest EXTRA_SOURCES emulator-syscall/compat.S
+  emulator-syscall EXTRA_SOURCES emulator-syscall/compat.S
   )
-add_guesttest(exceptions EXTRA_LIBS sotest)
+add_guesttest(exceptions)
 add_guesttest(fpu)
 add_guesttest(lapic-modes EXTRA_SOURCES lapic-modes/x2apic_test_tools.cpp)
 add_guesttest(lapic-priority EXTRA_SOURCES lapic-priority/benchmark.cpp)

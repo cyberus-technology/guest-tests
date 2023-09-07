@@ -1,19 +1,19 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <baretest/baretest.hpp>
-#include <cpuid.hpp>
+#include <toyos/baretest/baretest.hpp>
+#include <toyos/x86/cpuid.hpp>
 #include <functional>
-#include <hpet.hpp>
-#include <idt.hpp>
-#include <int_guard.hpp>
-#include <ioapic.hpp>
-#include <irq_handler.hpp>
-#include <irqinfo.hpp>
-#include <lapic_test_tools.hpp>
-#include <pic.hpp>
-#include <trace.hpp>
-#include <x86asm.hpp>
+#include <toyos/testhelper/hpet.hpp>
+#include <toyos/testhelper/idt.hpp>
+#include <toyos/testhelper/int_guard.hpp>
+#include <toyos/testhelper/ioapic.hpp>
+#include <toyos/testhelper/irq_handler.hpp>
+#include <toyos/testhelper/irqinfo.hpp>
+#include <toyos/testhelper/lapic_test_tools.hpp>
+#include <toyos/testhelper/pic.hpp>
+#include <toyos/util/trace.hpp>
+#include <toyos/x86/x86asm.hpp>
 
 using namespace lapic_test_tools;
 

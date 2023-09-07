@@ -3,9 +3,9 @@
 
 #include <cstdint>
 
-#include <baretest/baretest.hpp>
-#include <statistics/statistics.hpp>
-#include <x86asm.hpp>
+#include <toyos/baretest/baretest.hpp>
+#include <toyos/testhelper/statistics.hpp>
+#include <toyos/x86/x86asm.hpp>
 
 TEST_CASE(benchmark_cycles)
 {

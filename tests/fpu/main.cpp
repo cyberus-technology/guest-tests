@@ -1,17 +1,17 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <cbl/cast_helpers.hpp>
-#include <cpuid.hpp>
-#include <debugport_interface.h>
-#include <idt.hpp>
-#include <irq_handler.hpp>
-#include <irqinfo.hpp>
-#include <trace.hpp>
-#include <x86asm.hpp>
-#include <x86fpu.hpp>
+#include <toyos/util/cast_helpers.hpp>
+#include <toyos/x86/cpuid.hpp>
+#include <toyos/testhelper/debugport_interface.h>
+#include <toyos/testhelper/idt.hpp>
+#include <toyos/testhelper/irq_handler.hpp>
+#include <toyos/testhelper/irqinfo.hpp>
+#include <toyos/util/trace.hpp>
+#include <toyos/x86/x86asm.hpp>
+#include <toyos/x86/x86fpu.hpp>
 
-#include <baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 
 using namespace x86;
 

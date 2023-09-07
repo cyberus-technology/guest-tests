@@ -3,7 +3,7 @@
 
 #include <setjmp.h>
 
-#include <baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 
 TEST_CASE(setjmp_should_return_null_on_direct_call)
 {

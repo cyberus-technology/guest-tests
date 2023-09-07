@@ -6,12 +6,11 @@
 #include <string>
 #include <vector>
 
-#include <debugport_interface.h>
-#include <trace.hpp>
-#include <x86asm.hpp>
+#include <toyos/testhelper/debugport_interface.h>
+#include <toyos/x86/x86asm.hpp>
 
-#include <baretest/baretest.hpp>
-#include <statistics/statistics.hpp>
+#include <toyos/baretest/baretest.hpp>
+#include <toyos/testhelper/statistics.hpp>
 
 #ifdef RELEASE
 TEST_CASE(debugport_should_never_exist_in_release_build)

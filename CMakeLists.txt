@@ -14,7 +14,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 # important to establish version and policy settings before invoking other
 # commands whose behavior they may affect. Do not place any settings above this
 # point unless absolutely necessary and justified.
-project(supernova CXX C ASM)
+project(guest-integration-tests CXX C ASM)
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -44,10 +44,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DRELEASE -O2")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# Path to standalone library directory
-set(STANDALONE_LIB_DIR ${PROJECT_SOURCE_DIR}/standalone/lib)
-set(STANDALONE_CONTRIB_DIR ${PROJECT_SOURCE_DIR}/standalone/contrib)
 
 option(BUILD_DEPGRAPH "Build a dependency graph of all components" ON)
 include(depgraph)

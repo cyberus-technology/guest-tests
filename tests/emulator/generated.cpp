@@ -3,10 +3,10 @@
 
 #include <initializer_list>
 
-#include <baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 #include <compiler.hpp>
-#include <debugport_interface.h>
-#include <trace.hpp>
+#include <toyos/testhelper/debugport_interface.h>
+
 
 using namespace x86;
 

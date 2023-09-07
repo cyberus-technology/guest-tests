@@ -39,41 +39,9 @@ set(CMAKE_CXX_STANDARD 17)
 # set(as_subproject LibA LibB LibC)
 
 set(as_subproject
-    acpi
-    baretest
-    baretest-config
-    cbl
-    console
-    console-serial
-    compiler
-    config
-    decoder
-    device-driver
-    first-fit-heap
-    #elf
-    hedron
     libcxx
-    libsn
-    logger
-    multiboot
-    multiboot2
-    math
-    memory
-    optionparser
-    pci
-    printf
-    pprintpp
-    stackprotector
-    sotest
-    string_backend
-    tstickle
-    #slvm-info
-    x86
+    libc-tiny
     toyos
-    toyos-boot-portion
-    udis86
-    xen-pvh
-    xhci
   )
 
 # Globally define following compile options used for all sub-projects.
@@ -110,39 +78,6 @@ macro(find_package)
   endif()
 endmacro()
 
-add_subdirectory(acpi)
-add_subdirectory(baretest)
-add_subdirectory(baretest-config)
-add_subdirectory(cbl)
-add_subdirectory(console)
-add_subdirectory(console-serial)
-add_subdirectory(compiler)
-add_subdirectory(config)
-add_subdirectory(device-driver)
-add_subdirectory(decoder)
-add_subdirectory(first-fit-heap)
-#add_subdirectory(elf)
 add_subdirectory(libcxx)
-add_subdirectory(libsn)
-add_subdirectory(logger)
-add_subdirectory(hedron)
-add_subdirectory(math)
-add_subdirectory(multiboot)
-add_subdirectory(multiboot2)
-add_subdirectory(memory)
-add_subdirectory(optionparser)
-add_subdirectory(pci)
-add_subdirectory(printf)
-add_subdirectory(pprintpp)
-add_subdirectory(stackprotector)
-add_subdirectory(sotest)
-add_subdirectory(string_backend)
-#add_subdirectory(vcpu)
-#add_subdirectory(vmmu)
-add_subdirectory(tstickle)
-add_subdirectory(x86)
+add_subdirectory(libc-tiny)
 add_subdirectory(toyos)
-add_subdirectory(toyos-boot-portion)
-add_subdirectory(udis86)
-add_subdirectory(xen-pvh)
-add_subdirectory(xhci)

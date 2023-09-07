@@ -1,18 +1,18 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <baretest/baretest.hpp>
-#include <debugport_interface.h>
-#include <idt.hpp>
-#include <irq_handler.hpp>
-#include <irqinfo.hpp>
-#include <lapic_enabler.hpp>
-#include <lapic_test_tools.hpp>
-#include <pic.hpp>
-#include <sotest.hpp>
-#include <trace.hpp>
-#include <usermode.hpp>
-#include <x86asm.hpp>
+#include <toyos/baretest/baretest.hpp>
+#include <toyos/testhelper/debugport_interface.h>
+#include <toyos/testhelper/idt.hpp>
+#include <toyos/testhelper/irq_handler.hpp>
+#include <toyos/testhelper/irqinfo.hpp>
+#include <toyos/testhelper/lapic_enabler.hpp>
+#include <toyos/testhelper/lapic_test_tools.hpp>
+#include <toyos/testhelper/pic.hpp>
+#include <toyos/util/sotest.hpp>
+#include <toyos/util/trace.hpp>
+#include <toyos/testhelper/usermode.hpp>
+#include <toyos/x86/x86asm.hpp>
 
 using x86::exception;
 

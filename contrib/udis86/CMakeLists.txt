@@ -42,7 +42,7 @@ target_include_directories(
 
 target_link_libraries(
         udis86-contrib
-        PUBLIC libsn libcxx
+        PUBLIC libc-tiny libcxx
 )
 
 add_custom_target(

@@ -1,10 +1,10 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <baretest/baretest.hpp>
-#include <cpuid.hpp>
-#include <lapic_enabler.hpp>
-#include <lapic_test_tools.hpp>
+#include <toyos/baretest/baretest.hpp>
+#include <toyos/x86/cpuid.hpp>
+#include <toyos/testhelper/lapic_enabler.hpp>
+#include <toyos/testhelper/lapic_test_tools.hpp>
 
 using namespace lapic_test_tools;
 

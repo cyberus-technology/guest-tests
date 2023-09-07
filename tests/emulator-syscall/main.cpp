@@ -3,14 +3,14 @@
 
 #include "helpers.hpp"
 
-#include <baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 #include <compiler.hpp>
-#include <debugport_interface.h>
-#include <idt.hpp>
-#include <irq_handler.hpp>
-#include <irqinfo.hpp>
-#include <trace.hpp>
-#include <usermode.hpp>
+#include <toyos/testhelper/debugport_interface.h>
+#include <toyos/testhelper/idt.hpp>
+#include <toyos/testhelper/irq_handler.hpp>
+#include <toyos/testhelper/irqinfo.hpp>
+#include <toyos/util/trace.hpp>
+#include <toyos/testhelper/usermode.hpp>
 
 #include <tuple>
 

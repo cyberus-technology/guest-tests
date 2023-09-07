@@ -4,13 +4,13 @@
 #include <initializer_list>
 #include <tuple>
 
-#include <debugport_interface.h>
+#include <toyos/testhelper/debugport_interface.h>
 
-#include <baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 #include <compiler.hpp>
-#include <cpuid.hpp>
-#include <trace.hpp>
-#include <x86asm.hpp>
+#include <toyos/x86/cpuid.hpp>
+
+#include <toyos/x86/x86asm.hpp>
 
 template <typename SIZE_TYPE>
 static void test_movbe_internal(SIZE_TYPE test_value)

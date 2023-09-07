@@ -3,19 +3,19 @@
 
 #include <map>
 
-#include <trace.hpp>
+#include <toyos/util/trace.hpp>
 
-#include <cbl/cast_helpers.hpp>
-#include <cpuid.hpp>
-#include <int_guard.hpp>
-#include <irq_handler.hpp>
-#include <irqinfo.hpp>
-#include <lapic_test_tools.hpp>
-#include <pic.hpp>
-#include <x86asm.hpp>
-#include <x86defs.hpp>
+#include <toyos/util/cast_helpers.hpp>
+#include <toyos/x86/cpuid.hpp>
+#include <toyos/testhelper/int_guard.hpp>
+#include <toyos/testhelper/irq_handler.hpp>
+#include <toyos/testhelper/irqinfo.hpp>
+#include <toyos/testhelper/lapic_test_tools.hpp>
+#include <toyos/testhelper/pic.hpp>
+#include <toyos/x86/x86asm.hpp>
+#include <toyos/x86/x86defs.hpp>
 
-#include <baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 
 #include "x2apic_test_tools.hpp"
 

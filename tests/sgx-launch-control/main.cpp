@@ -1,11 +1,11 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <cpuid.hpp>
-#include <x86asm.hpp>
-#include <x86defs.hpp>
+#include <toyos/x86/cpuid.hpp>
+#include <toyos/x86/x86asm.hpp>
+#include <toyos/x86/x86defs.hpp>
 
-#include <baretest/baretest.hpp>
+#include <toyos/baretest/baretest.hpp>
 
 using namespace x86;
 

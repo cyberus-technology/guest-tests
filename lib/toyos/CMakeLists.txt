@@ -1,25 +1,56 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(toyos CXX)
+project(toyos CXX C ASM)
 
-add_library(toyos STATIC mm.cpp pd.cpp pdpt.cpp pml4.cpp pt.cpp)
-
-find_package(acpi REQUIRED)
-find_package(cbl REQUIRED)
-find_package(console-serial REQUIRED)
-find_package(printf REQUIRED)
-find_package(x86 REQUIRED)
-find_package(xhci REQUIRED)
+add_library(toyos STATIC
+        src/boot.cpp
+        src/console_serial.cpp
+        src/init.S
+        src/mm.cpp
+        src/pd.cpp
+        src/pdpt.cpp
+        src/pml4.cpp
+        src/pt.cpp
+        src/stackprotector.c
+        src/baretest/baretest.cpp
+        src/baretest/baretest_config.cpp
+        src/baretest/print.cpp
+        src/decoder/gdt.cpp
+        src/decoder/operand.cpp
+        src/decoder/udis_decoder.cpp
+        src/printf/backend.cpp
+        src/printf/xprintf.c
+        src/testhelper/entry.S
+        src/testhelper/ioapic.cpp
+        src/testhelper/irq_handler.cpp
+        src/testhelper/lapic_test_tools.cpp
+        src/xhci/console_base.cpp
+        src/xhci/debug_device.cpp
+        src/xhci/debug_device_transfers.cpp
+        src/xhci/device.cpp
+        src/x86/arch.cpp
+        src/x86/segmentation.cpp
+        src/x86/virtual_msr.cpp
+        src/x86/virtual_msr_bus.cpp
+)
 
 target_include_directories(
   toyos PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                $<INSTALL_INTERFACE:include>
+                             $<INSTALL_INTERFACE:include>
   )
 
 target_compile_options(toyos PRIVATE -Wall -Wextra)
 
-target_link_libraries(toyos PUBLIC acpi cbl x86 xhci)
-target_link_libraries(toyos PRIVATE console-serial printf)
+target_compile_options(toyos PUBLIC -Wall -Wextra
+        -Wno-ignored-qualifiers # silence pprintpp code
+)
+
+# for first-fit-heap
+target_compile_definitions(
+    toyos PUBLIC HEAP_FREESTANDING HEAP_ASSERT
+)
+
+target_link_libraries(toyos PUBLIC udis86-contrib)
 
 install(
   TARGETS toyos
@@ -31,16 +62,18 @@ install(
   DESTINATION include
   )
 
+install(DIRECTORY include/ DESTINATION include/)
+
 install(
   EXPORT toyosTargets
   FILE toyosTargets.cmake
   DESTINATION lib/cmake/toyos
   )
 
-install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/ DESTINATION include/)
-
 # In order to make interface libraries discoverable via find_package
 # we have to separate a *Config.cmake file and export the lib.
-install(FILES toyosConfig.cmake DESTINATION lib/cmake/toyos)
+install(FILES toyosConfig.cmake
+        DESTINATION lib/cmake/toyos
+  )
 
 export(TARGETS toyos FILE toyosTargets.cmake)

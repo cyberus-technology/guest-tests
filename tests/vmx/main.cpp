@@ -1,12 +1,12 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <baretest/baretest.hpp>
-#include <idt.hpp>
-#include <irq_handler.hpp>
-#include <irqinfo.hpp>
-#include <lapic_test_tools.hpp>
-#include <trace.hpp>
+#include <toyos/baretest/baretest.hpp>
+#include <toyos/testhelper/idt.hpp>
+#include <toyos/testhelper/irq_handler.hpp>
+#include <toyos/testhelper/irqinfo.hpp>
+#include <toyos/testhelper/lapic_test_tools.hpp>
+#include <toyos/util/trace.hpp>
 
 #define TEST_CASE_VMX(NAME, EXCEPTION, FUNCTION)                                                                       \
     TEST_CASE(NAME)                                                                                                    \
