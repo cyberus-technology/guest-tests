@@ -13,12 +13,10 @@
 #include <toyos/testhelper/cr0_guard.hpp>
 #include <toyos/mm.hpp>
 #include <toyos/testhelper/page_guard.hpp>
-#include "../../lib/toyos/include/toyos/page_pool.hpp"
+#include <toyos/page_pool.hpp>
 #include <toyos/pd.hpp>
 #include <toyos/pdpt.hpp>
 #include <toyos/pml4.hpp>
-
-#include <toyos/util/in_place_atomic.hpp>
 
 using namespace x86;
 
