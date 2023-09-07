@@ -18,17 +18,13 @@ add_library(toyos STATIC
         src/printf/backend.cpp
         src/printf/xprintf.c
         src/testhelper/entry.S
-        src/testhelper/ioapic.cpp
         src/testhelper/irq_handler.cpp
         src/testhelper/lapic_test_tools.cpp
         src/xhci/console_base.cpp
         src/xhci/debug_device.cpp
         src/xhci/debug_device_transfers.cpp
         src/xhci/device.cpp
-        src/x86/arch.cpp
         src/x86/segmentation.cpp
-        src/x86/virtual_msr.cpp
-        src/x86/virtual_msr_bus.cpp
 )
 
 target_include_directories(
