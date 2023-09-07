@@ -13,21 +13,22 @@
  * value on destruction.
  */
 
-template <class ENTRY>
+template<class ENTRY>
 class page_guard
 {
 public:
-    page_guard(ENTRY& paging_entry) : entry_ref(paging_entry), entry_val(static_cast<uint64_t>(paging_entry)) {}
+   page_guard(ENTRY& paging_entry)
+      : entry_ref(paging_entry), entry_val(static_cast<uint64_t>(paging_entry)) {}
 
-    ~page_guard()
-    {
-        entry_ref = ENTRY(entry_val);
-        memory_manager::invalidate_tlb_non_global();
-    }
+   ~page_guard()
+   {
+      entry_ref = ENTRY(entry_val);
+      memory_manager::invalidate_tlb_non_global();
+   }
 
 private:
-    ENTRY& entry_ref;
-    uint64_t entry_val;
+   ENTRY& entry_ref;
+   uint64_t entry_val;
 };
 
 using pml4_guard = page_guard<PML4E>;

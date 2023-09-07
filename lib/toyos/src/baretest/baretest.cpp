@@ -30,50 +30,57 @@ void __attribute__((weak)) epilogue()
 namespace baretest
 {
 
-jmp_buf& get_env()
-{
-    static jmp_buf env;
-    return env;
-}
+   jmp_buf& get_env()
+   {
+      static jmp_buf env;
+      return env;
+   }
 
-test_suite& get_suite()
-{
-    static test_suite suite;
-    return suite;
-}
+   test_suite& get_suite()
+   {
+      static test_suite suite;
+      return suite;
+   }
 
-bool test_case::run() const
-{
-    result_t res = fn_();
-    switch (res) {
-    case result_t::SUCCESS: success(name); return true;
-    case result_t::FAILURE: failure(name); return false;
-    case result_t::SKIPPED:
-    default: skip(); return false;
-    }
-}
+   bool test_case::run() const
+   {
+      result_t res = fn_();
+      switch(res) {
+         case result_t::SUCCESS:
+            success(name);
+            return true;
+         case result_t::FAILURE:
+            failure(name);
+            return false;
+         case result_t::SKIPPED:
+         default:
+            skip();
+            return false;
+      }
+   }
 
-test_case::test_case(test_suite& suite, const char* name_, test_case_fn tc) : name(name_), fn_(tc)
-{
-    suite.add(*this);
-}
+   test_case::test_case(test_suite& suite, const char* name_, test_case_fn tc)
+      : name(name_), fn_(tc)
+   {
+      suite.add(*this);
+   }
 
-void test_suite::run()
-{
-    hello(test_cases.size());
-    for (const auto& tc : test_cases) {
-        tc.run();
-    }
-    goodbye();
-}
+   void test_suite::run()
+   {
+      hello(test_cases.size());
+      for(const auto& tc : test_cases) {
+         tc.run();
+      }
+      goodbye();
+   }
 
-__attribute__((noreturn)) void fail(const char* msg, ...)
-{
-    va_list args;
-    va_start(args, msg);
-    vprintf(msg, args);
-    va_end(args);
-    longjmp(baretest::get_env(), baretest::ASSERT_FAILED);
-}
+   __attribute__((noreturn)) void fail(const char* msg, ...)
+   {
+      va_list args;
+      va_start(args, msg);
+      vprintf(msg, args);
+      va_end(args);
+      longjmp(baretest::get_env(), baretest::ASSERT_FAILED);
+   }
 
-} // namespace baretest
+}  // namespace baretest

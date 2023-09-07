@@ -42,7 +42,7 @@ typedef long int intmax_t;
 typedef unsigned long int uintmax_t;
 
 #else
-#    error Implement me!
+#error Implement me!
 #endif
 
 #endif

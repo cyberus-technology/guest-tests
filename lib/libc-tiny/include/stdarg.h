@@ -42,7 +42,7 @@
 #if defined(__GNUC__)
 typedef __builtin_va_list va_list;
 #else
-#    define va_list VA_LIST
+#define va_list VA_LIST
 #endif
 /*@}*/
 
@@ -66,9 +66,9 @@ typedef __builtin_va_list va_list;
                     behavior is undefined.
 **/
 #if defined(__GNUC__)
-#    define va_start __builtin_va_start
+#define va_start __builtin_va_start
 #else
-#    define va_start VA_START
+#define va_start VA_START
 #endif
 /*@}*/
 
@@ -96,9 +96,9 @@ typedef __builtin_va_list va_list;
                   of the remaining arguments in succession.
 **/
 #if defined(__GNUC__)
-#    define va_arg __builtin_va_arg
+#define va_arg __builtin_va_arg
 #else
-#    define va_arg VA_ARG
+#define va_arg VA_ARG
 #endif
 /*@}*/
 
@@ -118,9 +118,9 @@ typedef __builtin_va_list va_list;
                   invocation of va_start, that will no longer be referenced.
 **/
 #if defined(__GNUC__)
-#    define va_end __builtin_va_end
+#define va_end __builtin_va_end
 #else
-#    define va_end VA_END
+#define va_end VA_END
 #endif
 /*@}*/
 
@@ -128,9 +128,9 @@ typedef __builtin_va_list va_list;
     For BSD compatibility.
 **/
 #if defined(__GNUC__)
-#    define va_copy __builtin_va_copy
+#define va_copy __builtin_va_copy
 #else
-#    define va_copy(s, d) (s) = (d)
+#define va_copy(s, d) (s) = (d)
 #endif
 /*@}*/
 
@@ -140,7 +140,7 @@ typedef __builtin_va_list va_list;
     This breaks for compiler environments that define va_list as an array or structure.
 **/
 #ifndef __va_copy
-#    define __va_copy va_copy
+#define __va_copy va_copy
 #endif
 
 #endif /* _STDARG_H */

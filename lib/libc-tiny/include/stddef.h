@@ -3,9 +3,9 @@
 #pragma once
 
 #ifdef __cplusplus
-#    define NULL nullptr
+#define NULL nullptr
 #else
-#    define NULL ((void*) 0)
+#define NULL ((void*)0)
 #endif
 
 #define offsetof(t, x) __builtin_offsetof(t, x)
@@ -17,5 +17,5 @@ typedef long ssize_t;
 typedef long ptrdiff_t;
 
 #else
-#    error Implement me!
+#error Implement me!
 #endif

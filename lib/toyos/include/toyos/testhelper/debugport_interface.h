@@ -49,52 +49,51 @@
 
 #ifndef __ASSEMBLER__
 
-#    include <toyos/util/interval.hpp>
-#    include <toyos/x86/x86defs.hpp>
+#include <toyos/util/interval.hpp>
+#include <toyos/x86/x86defs.hpp>
 
-static constexpr const cbl::interval DEBUG_PORTS {DEBUGPORT_NUMBER, DEBUGPORT_NUMBER + 1};
+static constexpr const cbl::interval DEBUG_PORTS{ DEBUGPORT_NUMBER, DEBUGPORT_NUMBER + 1 };
 
 inline uint64_t debugport_call(uint8_t function)
 {
-    uint64_t ret = 0;
-    asm volatile("outb %[dbgport];"
-                 : DEBUGPORT_RETVAL_REG_CONSTRAINT(ret)
-                 : [dbgport] "i"(DEBUG_PORTS.a), "a"(function));
-    return ret;
+   uint64_t ret = 0;
+   asm volatile("outb %[dbgport];"
+                : DEBUGPORT_RETVAL_REG_CONSTRAINT(ret)
+                : [dbgport] "i"(DEBUG_PORTS.a), "a"(function));
+   return ret;
 }
 
 inline uint64_t debugport_param1(uint8_t function, uint64_t param)
 {
-    uint64_t ret = 0;
-    asm volatile("outb %[dbgport];"
-                 : DEBUGPORT_RETVAL_REG_CONSTRAINT(ret)
-                 : [dbgport] "i"(DEBUG_PORTS.a), "a"(function), DEBUGPORT_PARAM1_REG_CONSTRAINT(param));
-    return ret;
+   uint64_t ret = 0;
+   asm volatile("outb %[dbgport];"
+                : DEBUGPORT_RETVAL_REG_CONSTRAINT(ret)
+                : [dbgport] "i"(DEBUG_PORTS.a), "a"(function), DEBUGPORT_PARAM1_REG_CONSTRAINT(param));
+   return ret;
 }
 
 inline uint64_t debugport_param2(uint8_t function, uint64_t param1, uint64_t param2)
 {
-    uint64_t ret = 0;
-    asm volatile("outb %[dbgport];"
-                 : DEBUGPORT_RETVAL_REG_CONSTRAINT(ret)
-                 : [dbgport] "i"(DEBUG_PORTS.a), "a"(function), DEBUGPORT_PARAM1_REG_CONSTRAINT(param1),
-                   DEBUGPORT_PARAM2_REG_CONSTRAINT(param2));
-    return ret;
+   uint64_t ret = 0;
+   asm volatile("outb %[dbgport];"
+                : DEBUGPORT_RETVAL_REG_CONSTRAINT(ret)
+                : [dbgport] "i"(DEBUG_PORTS.a), "a"(function), DEBUGPORT_PARAM1_REG_CONSTRAINT(param1), DEBUGPORT_PARAM2_REG_CONSTRAINT(param2));
+   return ret;
 }
 
 inline bool debugport_present()
 {
-    return debugport_call(DEBUGPORT_QUERY_HV) == DEBUGPORT_HV_PRESENT;
+   return debugport_call(DEBUGPORT_QUERY_HV) == DEBUGPORT_HV_PRESENT;
 }
 
 inline void enable_exc_exit(x86::exception exc)
 {
-    debugport_param1(DEBUGPORT_ENABLE_EXC, unsigned(exc));
+   debugport_param1(DEBUGPORT_ENABLE_EXC, unsigned(exc));
 }
 
 inline void disable_exc_exit(x86::exception exc)
 {
-    debugport_param1(DEBUGPORT_DISABLE_EXC, unsigned(exc));
+   debugport_param1(DEBUGPORT_DISABLE_EXC, unsigned(exc));
 }
 
 #endif

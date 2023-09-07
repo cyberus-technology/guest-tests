@@ -14,10 +14,10 @@
  * This function converts a given number to its pointer representant
  *
  */
-template <class T, class V>
+template<class T, class V>
 static constexpr inline T* num_to_ptr(V num)
 {
-    return reinterpret_cast<T*>(static_cast<uintptr_t>(num));
+   return reinterpret_cast<T*>(static_cast<uintptr_t>(num));
 }
 
 /**
@@ -27,10 +27,10 @@ static constexpr inline T* num_to_ptr(V num)
  *
  * This function converts a given pointer to its number representant
  */
-template <class T>
+template<class T>
 static constexpr inline uintptr_t ptr_to_num(T* ptr)
 {
-    return uintptr_t(ptr);
+   return uintptr_t(ptr);
 }
 
 /**
@@ -41,8 +41,8 @@ static constexpr inline uintptr_t ptr_to_num(T* ptr)
  * This function converts a value of enum's type to its underlying type value
  *
  */
-template <typename T>
+template<typename T>
 static constexpr auto to_underlying(const T& e)
 {
-    return static_cast<std::underlying_type_t<T>>(e);
+   return static_cast<std::underlying_type_t<T>>(e);
 }

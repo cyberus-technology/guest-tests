@@ -20,36 +20,40 @@
 #define CC_VARS bool fail_invalid, fail_valid;
 
 // write error code bits from RFLAGS register to named output variables
-#define CC_STORE                                                                                                       \
-    "setb %[carry];"                                                                                                   \
-    "setz %[zero];"
+#define CC_STORE    \
+   "setb %[carry];" \
+   "setz %[zero];"
 
 // map local variables to named output variables
 #define CC_PARAM [carry] "=q"(fail_invalid), [zero] "=q"(fail_valid)
 
 // use assertions to check that no failure happened
-#define CC_CHECK                                                                                                       \
-    assert(not fail_invalid);                                                                                          \
-    assert(not fail_valid);
+#define CC_CHECK             \
+   assert(not fail_invalid); \
+   assert(not fail_valid);
 
 // generate a vmx operation which has a parameter and no return value
 // (all vmx instruction parameters are addresses)
-#define VMX_OPERATION_PARAM(op)                                                                                        \
-    inline void op(uintptr_t par)                                                                                      \
-    {                                                                                                                  \
-        CC_VARS                                                                                                        \
-        asm volatile(#op " %[param];" CC_STORE:CC_PARAM : [param] "m"(par) : "cc", "memory");                          \
-        CC_CHECK                                                                                                       \
-    }
+#define VMX_OPERATION_PARAM(op)                       \
+   inline void op(uintptr_t par)                      \
+   {                                                  \
+      CC_VARS                                         \
+      asm volatile(#op " %[param];" CC_STORE:CC_PARAM \
+                   : [param] "m"(par)                 \
+                   : "cc", "memory");                 \
+      CC_CHECK                                        \
+   }
 
 // generate a vmx operation which does not have a parameter and no return value
-#define VMX_OPERATION(op)                                                                                              \
-    inline void op()                                                                                                   \
-    {                                                                                                                  \
-        CC_VARS                                                                                                        \
-        asm volatile(#op ";" CC_STORE:CC_PARAM : : "cc", "memory");                                                    \
-        CC_CHECK                                                                                                       \
-    }
+#define VMX_OPERATION(op)                    \
+   inline void op()                          \
+   {                                         \
+      CC_VARS                                \
+      asm volatile(#op ";" CC_STORE:CC_PARAM \
+                   :                         \
+                   : "cc", "memory");        \
+      CC_CHECK                               \
+   }
 
 /**
  * \brief Put the processor in VMX operation.
@@ -89,11 +93,14 @@ VMX_OPERATION(vmlaunch);
  */
 inline uintptr_t vmptrst()
 {
-    uint64_t res;
-    CC_VARS
-    asm volatile("vmptrst %[loc];" CC_STORE : CC_PARAM, [loc] "=m"(res) : : "cc");
-    CC_CHECK
-    return res;
+   uint64_t res;
+   CC_VARS
+   asm volatile("vmptrst %[loc];" CC_STORE
+                : CC_PARAM, [loc] "=m"(res)
+                :
+                : "cc");
+   CC_CHECK
+   return res;
 }
 
 /**
@@ -105,11 +112,14 @@ inline uintptr_t vmptrst()
  */
 inline uint64_t vmread(uint64_t enc)
 {
-    uint64_t res;
-    CC_VARS
-    asm volatile("vmread %[_enc], %[_res];" CC_STORE : CC_PARAM, [_res] "=rm"(res) : [_enc] "r"(enc) : "cc");
-    CC_CHECK
-    return res;
+   uint64_t res;
+   CC_VARS
+   asm volatile("vmread %[_enc], %[_res];" CC_STORE
+                : CC_PARAM, [_res] "=rm"(res)
+                : [_enc] "r"(enc)
+                : "cc");
+   CC_CHECK
+   return res;
 }
 
 /**
@@ -120,7 +130,9 @@ inline uint64_t vmread(uint64_t enc)
  */
 inline void vmwrite(uint64_t enc, uint64_t value)
 {
-    CC_VARS
-    asm volatile("vmwrite %[_val], %[_enc];" CC_STORE:CC_PARAM : [_enc] "r"(enc), [_val] "rm"(value) : "cc", "memory");
-    CC_CHECK
+   CC_VARS
+   asm volatile("vmwrite %[_val], %[_enc];" CC_STORE:CC_PARAM
+                : [_enc] "r"(enc), [_val] "rm"(value)
+                : "cc", "memory");
+   CC_CHECK
 }

@@ -13,7 +13,7 @@ static_assert((STATIC_TLS_SIZE & math::mask(4)) == 0x8, "Stack implementation re
 
 namespace hedron
 {
-class utcb;
+   class utcb;
 };
 
 /**
@@ -23,43 +23,50 @@ class utcb;
  */
 struct layout_base
 {
-    uint64_t cpu_;
-    hedron::utcb* utcb_;
+   uint64_t cpu_;
+   hedron::utcb* utcb_;
 };
 
 /** This is a generic stack helper that can
  * be used to access thread local storage (TLS).
  */
-template <typename LAYOUT>
+template<typename LAYOUT>
 class stack_base
 {
 private:
-    static_assert(sizeof(LAYOUT) <= STATIC_TLS_SIZE);
-    static_assert(std::is_base_of_v<layout_base, LAYOUT>, "Stack layout must inherit from layout_base");
+   static_assert(sizeof(LAYOUT) <= STATIC_TLS_SIZE);
+   static_assert(std::is_base_of_v<layout_base, LAYOUT>, "Stack layout must inherit from layout_base");
 
-    static size_t get_current_sp()
-    {
-        size_t sp;
-        asm("mov %%rsp, %[sp];" : [sp] "=rm"(sp));
-        return sp;
-    }
+   static size_t get_current_sp()
+   {
+      size_t sp;
+      asm("mov %%rsp, %[sp];"
+          : [sp] "=rm"(sp));
+      return sp;
+   }
 
 protected:
-    static LAYOUT& get_current_stack_items()
-    {
-        size_t sp {current_bottom()};
-        ASSERT(sp != 0, "stack is null");
-        return *num_to_ptr<LAYOUT>(sp);
-    }
+   static LAYOUT& get_current_stack_items()
+   {
+      size_t sp{ current_bottom() };
+      ASSERT(sp != 0, "stack is null");
+      return *num_to_ptr<LAYOUT>(sp);
+   }
 
 public:
-    static size_t current_bottom()
-    {
-        size_t sp {get_current_sp()};
-        return (sp & ~(STACK_SIZE_VIRT - 1)) + STACK_SIZE_VIRT - STATIC_TLS_SIZE;
-    }
+   static size_t current_bottom()
+   {
+      size_t sp{ get_current_sp() };
+      return (sp & ~(STACK_SIZE_VIRT - 1)) + STACK_SIZE_VIRT - STATIC_TLS_SIZE;
+   }
 
-    static hedron::utcb& current_utcb() { return *get_current_stack_items().utcb_; }
+   static hedron::utcb& current_utcb()
+   {
+      return *get_current_stack_items().utcb_;
+   }
 
-    static uint64_t current_cpu() { return get_current_stack_items().cpu_; }
+   static uint64_t current_cpu()
+   {
+      return get_current_stack_items().cpu_;
+   }
 };

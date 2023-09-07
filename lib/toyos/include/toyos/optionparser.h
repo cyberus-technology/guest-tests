@@ -223,41 +223,41 @@ namespace option
 {
 
 #ifdef _MSC_VER
-#    include <intrin.h>
-#    pragma intrinsic(_BitScanReverse)
-struct MSC_Builtin_CLZ
-{
-    static int builtin_clz(unsigned x)
-    {
-        unsigned long index;
-        _BitScanReverse(&index, x);
-        return 32 - index; // int is always 32bit on Windows, even for target x64
-    }
-};
-#    define __builtin_clz(x) MSC_Builtin_CLZ::builtin_clz(x)
+#include <intrin.h>
+#pragma intrinsic(_BitScanReverse)
+   struct MSC_Builtin_CLZ
+   {
+      static int builtin_clz(unsigned x)
+      {
+         unsigned long index;
+         _BitScanReverse(&index, x);
+         return 32 - index;  // int is always 32bit on Windows, even for target x64
+      }
+   };
+#define __builtin_clz(x) MSC_Builtin_CLZ::builtin_clz(x)
 #endif
 
-class Option;
+   class Option;
 
-/**
+   /**
  * @brief Possible results when checking if an argument is valid for a certain option.
  *
  * In the case that no argument is provided for an option that takes an
  * optional argument, return codes @c ARG_OK and @c ARG_IGNORE are equivalent.
  */
-enum ArgStatus
-{
-    //! The option does not take an argument.
-    ARG_NONE,
-    //! The argument is acceptable for the option.
-    ARG_OK,
-    //! The argument is not acceptable but that's non-fatal because the option's argument is optional.
-    ARG_IGNORE,
-    //! The argument is not acceptable and that's fatal.
-    ARG_ILLEGAL
-};
+   enum ArgStatus
+   {
+      //! The option does not take an argument.
+      ARG_NONE,
+      //! The argument is acceptable for the option.
+      ARG_OK,
+      //! The argument is not acceptable but that's non-fatal because the option's argument is optional.
+      ARG_IGNORE,
+      //! The argument is not acceptable and that's fatal.
+      ARG_ILLEGAL
+   };
 
-/**
+   /**
  * @brief Signature of functions that check if an argument is valid for a certain type of option.
  *
  * Every Option has such a function assigned in its Descriptor.
@@ -285,9 +285,9 @@ enum ArgStatus
  * @li @c Arg::Optional @copybrief Arg::Optional
  *
  */
-typedef ArgStatus (*CheckArg)(const Option& option, bool msg);
+   typedef ArgStatus (*CheckArg)(const Option& option, bool msg);
 
-/**
+   /**
  * @brief Describes an option, its help text (usage) and how it should be parsed.
  *
  * The main input when constructing an option::Parser is an array of Descriptors.
@@ -309,9 +309,9 @@ typedef ArgStatus (*CheckArg)(const Option& option, bool msg);
  * };
  * @endcode
  */
-struct Descriptor
-{
-    /**
+   struct Descriptor
+   {
+      /**
      * @brief Index of this option's linked list in the array filled in by the parser.
      *
      * Command line options whose Descriptors have the same index will end up in the same
@@ -330,18 +330,18 @@ struct Descriptor
      * Use an enum rather than plain ints for better readability, as shown in the example
      * at Descriptor.
      */
-    const unsigned index;
+      const unsigned index;
 
-    /**
+      /**
      * @brief Used to distinguish between options with the same @ref index.
      * See @ref index for details.
      *
      * It is recommended that you use an enum rather than a plain int to make your
      * code more readable.
      */
-    const int type;
+      const int type;
 
-    /**
+      /**
      * @brief Each char in this string will be accepted as a short option character.
      *
      * The string must not include the minus character @c '-' or you'll get undefined
@@ -352,9 +352,9 @@ struct Descriptor
      *
      * See @ref longopt for more information.
      */
-    const char* const shortopt;
+      const char* const shortopt;
 
-    /**
+      /**
      * @brief The long option name (without the leading @c -- ).
      *
      * If this Descriptor should not have a long option name, use the empty
@@ -387,9 +387,9 @@ struct Descriptor
      * If there is no dummy descriptor, unknown options will be dropped silently.
      *
      */
-    const char* const longopt;
+      const char* const longopt;
 
-    /**
+      /**
      * @brief For each option that matches @ref shortopt or @ref longopt this function
      * will be called to check a potential argument to the option.
      *
@@ -399,9 +399,9 @@ struct Descriptor
      *
      * See @ref CheckArg for more information.
      */
-    const CheckArg check_arg;
+      const CheckArg check_arg;
 
-    /**
+      /**
      * @brief The usage text associated with the options in this Descriptor.
      *
      * You can use option::printUsage() to format your usage message based on
@@ -416,10 +416,10 @@ struct Descriptor
      * Must be UTF-8-encoded. If your compiler supports C++11 you can use the "u8"
      * prefix to make sure string literals are properly encoded.
      */
-    const char* help;
-};
+      const char* help;
+   };
 
-/**
+   /**
  * @brief A parsed option from the command line together with its argument if it has one.
  *
  * The Parser chains all parsed options with the same Descriptor::index together
@@ -436,13 +436,13 @@ struct Descriptor
  *     @code for (Option* opt = options[FILE]; opt; opt = opt->next())
  *   fname = opt->arg; ... @endcode
  */
-class Option
-{
-    Option* next_;
-    Option* prev_;
+   class Option
+   {
+      Option* next_;
+      Option* prev_;
 
-public:
-    /**
+   public:
+      /**
      * @brief Pointer to this Option's Descriptor.
      *
      * Remember that the first dummy descriptor (see @ref Descriptor::longopt) is used
@@ -460,9 +460,9 @@ public:
      * @endcode
      * This works because of <code> operator const Option*() </code>.
      */
-    const Descriptor* desc;
+      const Descriptor* desc;
 
-    /**
+      /**
      * @brief The name of the option as used on the command line.
      *
      * The main purpose of this string is to be presented to the user in messages.
@@ -476,17 +476,17 @@ public:
      * to filter out the actual option name only.
      *
      */
-    const char* name;
+      const char* name;
 
-    /**
+      /**
      * @brief Pointer to this Option's argument (if any).
      *
      * NULL if this option has no argument. Do not confuse this with the empty string which
      * is a valid argument.
      */
-    const char* arg;
+      const char* arg;
 
-    /**
+      /**
      * @brief The length of the option @ref name.
      *
      * Because @ref name points into the actual @c argv string, the option name may be
@@ -505,9 +505,9 @@ public:
      * the @c argv pointers. A long option's @c name is always identical to one of them,
      * whereas a short option's is never.
      */
-    int namelen;
+      int namelen;
 
-    /**
+      /**
      * @brief Returns Descriptor::type of this Option's Descriptor, or 0 if this Option
      * is invalid (unused).
      *
@@ -528,15 +528,21 @@ public:
      * }
      * @endcode
      */
-    int type() const { return desc == 0 ? 0 : desc->type; }
+      int type() const
+      {
+         return desc == 0 ? 0 : desc->type;
+      }
 
-    /**
+      /**
      * @brief Returns Descriptor::index of this Option's Descriptor, or -1 if this Option
      * is invalid (unused).
      */
-    int index() const { return desc == 0 ? -1 : (int) desc->index; }
+      int index() const
+      {
+         return desc == 0 ? -1 : (int)desc->index;
+      }
 
-    /**
+      /**
      * @brief Returns the number of times this Option (or others with the same Descriptor::index)
      * occurs in the argument vector.
      *
@@ -548,18 +554,18 @@ public:
      *
      * Returns 0 when called for an unused/invalid option.
      */
-    int count()
-    {
-        int c = (desc == 0 ? 0 : 1);
-        Option* p = first();
-        while (!p->isLast()) {
+      int count()
+      {
+         int c = (desc == 0 ? 0 : 1);
+         Option* p = first();
+         while(!p->isLast()) {
             ++c;
             p = p->next_;
-        };
-        return c;
-    }
+         };
+         return c;
+      }
 
-    /**
+      /**
      * @brief Returns true iff this is the first element of the linked list.
      *
      * The first element in the linked list is the first option on the command line
@@ -567,9 +573,12 @@ public:
      *
      * Returns true for an unused/invalid option.
      */
-    bool isFirst() const { return isTagged(prev_); }
+      bool isFirst() const
+      {
+         return isTagged(prev_);
+      }
 
-    /**
+      /**
      * @brief Returns true iff this is the last element of the linked list.
      *
      * The last element in the linked list is the last option on the command line
@@ -577,9 +586,12 @@ public:
      *
      * Returns true for an unused/invalid option.
      */
-    bool isLast() const { return isTagged(next_); }
+      bool isLast() const
+      {
+         return isTagged(next_);
+      }
 
-    /**
+      /**
      * @brief Returns a pointer to the first element of the linked list.
      *
      * Use this when you want the first occurrence of an option on the command line to
@@ -590,15 +602,15 @@ public:
      * This method may be called on an unused/invalid option and will return a pointer to the
      * option itself.
      */
-    Option* first()
-    {
-        Option* p = this;
-        while (!p->isFirst())
+      Option* first()
+      {
+         Option* p = this;
+         while(!p->isFirst())
             p = p->prev_;
-        return p;
-    }
+         return p;
+      }
 
-    /**
+      /**
      * @brief Returns a pointer to the last element of the linked list.
      *
      * Use this when you want the last occurrence of an option on the command line to
@@ -614,9 +626,12 @@ public:
      * Descriptor::type and all you have to do is check <code> last()->type() </code> to get
      * the state listed last on the command line.
      */
-    Option* last() { return first()->prevwrap(); }
+      Option* last()
+      {
+         return first()->prevwrap();
+      }
 
-    /**
+      /**
      * @brief Returns a pointer to the previous element of the linked list or NULL if
      * called on first().
      *
@@ -624,9 +639,12 @@ public:
      * option with the same Descriptor::index that precedes this option on the command
      * line.
      */
-    Option* prev() { return isFirst() ? 0 : prev_; }
+      Option* prev()
+      {
+         return isFirst() ? 0 : prev_;
+      }
 
-    /**
+      /**
      * @brief Returns a pointer to the previous element of the linked list with wrap-around from
      * first() to last().
      *
@@ -634,9 +652,12 @@ public:
      * option with the same Descriptor::index that precedes this option on the command
      * line.
      */
-    Option* prevwrap() { return untag(prev_); }
+      Option* prevwrap()
+      {
+         return untag(prev_);
+      }
 
-    /**
+      /**
      * @brief Returns a pointer to the next element of the linked list or NULL if called
      * on last().
      *
@@ -644,9 +665,12 @@ public:
      * option with the same Descriptor::index that follows this option on the command
      * line.
      */
-    Option* next() { return isLast() ? 0 : next_; }
+      Option* next()
+      {
+         return isLast() ? 0 : next_;
+      }
 
-    /**
+      /**
      * @brief Returns a pointer to the next element of the linked list with wrap-around from
      * last() to first().
      *
@@ -654,9 +678,12 @@ public:
      * option with the same Descriptor::index that follows this option on the command
      * line.
      */
-    Option* nextwrap() { return untag(next_); }
+      Option* nextwrap()
+      {
+         return untag(next_);
+      }
 
-    /**
+      /**
      * @brief Makes @c new_last the new last() by chaining it into the list after last().
      *
      * It doesn't matter which element you call append() on. The new element will always
@@ -666,17 +693,17 @@ public:
      * @c new_last must not yet be part of a list, or that list will become corrupted, because
      * this method does not unchain @c new_last from an existing list.
      */
-    void append(Option* new_last)
-    {
-        Option* p = last();
-        Option* f = first();
-        p->next_ = new_last;
-        new_last->prev_ = p;
-        new_last->next_ = tag(f);
-        f->prev_ = tag(new_last);
-    }
+      void append(Option* new_last)
+      {
+         Option* p = last();
+         Option* f = first();
+         p->next_ = new_last;
+         new_last->prev_ = p;
+         new_last->next_ = tag(f);
+         f->prev_ = tag(new_last);
+      }
 
-    /**
+      /**
      * @brief Casts from Option to const Option* but only if this Option is valid.
      *
      * If this Option is valid (i.e. @c desc!=NULL), returns this.
@@ -692,9 +719,12 @@ public:
      * @code for (Option* opt = options[FILE]; opt; opt = opt->next())
      *   fname = opt->arg; ... @endcode
      */
-    operator const Option*() const { return desc ? this : 0; }
+      operator const Option*() const
+      {
+         return desc ? this : 0;
+      }
 
-    /**
+      /**
      * @brief Casts from Option to Option* but only if this Option is valid.
      *
      * If this Option is valid (i.e. @c desc!=NULL), returns this.
@@ -710,19 +740,23 @@ public:
      * @code for (Option* opt = options[FILE]; opt; opt = opt->next())
      *   fname = opt->arg; ... @endcode
      */
-    operator Option*() { return desc ? this : 0; }
+      operator Option*()
+      {
+         return desc ? this : 0;
+      }
 
-    /**
+      /**
      * @brief Creates a new Option that is a one-element linked list and has NULL
      * @ref desc, @ref name, @ref arg and @ref namelen.
      */
-    Option() : desc(0), name(0), arg(0), namelen(0)
-    {
-        prev_ = tag(this);
-        next_ = tag(this);
-    }
+      Option()
+         : desc(0), name(0), arg(0), namelen(0)
+      {
+         prev_ = tag(this);
+         next_ = tag(this);
+      }
 
-    /**
+      /**
      * @brief Creates a new Option that is a one-element linked list and has the given
      * values for @ref desc, @ref name and @ref arg.
      *
@@ -730,24 +764,33 @@ public:
      * short option and @ref namelen will be set to 1. Otherwise the length will extend to
      * the first '=' character or the string's 0-terminator.
      */
-    Option(const Descriptor* desc_, const char* name_, const char* arg_) { init(desc_, name_, arg_); }
+      Option(const Descriptor* desc_, const char* name_, const char* arg_)
+      {
+         init(desc_, name_, arg_);
+      }
 
-    /**
+      /**
      * @brief Makes @c *this a copy of @c orig except for the linked list pointers.
      *
      * After this operation @c *this will be a one-element linked list.
      */
-    void operator=(const Option& orig) { init(orig.desc, orig.name, orig.arg); }
+      void operator=(const Option& orig)
+      {
+         init(orig.desc, orig.name, orig.arg);
+      }
 
-    /**
+      /**
      * @brief Makes @c *this a copy of @c orig except for the linked list pointers.
      *
      * After this operation @c *this will be a one-element linked list.
      */
-    Option(const Option& orig) { init(orig.desc, orig.name, orig.arg); }
+      Option(const Option& orig)
+      {
+         init(orig.desc, orig.name, orig.arg);
+      }
 
-private:
-    /**
+   private:
+      /**
      * @internal
      * @brief Sets the fields of this Option to the given values (extracting @c name if necessary).
      *
@@ -755,31 +798,40 @@ private:
      * short option and @ref namelen will be set to 1. Otherwise the length will extend to
      * the first '=' character or the string's 0-terminator.
      */
-    void init(const Descriptor* desc_, const char* name_, const char* arg_)
-    {
-        desc = desc_;
-        name = name_;
-        arg = arg_;
-        prev_ = tag(this);
-        next_ = tag(this);
-        namelen = 0;
-        if (name == 0)
+      void init(const Descriptor* desc_, const char* name_, const char* arg_)
+      {
+         desc = desc_;
+         name = name_;
+         arg = arg_;
+         prev_ = tag(this);
+         next_ = tag(this);
+         namelen = 0;
+         if(name == 0)
             return;
-        namelen = 1;
-        if (name[0] != '-')
+         namelen = 1;
+         if(name[0] != '-')
             return;
-        while (name[namelen] != 0 && name[namelen] != '=')
+         while(name[namelen] != 0 && name[namelen] != '=')
             ++namelen;
-    }
+      }
 
-    static Option* tag(Option* ptr) { return (Option*) ((unsigned long long) ptr | 1); }
+      static Option* tag(Option* ptr)
+      {
+         return (Option*)((unsigned long long)ptr | 1);
+      }
 
-    static Option* untag(Option* ptr) { return (Option*) ((unsigned long long) ptr & ~1ull); }
+      static Option* untag(Option* ptr)
+      {
+         return (Option*)((unsigned long long)ptr & ~1ull);
+      }
 
-    static bool isTagged(Option* ptr) { return ((unsigned long long) ptr & 1); }
-};
+      static bool isTagged(Option* ptr)
+      {
+         return ((unsigned long long)ptr & 1);
+      }
+   };
 
-/**
+   /**
  * @brief Functions for checking the validity of option arguments.
  *
  * @copydetails CheckArg
@@ -833,22 +885,25 @@ private:
  * };
  * @endcode
  */
-struct Arg
-{
-    //! @brief For options that don't take an argument: Returns ARG_NONE.
-    static ArgStatus None(const Option&, bool) { return ARG_NONE; }
+   struct Arg
+   {
+      //! @brief For options that don't take an argument: Returns ARG_NONE.
+      static ArgStatus None(const Option&, bool)
+      {
+         return ARG_NONE;
+      }
 
-    //! @brief Returns ARG_OK if the argument is attached and ARG_IGNORE otherwise.
-    static ArgStatus Optional(const Option& option, bool)
-    {
-        if (option.arg && option.name[option.namelen] != 0)
+      //! @brief Returns ARG_OK if the argument is attached and ARG_IGNORE otherwise.
+      static ArgStatus Optional(const Option& option, bool)
+      {
+         if(option.arg && option.name[option.namelen] != 0)
             return ARG_OK;
-        else
+         else
             return ARG_IGNORE;
-    }
-};
+      }
+   };
 
-/**
+   /**
  * @brief Determines the minimum lengths of the buffer and options arrays used for Parser.
  *
  * Because Parser doesn't use dynamic memory its output arrays have to be pre-allocated.
@@ -857,9 +912,9 @@ struct Arg
  * Stats work cumulative. You can first pass in your default options and then the real
  * options and afterwards the counts will reflect the union.
  */
-struct Stats
-{
-    /**
+   struct Stats
+   {
+      /**
      * @brief Number of elements needed for a @c buffer[] array to be used for
      * @ref Parser::parse() "parsing" the same argument vectors that were fed
      * into this Stats object.
@@ -868,9 +923,9 @@ struct Stats
      * This number is always 1 greater than the actual number needed, to give
      * you a sentinel element.
      */
-    unsigned buffer_max;
+      unsigned buffer_max;
 
-    /**
+      /**
      * @brief Number of elements needed for an @c options[] array to be used for
      * @ref Parser::parse() "parsing" the same argument vectors that were fed
      * into this Stats object.
@@ -881,15 +936,16 @@ struct Stats
      * @li This number depends only on the @c usage, not the argument vectors, because
      * the @c options array needs exactly one slot for each possible Descriptor::index.
      */
-    unsigned options_max;
+      unsigned options_max;
 
-    /**
+      /**
      * @brief Creates a Stats object with counts set to 1 (for the sentinel element).
      */
-    Stats() : buffer_max(1), options_max(1) // 1 more than necessary as sentinel
-    {}
+      Stats()
+         : buffer_max(1), options_max(1)  // 1 more than necessary as sentinel
+      {}
 
-    /**
+      /**
      * @brief Creates a new Stats object and immediately updates it for the
      * given @c usage and argument vector. You may pass 0 for @c argc and/or @c argv,
      * if you just want to update @ref options_max.
@@ -898,38 +954,38 @@ struct Stats
      * The calls to Stats methods must match the later calls to Parser methods.
      * See Parser::parse() for the meaning of the arguments.
      */
-    Stats(bool gnu, const Descriptor usage[], int argc, const char** argv, int min_abbr_len = 0, //
-          bool single_minus_longopt = false)
-        : buffer_max(1), options_max(1) // 1 more than necessary as sentinel
-    {
-        add(gnu, usage, argc, argv, min_abbr_len, single_minus_longopt);
-    }
+      Stats(bool gnu, const Descriptor usage[], int argc, const char** argv, int min_abbr_len = 0,  //
+            bool single_minus_longopt = false)
+         : buffer_max(1), options_max(1)  // 1 more than necessary as sentinel
+      {
+         add(gnu, usage, argc, argv, min_abbr_len, single_minus_longopt);
+      }
 
-    //! @brief Stats(...) with non-const argv.
-    Stats(bool gnu, const Descriptor usage[], int argc, char** argv, int min_abbr_len = 0, //
-          bool single_minus_longopt = false)
-        : buffer_max(1), options_max(1) // 1 more than necessary as sentinel
-    {
-        add(gnu, usage, argc, (const char**) argv, min_abbr_len, single_minus_longopt);
-    }
+      //! @brief Stats(...) with non-const argv.
+      Stats(bool gnu, const Descriptor usage[], int argc, char** argv, int min_abbr_len = 0,  //
+            bool single_minus_longopt = false)
+         : buffer_max(1), options_max(1)  // 1 more than necessary as sentinel
+      {
+         add(gnu, usage, argc, (const char**)argv, min_abbr_len, single_minus_longopt);
+      }
 
-    //! @brief POSIX Stats(...) (gnu==false).
-    Stats(const Descriptor usage[], int argc, const char** argv, int min_abbr_len = 0, //
-          bool single_minus_longopt = false)
-        : buffer_max(1), options_max(1) // 1 more than necessary as sentinel
-    {
-        add(false, usage, argc, argv, min_abbr_len, single_minus_longopt);
-    }
+      //! @brief POSIX Stats(...) (gnu==false).
+      Stats(const Descriptor usage[], int argc, const char** argv, int min_abbr_len = 0,  //
+            bool single_minus_longopt = false)
+         : buffer_max(1), options_max(1)  // 1 more than necessary as sentinel
+      {
+         add(false, usage, argc, argv, min_abbr_len, single_minus_longopt);
+      }
 
-    //! @brief POSIX Stats(...) (gnu==false) with non-const argv.
-    Stats(const Descriptor usage[], int argc, char** argv, int min_abbr_len = 0, //
-          bool single_minus_longopt = false)
-        : buffer_max(1), options_max(1) // 1 more than necessary as sentinel
-    {
-        add(false, usage, argc, (const char**) argv, min_abbr_len, single_minus_longopt);
-    }
+      //! @brief POSIX Stats(...) (gnu==false) with non-const argv.
+      Stats(const Descriptor usage[], int argc, char** argv, int min_abbr_len = 0,  //
+            bool single_minus_longopt = false)
+         : buffer_max(1), options_max(1)  // 1 more than necessary as sentinel
+      {
+         add(false, usage, argc, (const char**)argv, min_abbr_len, single_minus_longopt);
+      }
 
-    /**
+      /**
      * @brief Updates this Stats object for the
      * given @c usage and argument vector. You may pass 0 for @c argc and/or @c argv,
      * if you just want to update @ref options_max.
@@ -938,35 +994,35 @@ struct Stats
      * The calls to Stats methods must match the later calls to Parser methods.
      * See Parser::parse() for the meaning of the arguments.
      */
-    void add(bool gnu, const Descriptor usage[], int argc, const char** argv, int min_abbr_len = 0, //
-             bool single_minus_longopt = false);
+      void add(bool gnu, const Descriptor usage[], int argc, const char** argv, int min_abbr_len = 0,  //
+               bool single_minus_longopt = false);
 
-    //! @brief add() with non-const argv.
-    void add(bool gnu, const Descriptor usage[], int argc, char** argv, int min_abbr_len = 0, //
-             bool single_minus_longopt = false)
-    {
-        add(gnu, usage, argc, (const char**) argv, min_abbr_len, single_minus_longopt);
-    }
+      //! @brief add() with non-const argv.
+      void add(bool gnu, const Descriptor usage[], int argc, char** argv, int min_abbr_len = 0,  //
+               bool single_minus_longopt = false)
+      {
+         add(gnu, usage, argc, (const char**)argv, min_abbr_len, single_minus_longopt);
+      }
 
-    //! @brief POSIX add() (gnu==false).
-    void add(const Descriptor usage[], int argc, const char** argv, int min_abbr_len = 0, //
-             bool single_minus_longopt = false)
-    {
-        add(false, usage, argc, argv, min_abbr_len, single_minus_longopt);
-    }
+      //! @brief POSIX add() (gnu==false).
+      void add(const Descriptor usage[], int argc, const char** argv, int min_abbr_len = 0,  //
+               bool single_minus_longopt = false)
+      {
+         add(false, usage, argc, argv, min_abbr_len, single_minus_longopt);
+      }
 
-    //! @brief POSIX add() (gnu==false) with non-const argv.
-    void add(const Descriptor usage[], int argc, char** argv, int min_abbr_len = 0, //
-             bool single_minus_longopt = false)
-    {
-        add(false, usage, argc, (const char**) argv, min_abbr_len, single_minus_longopt);
-    }
+      //! @brief POSIX add() (gnu==false) with non-const argv.
+      void add(const Descriptor usage[], int argc, char** argv, int min_abbr_len = 0,  //
+               bool single_minus_longopt = false)
+      {
+         add(false, usage, argc, (const char**)argv, min_abbr_len, single_minus_longopt);
+      }
 
-private:
-    class CountOptionsAction;
-};
+   private:
+      class CountOptionsAction;
+   };
 
-/**
+   /**
  * @brief Checks argument vectors for validity and parses them into data
  * structures that are easier to work with.
  *
@@ -986,54 +1042,51 @@ private:
  *   ...
  * @endcode
  */
-class Parser
-{
-    int op_count;            //!< @internal @brief see optionsCount()
-    int nonop_count;         //!< @internal @brief see nonOptionsCount()
-    const char** nonop_args; //!< @internal @brief see nonOptions()
-    bool err;                //!< @internal @brief see error()
-public:
-    /**
+   class Parser
+   {
+      int op_count;             //!< @internal @brief see optionsCount()
+      int nonop_count;          //!< @internal @brief see nonOptionsCount()
+      const char** nonop_args;  //!< @internal @brief see nonOptions()
+      bool err;                 //!< @internal @brief see error()
+   public:
+      /**
      * @brief Creates a new Parser.
      */
-    Parser() : op_count(0), nonop_count(0), nonop_args(0), err(false) {}
+      Parser()
+         : op_count(0), nonop_count(0), nonop_args(0), err(false) {}
 
-    /**
+      /**
      * @brief Creates a new Parser and immediately parses the given argument vector.
      * @copydetails parse()
      */
-    Parser(bool gnu, const Descriptor usage[], int argc, const char** argv, Option options[], Option buffer[],
-           int min_abbr_len = 0, bool single_minus_longopt = false, int bufmax = -1)
-        : op_count(0), nonop_count(0), nonop_args(0), err(false)
-    {
-        parse(gnu, usage, argc, argv, options, buffer, min_abbr_len, single_minus_longopt, bufmax);
-    }
+      Parser(bool gnu, const Descriptor usage[], int argc, const char** argv, Option options[], Option buffer[], int min_abbr_len = 0, bool single_minus_longopt = false, int bufmax = -1)
+         : op_count(0), nonop_count(0), nonop_args(0), err(false)
+      {
+         parse(gnu, usage, argc, argv, options, buffer, min_abbr_len, single_minus_longopt, bufmax);
+      }
 
-    //! @brief Parser(...) with non-const argv.
-    Parser(bool gnu, const Descriptor usage[], int argc, char** argv, Option options[], Option buffer[],
-           int min_abbr_len = 0, bool single_minus_longopt = false, int bufmax = -1)
-        : op_count(0), nonop_count(0), nonop_args(0), err(false)
-    {
-        parse(gnu, usage, argc, (const char**) argv, options, buffer, min_abbr_len, single_minus_longopt, bufmax);
-    }
+      //! @brief Parser(...) with non-const argv.
+      Parser(bool gnu, const Descriptor usage[], int argc, char** argv, Option options[], Option buffer[], int min_abbr_len = 0, bool single_minus_longopt = false, int bufmax = -1)
+         : op_count(0), nonop_count(0), nonop_args(0), err(false)
+      {
+         parse(gnu, usage, argc, (const char**)argv, options, buffer, min_abbr_len, single_minus_longopt, bufmax);
+      }
 
-    //! @brief POSIX Parser(...) (gnu==false).
-    Parser(const Descriptor usage[], int argc, const char** argv, Option options[], Option buffer[],
-           int min_abbr_len = 0, bool single_minus_longopt = false, int bufmax = -1)
-        : op_count(0), nonop_count(0), nonop_args(0), err(false)
-    {
-        parse(false, usage, argc, argv, options, buffer, min_abbr_len, single_minus_longopt, bufmax);
-    }
+      //! @brief POSIX Parser(...) (gnu==false).
+      Parser(const Descriptor usage[], int argc, const char** argv, Option options[], Option buffer[], int min_abbr_len = 0, bool single_minus_longopt = false, int bufmax = -1)
+         : op_count(0), nonop_count(0), nonop_args(0), err(false)
+      {
+         parse(false, usage, argc, argv, options, buffer, min_abbr_len, single_minus_longopt, bufmax);
+      }
 
-    //! @brief POSIX Parser(...) (gnu==false) with non-const argv.
-    Parser(const Descriptor usage[], int argc, char** argv, Option options[], Option buffer[], int min_abbr_len = 0,
-           bool single_minus_longopt = false, int bufmax = -1)
-        : op_count(0), nonop_count(0), nonop_args(0), err(false)
-    {
-        parse(false, usage, argc, (const char**) argv, options, buffer, min_abbr_len, single_minus_longopt, bufmax);
-    }
+      //! @brief POSIX Parser(...) (gnu==false) with non-const argv.
+      Parser(const Descriptor usage[], int argc, char** argv, Option options[], Option buffer[], int min_abbr_len = 0, bool single_minus_longopt = false, int bufmax = -1)
+         : op_count(0), nonop_count(0), nonop_args(0), err(false)
+      {
+         parse(false, usage, argc, (const char**)argv, options, buffer, min_abbr_len, single_minus_longopt, bufmax);
+      }
 
-    /**
+      /**
      * @brief Parses the given argument vector.
      *
      * @param gnu if true, parse() will not stop at the first non-option argument. Instead it will
@@ -1089,31 +1142,27 @@ public:
      * @c options[]. You can get the linked list in options from a buffer object via something like
      * @c options[buffer[i].index()].
      */
-    void parse(bool gnu, const Descriptor usage[], int argc, const char** argv, Option options[], Option buffer[],
-               int min_abbr_len = 0, bool single_minus_longopt = false, int bufmax = -1);
+      void parse(bool gnu, const Descriptor usage[], int argc, const char** argv, Option options[], Option buffer[], int min_abbr_len = 0, bool single_minus_longopt = false, int bufmax = -1);
 
-    //! @brief parse() with non-const argv.
-    void parse(bool gnu, const Descriptor usage[], int argc, char** argv, Option options[], Option buffer[],
-               int min_abbr_len = 0, bool single_minus_longopt = false, int bufmax = -1)
-    {
-        parse(gnu, usage, argc, (const char**) argv, options, buffer, min_abbr_len, single_minus_longopt, bufmax);
-    }
+      //! @brief parse() with non-const argv.
+      void parse(bool gnu, const Descriptor usage[], int argc, char** argv, Option options[], Option buffer[], int min_abbr_len = 0, bool single_minus_longopt = false, int bufmax = -1)
+      {
+         parse(gnu, usage, argc, (const char**)argv, options, buffer, min_abbr_len, single_minus_longopt, bufmax);
+      }
 
-    //! @brief POSIX parse() (gnu==false).
-    void parse(const Descriptor usage[], int argc, const char** argv, Option options[], Option buffer[],
-               int min_abbr_len = 0, bool single_minus_longopt = false, int bufmax = -1)
-    {
-        parse(false, usage, argc, argv, options, buffer, min_abbr_len, single_minus_longopt, bufmax);
-    }
+      //! @brief POSIX parse() (gnu==false).
+      void parse(const Descriptor usage[], int argc, const char** argv, Option options[], Option buffer[], int min_abbr_len = 0, bool single_minus_longopt = false, int bufmax = -1)
+      {
+         parse(false, usage, argc, argv, options, buffer, min_abbr_len, single_minus_longopt, bufmax);
+      }
 
-    //! @brief POSIX parse() (gnu==false) with non-const argv.
-    void parse(const Descriptor usage[], int argc, char** argv, Option options[], Option buffer[], int min_abbr_len = 0,
-               bool single_minus_longopt = false, int bufmax = -1)
-    {
-        parse(false, usage, argc, (const char**) argv, options, buffer, min_abbr_len, single_minus_longopt, bufmax);
-    }
+      //! @brief POSIX parse() (gnu==false) with non-const argv.
+      void parse(const Descriptor usage[], int argc, char** argv, Option options[], Option buffer[], int min_abbr_len = 0, bool single_minus_longopt = false, int bufmax = -1)
+      {
+         parse(false, usage, argc, (const char**)argv, options, buffer, min_abbr_len, single_minus_longopt, bufmax);
+      }
 
-    /**
+      /**
      * @brief Returns the number of valid Option objects in @c buffer[].
      *
      * @note
@@ -1122,9 +1171,12 @@ public:
      * @li The count (and the buffer[]) includes unknown options if they are collected
      * (see Descriptor::longopt).
      */
-    int optionsCount() { return op_count; }
+      int optionsCount()
+      {
+         return op_count;
+      }
 
-    /**
+      /**
      * @brief Returns the number of non-option arguments that remained at the end of the
      * most recent parse() that actually encountered non-option arguments.
      *
@@ -1138,9 +1190,12 @@ public:
      * user does not supply any non-option arguments the defaults will still be in
      * effect.
      */
-    int nonOptionsCount() { return nonop_count; }
+      int nonOptionsCount()
+      {
+         return nonop_count;
+      }
 
-    /**
+      /**
      * @brief Returns a pointer to an array of non-option arguments (only valid
      * if <code>nonOptionsCount() >0 </code>).
      *
@@ -1151,14 +1206,20 @@ public:
      * that actually encounter non-option arguments. A parse() call that encounters only
      * options, will not change nonOptions().
      */
-    const char** nonOptions() { return nonop_args; }
+      const char** nonOptions()
+      {
+         return nonop_args;
+      }
 
-    /**
+      /**
      * @brief Returns <b><code>nonOptions()[i]</code></b> (@e without checking if i is in range!).
      */
-    const char* nonOption(int i) { return nonOptions()[i]; }
+      const char* nonOption(int i)
+      {
+         return nonOptions()[i];
+      }
 
-    /**
+      /**
      * @brief Returns @c true if an unrecoverable error occurred while parsing options.
      *
      * An illegal argument to an option (i.e. CheckArg returns @ref ARG_ILLEGAL) is an
@@ -1173,22 +1234,24 @@ public:
      * @endcode
      *
      */
-    bool error() { return err; }
+      bool error()
+      {
+         return err;
+      }
 
-private:
-    friend struct Stats;
-    class StoreOptionAction;
-    struct Action;
+   private:
+      friend struct Stats;
+      class StoreOptionAction;
+      struct Action;
 
-    /**
+      /**
      * @internal
      * @brief This is the core function that does all the parsing.
      * @retval false iff an unrecoverable error occurred.
      */
-    static bool workhorse(bool gnu, const Descriptor usage[], int numargs, const char** args, Action& action,
-                          bool single_minus_longopt, bool print_errors, int min_abbr_len);
+      static bool workhorse(bool gnu, const Descriptor usage[], int numargs, const char** args, Action& action, bool single_minus_longopt, bool print_errors, int min_abbr_len);
 
-    /**
+      /**
      * @internal
      * @brief Returns true iff @c st1 is a prefix of @c st2 and
      * in case @c st2 is longer than @c st1, then
@@ -1202,15 +1265,15 @@ private:
      * streq("foo=bar", "foo") == false
      * @endcode
      */
-    static bool streq(const char* st1, const char* st2)
-    {
-        while (*st1 != 0)
-            if (*st1++ != *st2++)
-                return false;
-        return (*st2 == 0 || *st2 == '=');
-    }
+      static bool streq(const char* st1, const char* st2)
+      {
+         while(*st1 != 0)
+            if(*st1++ != *st2++)
+               return false;
+         return (*st2 == 0 || *st2 == '=');
+      }
 
-    /**
+      /**
      * @internal
      * @brief Like streq() but handles abbreviations.
      *
@@ -1234,53 +1297,53 @@ private:
      * streqabbr("foo", "foo"    ,<anything>)  == true
      * @endcode
      */
-    static bool streqabbr(const char* st1, const char* st2, long long min)
-    {
-        const char* st1start = st1;
-        while (*st1 != 0 && (*st1 == *st2)) {
+      static bool streqabbr(const char* st1, const char* st2, long long min)
+      {
+         const char* st1start = st1;
+         while(*st1 != 0 && (*st1 == *st2)) {
             ++st1;
             ++st2;
-        }
+         }
 
-        return (*st1 == 0 || (min > 0 && (st1 - st1start) >= min)) && (*st2 == 0 || *st2 == '=');
-    }
+         return (*st1 == 0 || (min > 0 && (st1 - st1start) >= min)) && (*st2 == 0 || *st2 == '=');
+      }
 
-    /**
+      /**
      * @internal
      * @brief Returns true iff character @c ch is contained in the string @c st.
      *
      * Returns @c true for @c ch==0 .
      */
-    static bool instr(char ch, const char* st)
-    {
-        while (*st != 0 && *st != ch)
+      static bool instr(char ch, const char* st)
+      {
+         while(*st != 0 && *st != ch)
             ++st;
-        return *st == ch;
-    }
+         return *st == ch;
+      }
 
-    /**
+      /**
      * @internal
      * @brief Rotates <code>args[-count],...,args[-1],args[0]</code> to become
      *        <code>args[0],args[-count],...,args[-1]</code>.
      */
-    static void shift(const char** args, int count)
-    {
-        for (int i = 0; i > -count; --i) {
+      static void shift(const char** args, int count)
+      {
+         for(int i = 0; i > -count; --i) {
             const char* temp = args[i];
             args[i] = args[i - 1];
             args[i - 1] = temp;
-        }
-    }
-};
+         }
+      }
+   };
 
-/**
+   /**
  * @internal
  * @brief Interface for actions Parser::workhorse() should perform for each Option it
  * parses.
  */
-struct Parser::Action
-{
-    /**
+   struct Parser::Action
+   {
+      /**
      * @brief Called by Parser::workhorse() for each Option that has been successfully
      * parsed (including unknown
      * options if they have a Descriptor whose Descriptor::check_arg does not return
@@ -1288,9 +1351,12 @@ struct Parser::Action
      *
      * Returns @c false iff a fatal error has occured and the parse should be aborted.
      */
-    virtual bool perform(Option&) { return true; }
+      virtual bool perform(Option&)
+      {
+         return true;
+      }
 
-    /**
+      /**
      * @brief Called by Parser::workhorse() after finishing the parse.
      * @param numargs the number of non-option arguments remaining
      * @param args pointer to the first remaining non-option argument (if numargs > 0).
@@ -1298,392 +1364,418 @@ struct Parser::Action
      * @return
      * @c false iff a fatal error has occurred.
      */
-    virtual bool finished(int numargs, const char** args)
-    {
-        (void) numargs;
-        (void) args;
-        return true;
-    }
-};
+      virtual bool finished(int numargs, const char** args)
+      {
+         (void)numargs;
+         (void)args;
+         return true;
+      }
+   };
 
-/**
+   /**
  * @internal
  * @brief An Action to pass to Parser::workhorse() that will increment a counter for
  * each parsed Option.
  */
-class Stats::CountOptionsAction : public Parser::Action
-{
-    unsigned* buffer_max;
+   class Stats::CountOptionsAction : public Parser::Action
+   {
+      unsigned* buffer_max;
 
-public:
-    /**
+   public:
+      /**
      * Creates a new CountOptionsAction that will increase @c *buffer_max_ for each
      * parsed Option.
      */
-    CountOptionsAction(unsigned* buffer_max_) : buffer_max(buffer_max_) {}
+      CountOptionsAction(unsigned* buffer_max_)
+         : buffer_max(buffer_max_) {}
 
-    bool perform(Option&)
-    {
-        if (*buffer_max == 0x7fffffff)
-            return false; // overflow protection: don't accept number of options that doesn't fit signed int
-        ++*buffer_max;
-        return true;
-    }
-};
+      bool perform(Option&)
+      {
+         if(*buffer_max == 0x7fffffff)
+            return false;  // overflow protection: don't accept number of options that doesn't fit signed int
+         ++*buffer_max;
+         return true;
+      }
+   };
 
-/**
+   /**
  * @internal
  * @brief An Action to pass to Parser::workhorse() that will store each parsed Option in
  * appropriate arrays (see Parser::parse()).
  */
-class Parser::StoreOptionAction : public Parser::Action
-{
-    Parser& parser;
-    Option* options;
-    Option* buffer;
-    int bufmax; //! Number of slots in @c buffer. @c -1 means "large enough".
-public:
-    /**
+   class Parser::StoreOptionAction : public Parser::Action
+   {
+      Parser& parser;
+      Option* options;
+      Option* buffer;
+      int bufmax;  //! Number of slots in @c buffer. @c -1 means "large enough".
+   public:
+      /**
      * @brief Creates a new StoreOption action.
      * @param parser_ the parser whose op_count should be updated.
      * @param options_ each Option @c o is chained into the linked list @c options_[o.desc->index]
      * @param buffer_ each Option is appended to this array as long as there's a free slot.
      * @param bufmax_ number of slots in @c buffer_. @c -1 means "large enough".
      */
-    StoreOptionAction(Parser& parser_, Option options_[], Option buffer_[], int bufmax_)
-        : parser(parser_), options(options_), buffer(buffer_), bufmax(bufmax_)
-    {
-        // find first empty slot in buffer (if any)
-        int bufidx = 0;
-        while ((bufmax < 0 || bufidx < bufmax) && buffer[bufidx])
+      StoreOptionAction(Parser& parser_, Option options_[], Option buffer_[], int bufmax_)
+         : parser(parser_), options(options_), buffer(buffer_), bufmax(bufmax_)
+      {
+         // find first empty slot in buffer (if any)
+         int bufidx = 0;
+         while((bufmax < 0 || bufidx < bufmax) && buffer[bufidx])
             ++bufidx;
 
-        // set parser's optionCount
-        parser.op_count = bufidx;
-    }
+         // set parser's optionCount
+         parser.op_count = bufidx;
+      }
 
-    bool perform(Option& option)
-    {
-        if (bufmax < 0 || parser.op_count < bufmax) {
-            if (parser.op_count == 0x7fffffff)
-                return false; // overflow protection: don't accept number of options that doesn't fit signed int
+      bool perform(Option& option)
+      {
+         if(bufmax < 0 || parser.op_count < bufmax) {
+            if(parser.op_count == 0x7fffffff)
+               return false;  // overflow protection: don't accept number of options that doesn't fit signed int
 
             buffer[parser.op_count] = option;
             int idx = buffer[parser.op_count].desc->index;
-            if (options[idx])
-                options[idx].append(buffer[parser.op_count]);
+            if(options[idx])
+               options[idx].append(buffer[parser.op_count]);
             else
-                options[idx] = buffer[parser.op_count];
+               options[idx] = buffer[parser.op_count];
             ++parser.op_count;
-        }
-        return true; // NOTE: an option that is discarded because of a full buffer is not fatal
-    }
+         }
+         return true;  // NOTE: an option that is discarded because of a full buffer is not fatal
+      }
 
-    bool finished(int numargs, const char** args)
-    {
-        // only overwrite non-option argument list if there's at least 1
-        // new non-option argument. Otherwise we keep the old list. This
-        // makes it easy to use default non-option arguments.
-        if (numargs > 0) {
+      bool finished(int numargs, const char** args)
+      {
+         // only overwrite non-option argument list if there's at least 1
+         // new non-option argument. Otherwise we keep the old list. This
+         // makes it easy to use default non-option arguments.
+         if(numargs > 0) {
             parser.nonop_count = numargs;
             parser.nonop_args = args;
-        }
+         }
 
-        return true;
-    }
-};
+         return true;
+      }
+   };
 
-inline void Parser::parse(bool gnu, const Descriptor usage[], int argc, const char** argv, Option options[],
-                          Option buffer[], int min_abbr_len, bool single_minus_longopt, int bufmax)
-{
-    StoreOptionAction action(*this, options, buffer, bufmax);
-    err = !workhorse(gnu, usage, argc, argv, action, single_minus_longopt, true, min_abbr_len);
-}
+   inline void Parser::parse(bool gnu, const Descriptor usage[], int argc, const char** argv, Option options[], Option buffer[], int min_abbr_len, bool single_minus_longopt, int bufmax)
+   {
+      StoreOptionAction action(*this, options, buffer, bufmax);
+      err = !workhorse(gnu, usage, argc, argv, action, single_minus_longopt, true, min_abbr_len);
+   }
 
-inline void Stats::add(bool gnu, const Descriptor usage[], int argc, const char** argv, int min_abbr_len,
-                       bool single_minus_longopt)
-{
-    // determine size of options array. This is the greatest index used in the usage + 1
-    int i = 0;
-    while (usage[i].shortopt != 0) {
-        if (usage[i].index + 1 >= options_max)
-            options_max = (usage[i].index + 1) + 1; // 1 more than necessary as sentinel
+   inline void Stats::add(bool gnu, const Descriptor usage[], int argc, const char** argv, int min_abbr_len, bool single_minus_longopt)
+   {
+      // determine size of options array. This is the greatest index used in the usage + 1
+      int i = 0;
+      while(usage[i].shortopt != 0) {
+         if(usage[i].index + 1 >= options_max)
+            options_max = (usage[i].index + 1) + 1;  // 1 more than necessary as sentinel
 
-        ++i;
-    }
+         ++i;
+      }
 
-    CountOptionsAction action(&buffer_max);
-    Parser::workhorse(gnu, usage, argc, argv, action, single_minus_longopt, false, min_abbr_len);
-}
+      CountOptionsAction action(&buffer_max);
+      Parser::workhorse(gnu, usage, argc, argv, action, single_minus_longopt, false, min_abbr_len);
+   }
 
-inline bool Parser::workhorse(bool gnu, const Descriptor usage[], int numargs, const char** args, Action& action,
-                              bool single_minus_longopt, bool print_errors, int min_abbr_len)
-{
-    // protect against NULL pointer
-    if (args == 0)
-        numargs = 0;
+   inline bool Parser::workhorse(bool gnu, const Descriptor usage[], int numargs, const char** args, Action& action, bool single_minus_longopt, bool print_errors, int min_abbr_len)
+   {
+      // protect against NULL pointer
+      if(args == 0)
+         numargs = 0;
 
-    int nonops = 0;
+      int nonops = 0;
 
-    while (numargs != 0 && *args != 0) {
-        const char* param = *args; // param can be --long-option, -srto or non-option argument
+      while(numargs != 0 && *args != 0) {
+         const char* param = *args;  // param can be --long-option, -srto or non-option argument
 
-        // in POSIX mode the first non-option argument terminates the option list
-        // a lone minus character is a non-option argument
-        if (param[0] != '-' || param[1] == 0) {
-            if (gnu) {
-                ++nonops;
-                ++args;
-                if (numargs > 0)
-                    --numargs;
-                continue;
-            } else
-                break;
-        }
+         // in POSIX mode the first non-option argument terminates the option list
+         // a lone minus character is a non-option argument
+         if(param[0] != '-' || param[1] == 0) {
+            if(gnu) {
+               ++nonops;
+               ++args;
+               if(numargs > 0)
+                  --numargs;
+               continue;
+            }
+            else
+               break;
+         }
 
-        // -- terminates the option list. The -- itself is skipped.
-        if (param[1] == '-' && param[2] == 0) {
+         // -- terminates the option list. The -- itself is skipped.
+         if(param[1] == '-' && param[2] == 0) {
             shift(args, nonops);
             ++args;
-            if (numargs > 0)
-                --numargs;
+            if(numargs > 0)
+               --numargs;
             break;
-        }
+         }
 
-        bool handle_short_options;
-        const char* longopt_name;
-        if (param[1] == '-') // if --long-option
-        {
+         bool handle_short_options;
+         const char* longopt_name;
+         if(param[1] == '-')  // if --long-option
+         {
             handle_short_options = false;
             longopt_name = param + 2;
-        } else {
+         }
+         else {
             handle_short_options = true;
-            longopt_name = param + 1; // for testing a potential -long-option
-        }
+            longopt_name = param + 1;  // for testing a potential -long-option
+         }
 
-        bool try_single_minus_longopt = single_minus_longopt;
-        bool have_more_args = (numargs > 1 || numargs < 0); // is referencing argv[1] valid?
+         bool try_single_minus_longopt = single_minus_longopt;
+         bool have_more_args = (numargs > 1 || numargs < 0);  // is referencing argv[1] valid?
 
-        do // loop over short options in group, for long options the body is executed only once
-        {
+         do  // loop over short options in group, for long options the body is executed only once
+         {
             int idx;
 
             const char* optarg;
 
             /******************** long option **********************/
-            if (handle_short_options == false || try_single_minus_longopt) {
-                idx = 0;
-                while (usage[idx].longopt != 0 && !streq(usage[idx].longopt, longopt_name))
-                    ++idx;
+            if(handle_short_options == false || try_single_minus_longopt) {
+               idx = 0;
+               while(usage[idx].longopt != 0 && !streq(usage[idx].longopt, longopt_name))
+                  ++idx;
 
-                if (usage[idx].longopt == 0 && min_abbr_len > 0) // if we should try to match abbreviated long options
-                {
-                    int i1 = 0;
-                    while (usage[i1].longopt != 0 && !streqabbr(usage[i1].longopt, longopt_name, min_abbr_len))
-                        ++i1;
-                    if (usage[i1].longopt != 0) { // now test if the match is unambiguous by checking for another match
-                        int i2 = i1 + 1;
-                        while (usage[i2].longopt != 0 && !streqabbr(usage[i2].longopt, longopt_name, min_abbr_len))
-                            ++i2;
+               if(usage[idx].longopt == 0 && min_abbr_len > 0)  // if we should try to match abbreviated long options
+               {
+                  int i1 = 0;
+                  while(usage[i1].longopt != 0 && !streqabbr(usage[i1].longopt, longopt_name, min_abbr_len))
+                     ++i1;
+                  if(usage[i1].longopt != 0) {  // now test if the match is unambiguous by checking for another match
+                     int i2 = i1 + 1;
+                     while(usage[i2].longopt != 0 && !streqabbr(usage[i2].longopt, longopt_name, min_abbr_len))
+                        ++i2;
 
-                        if (usage[i2].longopt
-                            == 0) // if there was no second match it's unambiguous, so accept i1 as idx
-                            idx = i1;
-                    }
-                }
+                     if(usage[i2].longopt
+                        == 0)  // if there was no second match it's unambiguous, so accept i1 as idx
+                        idx = i1;
+                  }
+               }
 
-                // if we found something, disable handle_short_options (only relevant if single_minus_longopt)
-                if (usage[idx].longopt != 0)
-                    handle_short_options = false;
+               // if we found something, disable handle_short_options (only relevant if single_minus_longopt)
+               if(usage[idx].longopt != 0)
+                  handle_short_options = false;
 
-                try_single_minus_longopt = false; // prevent looking for longopt in the middle of shortopt group
+               try_single_minus_longopt = false;  // prevent looking for longopt in the middle of shortopt group
 
-                optarg = longopt_name;
-                while (*optarg != 0 && *optarg != '=')
-                    ++optarg;
-                if (*optarg == '=') // attached argument
-                    ++optarg;
-                else
-                    // possibly detached argument
-                    optarg = (have_more_args ? args[1] : 0);
+               optarg = longopt_name;
+               while(*optarg != 0 && *optarg != '=')
+                  ++optarg;
+               if(*optarg == '=')  // attached argument
+                  ++optarg;
+               else
+                  // possibly detached argument
+                  optarg = (have_more_args ? args[1] : 0);
             }
 
             /************************ short option ***********************************/
-            if (handle_short_options) {
-                if (*++param == 0) // point at the 1st/next option character
-                    break;         // end of short option group
+            if(handle_short_options) {
+               if(*++param == 0)  // point at the 1st/next option character
+                  break;          // end of short option group
 
-                idx = 0;
-                while (usage[idx].shortopt != 0 && !instr(*param, usage[idx].shortopt))
-                    ++idx;
+               idx = 0;
+               while(usage[idx].shortopt != 0 && !instr(*param, usage[idx].shortopt))
+                  ++idx;
 
-                if (param[1] == 0) // if the potential argument is separate
-                    optarg = (have_more_args ? args[1] : 0);
-                else
-                    // if the potential argument is attached
-                    optarg = param + 1;
+               if(param[1] == 0)  // if the potential argument is separate
+                  optarg = (have_more_args ? args[1] : 0);
+               else
+                  // if the potential argument is attached
+                  optarg = param + 1;
             }
 
             const Descriptor* descriptor = &usage[idx];
 
-            if (descriptor->shortopt == 0) /**************  unknown option ********************/
+            if(descriptor->shortopt == 0) /**************  unknown option ********************/
             {
-                // look for dummy entry (shortopt == "" and longopt == "") to use as Descriptor for unknown options
-                idx = 0;
-                while (usage[idx].shortopt != 0 && (usage[idx].shortopt[0] != 0 || usage[idx].longopt[0] != 0))
-                    ++idx;
-                descriptor = (usage[idx].shortopt == 0 ? 0 : &usage[idx]);
+               // look for dummy entry (shortopt == "" and longopt == "") to use as Descriptor for unknown options
+               idx = 0;
+               while(usage[idx].shortopt != 0 && (usage[idx].shortopt[0] != 0 || usage[idx].longopt[0] != 0))
+                  ++idx;
+               descriptor = (usage[idx].shortopt == 0 ? 0 : &usage[idx]);
             }
 
-            if (descriptor != 0) {
-                Option option(descriptor, param, optarg);
-                switch (descriptor->check_arg(option, print_errors)) {
-                case ARG_ILLEGAL: return false; // fatal
-                case ARG_OK:
-                    // skip one element of the argument vector, if it's a separated argument
-                    if (optarg != 0 && have_more_args && optarg == args[1]) {
+            if(descriptor != 0) {
+               Option option(descriptor, param, optarg);
+               switch(descriptor->check_arg(option, print_errors)) {
+                  case ARG_ILLEGAL:
+                     return false;  // fatal
+                  case ARG_OK:
+                     // skip one element of the argument vector, if it's a separated argument
+                     if(optarg != 0 && have_more_args && optarg == args[1]) {
                         shift(args, nonops);
-                        if (numargs > 0)
-                            --numargs;
+                        if(numargs > 0)
+                           --numargs;
                         ++args;
-                    }
+                     }
 
-                    // No further short options are possible after an argument
-                    handle_short_options = false;
+                     // No further short options are possible after an argument
+                     handle_short_options = false;
 
-                    break;
-                case ARG_IGNORE:
-                case ARG_NONE: option.arg = 0; break;
-                }
+                     break;
+                  case ARG_IGNORE:
+                  case ARG_NONE:
+                     option.arg = 0;
+                     break;
+               }
 
-                if (!action.perform(option))
-                    return false;
+               if(!action.perform(option))
+                  return false;
             }
 
-        } while (handle_short_options);
+         } while(handle_short_options);
 
-        shift(args, nonops);
-        ++args;
-        if (numargs > 0)
+         shift(args, nonops);
+         ++args;
+         if(numargs > 0)
             --numargs;
 
-    } // while
+      }  // while
 
-    if (numargs > 0 && *args == 0) // It's a bug in the caller if numargs is greater than the actual number
-        numargs = 0;               // of arguments, but as a service to the user we fix this if we spot it.
+      if(numargs > 0 && *args == 0)  // It's a bug in the caller if numargs is greater than the actual number
+         numargs = 0;                // of arguments, but as a service to the user we fix this if we spot it.
 
-    if (numargs < 0) // if we don't know the number of remaining non-option arguments
-    {                // we need to count them
-        numargs = 0;
-        while (args[numargs] != 0)
+      if(numargs < 0)  // if we don't know the number of remaining non-option arguments
+      {                // we need to count them
+         numargs = 0;
+         while(args[numargs] != 0)
             ++numargs;
-    }
+      }
 
-    return action.finished(numargs + nonops, args - nonops);
-}
+      return action.finished(numargs + nonops, args - nonops);
+   }
 
-/**
+   /**
  * @internal
  * @brief The implementation of option::printUsage().
  */
-struct PrintUsageImplementation
-{
-    /**
+   struct PrintUsageImplementation
+   {
+      /**
      * @internal
      * @brief Interface for Functors that write (part of) a string somewhere.
      */
-    struct IStringWriter
-    {
-        /**
+      struct IStringWriter
+      {
+         /**
          * @brief Writes the given number of chars beginning at the given pointer somewhere.
          */
-        virtual void operator()(const char*, int) {}
-    };
+         virtual void operator()(const char*, int) {}
+      };
 
-    /**
+      /**
      * @internal
      * @brief Encapsulates a function with signature <code>func(string, size)</code> where
      * string can be initialized with a const char* and size with an int.
      */
-    template <typename Function>
-    struct FunctionWriter : public IStringWriter
-    {
-        Function* write;
+      template<typename Function>
+      struct FunctionWriter : public IStringWriter
+      {
+         Function* write;
 
-        virtual void operator()(const char* str, int size) { (*write)(str, size); }
+         virtual void operator()(const char* str, int size)
+         {
+            (*write)(str, size);
+         }
 
-        FunctionWriter(Function* w) : write(w) {}
-    };
+         FunctionWriter(Function* w)
+            : write(w) {}
+      };
 
-    /**
+      /**
      * @internal
      * @brief Encapsulates a reference to an object with a <code>write(string, size)</code>
      * method like that of @c std::ostream.
      */
-    template <typename OStream>
-    struct OStreamWriter : public IStringWriter
-    {
-        OStream& ostream;
+      template<typename OStream>
+      struct OStreamWriter : public IStringWriter
+      {
+         OStream& ostream;
 
-        virtual void operator()(const char* str, int size) { ostream.write(str, size); }
+         virtual void operator()(const char* str, int size)
+         {
+            ostream.write(str, size);
+         }
 
-        OStreamWriter(OStream& o) : ostream(o) {}
-    };
+         OStreamWriter(OStream& o)
+            : ostream(o) {}
+      };
 
-    /**
+      /**
      * @internal
      * @brief Like OStreamWriter but encapsulates a @c const reference, which is
      * typically a temporary object of a user class.
      */
-    template <typename Temporary>
-    struct TemporaryWriter : public IStringWriter
-    {
-        const Temporary& userstream;
+      template<typename Temporary>
+      struct TemporaryWriter : public IStringWriter
+      {
+         const Temporary& userstream;
 
-        virtual void operator()(const char* str, int size) { userstream.write(str, size); }
+         virtual void operator()(const char* str, int size)
+         {
+            userstream.write(str, size);
+         }
 
-        TemporaryWriter(const Temporary& u) : userstream(u) {}
-    };
+         TemporaryWriter(const Temporary& u)
+            : userstream(u) {}
+      };
 
-    /**
+      /**
      * @internal
      * @brief Encapsulates a function with the signature <code>func(fd, string, size)</code> (the
      * signature of the @c write() system call)
      * where fd can be initialized from an int, string from a const char* and size from an int.
      */
-    template <typename Syscall>
-    struct SyscallWriter : public IStringWriter
-    {
-        Syscall* write;
-        int fd;
+      template<typename Syscall>
+      struct SyscallWriter : public IStringWriter
+      {
+         Syscall* write;
+         int fd;
 
-        virtual void operator()(const char* str, int size) { (*write)(fd, str, size); }
+         virtual void operator()(const char* str, int size)
+         {
+            (*write)(fd, str, size);
+         }
 
-        SyscallWriter(Syscall* w, int f) : write(w), fd(f) {}
-    };
+         SyscallWriter(Syscall* w, int f)
+            : write(w), fd(f) {}
+      };
 
-    /**
+      /**
      * @internal
      * @brief Encapsulates a function with the same signature as @c std::fwrite().
      */
-    template <typename Function, typename Stream>
-    struct StreamWriter : public IStringWriter
-    {
-        Function* fwrite;
-        Stream* stream;
+      template<typename Function, typename Stream>
+      struct StreamWriter : public IStringWriter
+      {
+         Function* fwrite;
+         Stream* stream;
 
-        virtual void operator()(const char* str, int size) { (*fwrite)(str, size, 1, stream); }
+         virtual void operator()(const char* str, int size)
+         {
+            (*fwrite)(str, size, 1, stream);
+         }
 
-        StreamWriter(Function* w, Stream* s) : fwrite(w), stream(s) {}
-    };
+         StreamWriter(Function* w, Stream* s)
+            : fwrite(w), stream(s) {}
+      };
 
-    /**
+      /**
      * @internal
      * @brief Sets <code> i1 = max(i1, i2) </code>
      */
-    static void upmax(int& i1, int i2) { i1 = (i1 >= i2 ? i1 : i2); }
+      static void upmax(int& i1, int i2)
+      {
+         i1 = (i1 >= i2 ? i1 : i2);
+      }
 
-    /**
+      /**
      * @internal
      * @brief Moves the "cursor" to column @c want_x assuming it is currently at column @c x
      * and sets @c x=want_x .
@@ -1694,23 +1786,23 @@ struct PrintUsageImplementation
      * @param[in,out] x the current indentation. Set to @c want_x by this method.
      * @param want_x the desired indentation.
      */
-    static void indent(IStringWriter& write, int& x, int want_x)
-    {
-        int indent = want_x - x;
-        if (indent < 0) {
+      static void indent(IStringWriter& write, int& x, int want_x)
+      {
+         int indent = want_x - x;
+         if(indent < 0) {
             write("\n", 1);
             indent = want_x;
-        }
+         }
 
-        if (indent > 0) {
+         if(indent > 0) {
             char space = ' ';
-            for (int i = 0; i < indent; ++i)
-                write(&space, 1);
+            for(int i = 0; i < indent; ++i)
+               write(&space, 1);
             x = want_x;
-        }
-    }
+         }
+      }
 
-    /**
+      /**
      * @brief Returns true if ch is the unicode code point of a wide character.
      *
      * @note
@@ -1728,18 +1820,18 @@ struct PrintUsageImplementation
      * 1B000......
      * @endcode
      */
-    static bool isWideChar(unsigned ch)
-    {
-        if (ch == 0x303F)
+      static bool isWideChar(unsigned ch)
+      {
+         if(ch == 0x303F)
             return false;
 
-        return ((0x1100 <= ch && ch <= 0x115F) || (0x2329 <= ch && ch <= 0x232A) || (0x2E80 <= ch && ch <= 0xA4C6)
-                || (0xA960 <= ch && ch <= 0xA97C) || (0xAC00 <= ch && ch <= 0xD7FB) || (0xF900 <= ch && ch <= 0xFAFF)
-                || (0xFE10 <= ch && ch <= 0xFE6B) || (0xFF01 <= ch && ch <= 0xFF60) || (0xFFE0 <= ch && ch <= 0xFFE6)
-                || (0x1B000 <= ch));
-    }
+         return ((0x1100 <= ch && ch <= 0x115F) || (0x2329 <= ch && ch <= 0x232A) || (0x2E80 <= ch && ch <= 0xA4C6)
+                 || (0xA960 <= ch && ch <= 0xA97C) || (0xAC00 <= ch && ch <= 0xD7FB) || (0xF900 <= ch && ch <= 0xFAFF)
+                 || (0xFE10 <= ch && ch <= 0xFE6B) || (0xFF01 <= ch && ch <= 0xFF60) || (0xFFE0 <= ch && ch <= 0xFFE6)
+                 || (0x1B000 <= ch));
+      }
 
-    /**
+      /**
      * @internal
      * @brief Splits a @c Descriptor[] array into tables, rows, lines and columns and
      * iterates over these components.
@@ -1775,133 +1867,125 @@ struct PrintUsageImplementation
      * the same number of columns will be returned for each row.
      *
      */
-    class LinePartIterator
-    {
-        const Descriptor* tablestart; //!< The 1st descriptor of the current table.
-        const Descriptor* rowdesc;    //!< The Descriptor that contains the current row.
-        const char* rowstart;         //!< Ptr to 1st character of current row within rowdesc->help.
-        const char* ptr;              //!< Ptr to current part within the current row.
-        int col;                      //!< Index of current column.
-        int len;                      //!< Length of the current part (that ptr points at) in BYTES
-        int screenlen; //!< Length of the current part in screen columns (taking narrow/wide chars into account).
-        int max_line_in_block; //!< Greatest index of a line within the block. This is the number of \\v within the cell
-                               //!< with the most \\vs.
-        int line_in_block;     //!< Line index within the current cell of the current part.
-        int target_line_in_block; //!< Line index of the parts we should return to the user on this iteration.
-        bool hit_target_line;     //!< Flag whether we encountered a part with line index target_line_in_block in the
-                                  //!< current cell.
+      class LinePartIterator
+      {
+         const Descriptor* tablestart;  //!< The 1st descriptor of the current table.
+         const Descriptor* rowdesc;     //!< The Descriptor that contains the current row.
+         const char* rowstart;          //!< Ptr to 1st character of current row within rowdesc->help.
+         const char* ptr;               //!< Ptr to current part within the current row.
+         int col;                       //!< Index of current column.
+         int len;                       //!< Length of the current part (that ptr points at) in BYTES
+         int screenlen;                 //!< Length of the current part in screen columns (taking narrow/wide chars into account).
+         int max_line_in_block;         //!< Greatest index of a line within the block. This is the number of \\v within the cell
+                                        //!< with the most \\vs.
+         int line_in_block;             //!< Line index within the current cell of the current part.
+         int target_line_in_block;      //!< Line index of the parts we should return to the user on this iteration.
+         bool hit_target_line;          //!< Flag whether we encountered a part with line index target_line_in_block in the
+                                        //!< current cell.
 
-        /**
+         /**
          * @brief Determines the byte and character lengths of the part at @ref ptr and
          * stores them in @ref len and @ref screenlen respectively.
          */
-        void update_length()
-        {
+         void update_length()
+         {
             screenlen = 0;
-            for (len = 0; ptr[len] != 0 && ptr[len] != '\v' && ptr[len] != '\t' && ptr[len] != '\n'; ++len) {
-                ++screenlen;
-                unsigned ch = (unsigned char) ptr[len];
-                if (ch > 0xC1) // everything <= 0xC1 (yes, even 0xC1 itself) is not a valid UTF-8 start byte
-                {
-                    // int __builtin_clz (unsigned int x)
-                    // Returns the number of leading 0-bits in x, starting at the most significant bit
-                    unsigned mask = (unsigned) -1 >> __builtin_clz(ch ^ 0xff);
-                    ch = ch & mask; // mask out length bits, we don't verify their correctness
-                    while (((unsigned char) ptr[len + 1] ^ 0x80) <= 0x3F) // while next byte is continuation byte
-                    {
-                        ch = (ch << 6) ^ (unsigned char) ptr[len + 1] ^ 0x80; // add continuation to char code
-                        ++len;
-                    }
-                    // ch is the decoded unicode code point
-                    if (ch >= 0x1100
-                        && isWideChar(ch)) // the test for 0x1100 is here to avoid the function call in the Latin case
-                        ++screenlen;
-                }
+            for(len = 0; ptr[len] != 0 && ptr[len] != '\v' && ptr[len] != '\t' && ptr[len] != '\n'; ++len) {
+               ++screenlen;
+               unsigned ch = (unsigned char)ptr[len];
+               if(ch > 0xC1)  // everything <= 0xC1 (yes, even 0xC1 itself) is not a valid UTF-8 start byte
+               {
+                  // int __builtin_clz (unsigned int x)
+                  // Returns the number of leading 0-bits in x, starting at the most significant bit
+                  unsigned mask = (unsigned)-1 >> __builtin_clz(ch ^ 0xff);
+                  ch = ch & mask;                                      // mask out length bits, we don't verify their correctness
+                  while(((unsigned char)ptr[len + 1] ^ 0x80) <= 0x3F)  // while next byte is continuation byte
+                  {
+                     ch = (ch << 6) ^ (unsigned char)ptr[len + 1] ^ 0x80;  // add continuation to char code
+                     ++len;
+                  }
+                  // ch is the decoded unicode code point
+                  if(ch >= 0x1100
+                     && isWideChar(ch))  // the test for 0x1100 is here to avoid the function call in the Latin case
+                     ++screenlen;
+               }
             }
-        }
+         }
 
-    public:
-        //! @brief Creates an iterator for @c usage.
-        LinePartIterator(const Descriptor usage[])
-            : tablestart(usage)
-            , rowdesc(0)
-            , rowstart(0)
-            , ptr(0)
-            , col(-1)
-            , len(0)
-            , max_line_in_block(0)
-            , line_in_block(0)
-            , target_line_in_block(0)
-            , hit_target_line(true)
-        {}
+      public:
+         //! @brief Creates an iterator for @c usage.
+         LinePartIterator(const Descriptor usage[])
+            : tablestart(usage), rowdesc(0), rowstart(0), ptr(0), col(-1), len(0), max_line_in_block(0), line_in_block(0), target_line_in_block(0), hit_target_line(true)
+         {}
 
-        /**
+         /**
          * @brief Moves iteration to the next table (if any). Has to be called once on a new
          * LinePartIterator to move to the 1st table.
          * @retval false if moving to next table failed because no further table exists.
          */
-        bool nextTable()
-        {
+         bool nextTable()
+         {
             // If this is NOT the first time nextTable() is called after the constructor,
             // then skip to the next table break (i.e. a Descriptor with help == 0)
-            if (rowdesc != 0) {
-                while (tablestart->help != 0 && tablestart->shortopt != 0)
-                    ++tablestart;
+            if(rowdesc != 0) {
+               while(tablestart->help != 0 && tablestart->shortopt != 0)
+                  ++tablestart;
             }
 
             // Find the next table after the break (if any)
-            while (tablestart->help == 0 && tablestart->shortopt != 0)
-                ++tablestart;
+            while(tablestart->help == 0 && tablestart->shortopt != 0)
+               ++tablestart;
 
             restartTable();
             return rowstart != 0;
-        }
+         }
 
-        /**
+         /**
          * @brief Reset iteration to the beginning of the current table.
          */
-        void restartTable()
-        {
+         void restartTable()
+         {
             rowdesc = tablestart;
             rowstart = tablestart->help;
             ptr = 0;
-        }
+         }
 
-        /**
+         /**
          * @brief Moves iteration to the next row (if any). Has to be called once after each call to
          * @ref nextTable() to move to the 1st row of the table.
          * @retval false if moving to next row failed because no further row exists.
          */
-        bool nextRow()
-        {
-            if (ptr == 0) {
-                restartRow();
-                return rowstart != 0;
+         bool nextRow()
+         {
+            if(ptr == 0) {
+               restartRow();
+               return rowstart != 0;
             }
 
-            while (*ptr != 0 && *ptr != '\n')
-                ++ptr;
+            while(*ptr != 0 && *ptr != '\n')
+               ++ptr;
 
-            if (*ptr == 0) {
-                if ((rowdesc + 1)->help == 0) // table break
-                    return false;
+            if(*ptr == 0) {
+               if((rowdesc + 1)->help == 0)  // table break
+                  return false;
 
-                ++rowdesc;
-                rowstart = rowdesc->help;
-            } else // if (*ptr == '\n')
+               ++rowdesc;
+               rowstart = rowdesc->help;
+            }
+            else  // if (*ptr == '\n')
             {
-                rowstart = ptr + 1;
+               rowstart = ptr + 1;
             }
 
             restartRow();
             return true;
-        }
+         }
 
-        /**
+         /**
          * @brief Reset iteration to the beginning of the current row.
          */
-        void restartRow()
-        {
+         void restartRow()
+         {
             ptr = rowstart;
             col = -1;
             len = 0;
@@ -1910,109 +1994,123 @@ struct PrintUsageImplementation
             line_in_block = 0;
             target_line_in_block = 0;
             hit_target_line = true;
-        }
+         }
 
-        /**
+         /**
          * @brief Moves iteration to the next part (if any). Has to be called once after each call to
          * @ref nextRow() to move to the 1st part of the row.
          * @retval false if moving to next part failed because no further part exists.
          *
          * See @ref LinePartIterator for details about the iteration.
          */
-        bool next()
-        {
-            if (ptr == 0)
-                return false;
+         bool next()
+         {
+            if(ptr == 0)
+               return false;
 
-            if (col == -1) {
-                col = 0;
-                update_length();
-                return true;
+            if(col == -1) {
+               col = 0;
+               update_length();
+               return true;
             }
 
             ptr += len;
-            while (true) {
-                switch (*ptr) {
-                case '\v':
-                    upmax(max_line_in_block, ++line_in_block);
-                    ++ptr;
-                    break;
-                case '\t':
-                    if (!hit_target_line) // if previous column did not have the targetline
-                    {                     // then "insert" a 0-length part
+            while(true) {
+               switch(*ptr) {
+                  case '\v':
+                     upmax(max_line_in_block, ++line_in_block);
+                     ++ptr;
+                     break;
+                  case '\t':
+                     if(!hit_target_line)  // if previous column did not have the targetline
+                     {                     // then "insert" a 0-length part
                         update_length();
                         hit_target_line = true;
                         return true;
-                    }
+                     }
 
-                    hit_target_line = false;
-                    line_in_block = 0;
-                    ++col;
-                    ++ptr;
-                    break;
-                case 0:
-                case '\n':
-                    if (!hit_target_line) // if previous column did not have the targetline
-                    {                     // then "insert" a 0-length part
+                     hit_target_line = false;
+                     line_in_block = 0;
+                     ++col;
+                     ++ptr;
+                     break;
+                  case 0:
+                  case '\n':
+                     if(!hit_target_line)  // if previous column did not have the targetline
+                     {                     // then "insert" a 0-length part
                         update_length();
                         hit_target_line = true;
                         return true;
-                    }
+                     }
 
-                    if (++target_line_in_block > max_line_in_block) {
+                     if(++target_line_in_block > max_line_in_block) {
                         update_length();
                         return false;
-                    }
+                     }
 
-                    hit_target_line = false;
-                    line_in_block = 0;
-                    col = 0;
-                    ptr = rowstart;
-                    continue;
-                default: ++ptr; continue;
-                } // switch
+                     hit_target_line = false;
+                     line_in_block = 0;
+                     col = 0;
+                     ptr = rowstart;
+                     continue;
+                  default:
+                     ++ptr;
+                     continue;
+               }  // switch
 
-                if (line_in_block == target_line_in_block) {
-                    update_length();
-                    hit_target_line = true;
-                    return true;
-                }
-            } // while
-        }
+               if(line_in_block == target_line_in_block) {
+                  update_length();
+                  hit_target_line = true;
+                  return true;
+               }
+            }  // while
+         }
 
-        /**
+         /**
          * @brief Returns the index (counting from 0) of the column in which
          * the part pointed to by @ref data() is located.
          */
-        int column() { return col; }
+         int column()
+         {
+            return col;
+         }
 
-        /**
+         /**
          * @brief Returns the index (counting from 0) of the line within the current column
          * this part belongs to.
          */
-        int line()
-        {
-            return target_line_in_block; // NOT line_in_block !!! It would be wrong if !hit_target_line
-        }
+         int line()
+         {
+            return target_line_in_block;  // NOT line_in_block !!! It would be wrong if !hit_target_line
+         }
 
-        /**
+         /**
          * @brief Returns the length of the part pointed to by @ref data() in raw chars (not UTF-8 characters).
          */
-        int length() { return len; }
+         int length()
+         {
+            return len;
+         }
 
-        /**
+         /**
          * @brief Returns the width in screen columns of the part pointed to by @ref data().
          * Takes multi-byte UTF-8 sequences and wide characters into account.
          */
-        int screenLength() { return screenlen; }
+         int screenLength()
+         {
+            return screenlen;
+         }
 
-        /**
+         /**
          * @brief Returns the current part of the iteration.
          */
-        const char* data() { return ptr; }
-    };
+         const char* data()
+         {
+            return ptr;
+         }
+      };
 
-    /**
+      /**
      * @internal
      * @brief Takes input and line wraps it, writing out one line at a time so that
      * it can be interleaved with output from other columns.
@@ -2036,105 +2134,114 @@ struct PrintUsageImplementation
      * output the string must be output piecemeal, interleaved with
      * the data from the other columns.
      */
-    class LineWrapper
-    {
-        static const int bufmask = 15; //!< Must be a power of 2 minus 1.
-        /**
+      class LineWrapper
+      {
+         static const int bufmask = 15;  //!< Must be a power of 2 minus 1.
+         /**
          * @brief Ring buffer for length component of pair (data, length).
          */
-        int lenbuf[bufmask + 1];
-        /**
+         int lenbuf[bufmask + 1];
+         /**
          * @brief Ring buffer for data component of pair (data, length).
          */
-        const char* datbuf[bufmask + 1];
-        /**
+         const char* datbuf[bufmask + 1];
+         /**
          * @brief The indentation of the column to which the LineBuffer outputs. LineBuffer
          * assumes that the indentation has already been written when @ref process()
          * is called, so this value is only used when a buffer flush requires writing
          * additional lines of output.
          */
-        int x;
-        /**
+         int x;
+         /**
          * @brief The width of the column to line wrap.
          */
-        int width;
-        int head; //!< @brief index for next write
-        int tail; //!< @brief index for next read - 1 (i.e. increment tail BEFORE read)
+         int width;
+         int head;  //!< @brief index for next write
+         int tail;  //!< @brief index for next read - 1 (i.e. increment tail BEFORE read)
 
-        /**
+         /**
          * @brief Multiple methods of LineWrapper may decide to flush part of the buffer to
          * free up space. The contract of process() says that only 1 line is output. So
          * this variable is used to track whether something has output a line. It is
          * reset at the beginning of process() and checked at the end to decide if
          * output has already occurred or is still needed.
          */
-        bool wrote_something;
+         bool wrote_something;
 
-        bool buf_empty() { return ((tail + 1) & bufmask) == head; }
+         bool buf_empty()
+         {
+            return ((tail + 1) & bufmask) == head;
+         }
 
-        bool buf_full() { return tail == head; }
+         bool buf_full()
+         {
+            return tail == head;
+         }
 
-        void buf_store(const char* data, int len)
-        {
+         void buf_store(const char* data, int len)
+         {
             lenbuf[head] = len;
             datbuf[head] = data;
             head = (head + 1) & bufmask;
-        }
+         }
 
-        //! @brief Call BEFORE reading ...buf[tail].
-        void buf_next() { tail = (tail + 1) & bufmask; }
+         //! @brief Call BEFORE reading ...buf[tail].
+         void buf_next()
+         {
+            tail = (tail + 1) & bufmask;
+         }
 
-        /**
+         /**
          * @brief Writes (data,len) into the ring buffer. If the buffer is full, a single line
          * is flushed out of the buffer into @c write.
          */
-        void output(IStringWriter& write, const char* data, int len)
-        {
-            if (buf_full())
-                write_one_line(write);
+         void output(IStringWriter& write, const char* data, int len)
+         {
+            if(buf_full())
+               write_one_line(write);
 
             buf_store(data, len);
-        }
+         }
 
-        /**
+         /**
          * @brief Writes a single line of output from the buffer to @c write.
          */
-        void write_one_line(IStringWriter& write)
-        {
-            if (wrote_something) // if we already wrote something, we need to start a new line
+         void write_one_line(IStringWriter& write)
+         {
+            if(wrote_something)  // if we already wrote something, we need to start a new line
             {
-                write("\n", 1);
-                int _ = 0;
-                indent(write, _, x);
+               write("\n", 1);
+               int _ = 0;
+               indent(write, _, x);
             }
 
-            if (!buf_empty()) {
-                buf_next();
-                write(datbuf[tail], lenbuf[tail]);
+            if(!buf_empty()) {
+               buf_next();
+               write(datbuf[tail], lenbuf[tail]);
             }
 
             wrote_something = true;
-        }
+         }
 
-    public:
-        /**
+      public:
+         /**
          * @brief Writes out all remaining data from the LineWrapper using @c write.
          * Unlike @ref process() this method indents all lines including the first and
          * will output a \\n at the end (but only if something has been written).
          */
-        void flush(IStringWriter& write)
-        {
-            if (buf_empty())
-                return;
+         void flush(IStringWriter& write)
+         {
+            if(buf_empty())
+               return;
             int _ = 0;
             indent(write, _, x);
             wrote_something = false;
-            while (!buf_empty())
-                write_one_line(write);
+            while(!buf_empty())
+               write_one_line(write);
             write("\n", 1);
-        }
+         }
 
-        /**
+         /**
          * @brief Process, wrap and output the next piece of data.
          *
          * process() will output at least one line of output. This is not necessarily
@@ -2152,144 +2259,149 @@ struct PrintUsageImplementation
          * @param data the new chunk of data to write.
          * @param len the length of the chunk of data to write.
          */
-        void process(IStringWriter& write, const char* data, int len)
-        {
+         void process(IStringWriter& write, const char* data, int len)
+         {
             wrote_something = false;
 
-            while (len > 0) {
-                if (len
-                    <= width) // quick test that works because utf8width <= len (all wide chars have at least 2 bytes)
-                {
-                    output(write, data, len);
-                    len = 0;
-                } else // if (len > width)  it's possible (but not guaranteed) that utf8len > width
-                {
-                    int utf8width = 0;
-                    int maxi = 0;
-                    while (maxi < len && utf8width < width) {
-                        int charbytes = 1;
-                        unsigned ch = (unsigned char) data[maxi];
-                        if (ch > 0xC1) // everything <= 0xC1 (yes, even 0xC1 itself) is not a valid UTF-8 start byte
+            while(len > 0) {
+               if(len
+                  <= width)  // quick test that works because utf8width <= len (all wide chars have at least 2 bytes)
+               {
+                  output(write, data, len);
+                  len = 0;
+               }
+               else  // if (len > width)  it's possible (but not guaranteed) that utf8len > width
+               {
+                  int utf8width = 0;
+                  int maxi = 0;
+                  while(maxi < len && utf8width < width) {
+                     int charbytes = 1;
+                     unsigned ch = (unsigned char)data[maxi];
+                     if(ch > 0xC1)  // everything <= 0xC1 (yes, even 0xC1 itself) is not a valid UTF-8 start byte
+                     {
+                        // int __builtin_clz (unsigned int x)
+                        // Returns the number of leading 0-bits in x, starting at the most significant bit
+                        unsigned mask = (unsigned)-1 >> __builtin_clz(ch ^ 0xff);
+                        ch = ch & mask;                    // mask out length bits, we don't verify their correctness
+                        while((maxi + charbytes < len) &&  //
+                              (((unsigned char)data[maxi + charbytes] ^ 0x80)
+                               <= 0x3F))  // while next byte is continuation byte
                         {
-                            // int __builtin_clz (unsigned int x)
-                            // Returns the number of leading 0-bits in x, starting at the most significant bit
-                            unsigned mask = (unsigned) -1 >> __builtin_clz(ch ^ 0xff);
-                            ch = ch & mask; // mask out length bits, we don't verify their correctness
-                            while ((maxi + charbytes < len) && //
-                                   (((unsigned char) data[maxi + charbytes] ^ 0x80)
-                                    <= 0x3F)) // while next byte is continuation byte
-                            {
-                                ch = (ch << 6) ^ (unsigned char) data[maxi + charbytes]
-                                     ^ 0x80; // add continuation to char code
-                                ++charbytes;
-                            }
-                            // ch is the decoded unicode code point
-                            if (ch >= 0x1100
-                                && isWideChar(
-                                    ch)) // the test for 0x1100 is here to avoid the function call in the Latin case
-                            {
-                                if (utf8width + 2 > width)
-                                    break;
-                                ++utf8width;
-                            }
+                           ch = (ch << 6) ^ (unsigned char)data[maxi + charbytes]
+                                ^ 0x80;  // add continuation to char code
+                           ++charbytes;
                         }
-                        ++utf8width;
-                        maxi += charbytes;
-                    }
-
-                    // data[maxi-1] is the last byte of the UTF-8 sequence of the last character that fits
-                    // onto the 1st line. If maxi == len, all characters fit on the line.
-
-                    if (maxi == len) {
-                        output(write, data, len);
-                        len = 0;
-                    } else // if (maxi < len)  at least 1 character (data[maxi] that is) doesn't fit on the line
-                    {
-                        int i;
-                        for (i = maxi; i >= 0; --i)
-                            if (data[i] == ' ')
-                                break;
-
-                        if (i >= 0) {
-                            output(write, data, i);
-                            data += i + 1;
-                            len -= i + 1;
-                        } else // did not find a space to split at => split before data[maxi]
-                        {      // data[maxi] is always the beginning of a character, never a continuation byte
-                            output(write, data, maxi);
-                            data += maxi;
-                            len -= maxi;
+                        // ch is the decoded unicode code point
+                        if(ch >= 0x1100
+                           && isWideChar(
+                              ch))  // the test for 0x1100 is here to avoid the function call in the Latin case
+                        {
+                           if(utf8width + 2 > width)
+                              break;
+                           ++utf8width;
                         }
-                    }
-                }
+                     }
+                     ++utf8width;
+                     maxi += charbytes;
+                  }
+
+                  // data[maxi-1] is the last byte of the UTF-8 sequence of the last character that fits
+                  // onto the 1st line. If maxi == len, all characters fit on the line.
+
+                  if(maxi == len) {
+                     output(write, data, len);
+                     len = 0;
+                  }
+                  else  // if (maxi < len)  at least 1 character (data[maxi] that is) doesn't fit on the line
+                  {
+                     int i;
+                     for(i = maxi; i >= 0; --i)
+                        if(data[i] == ' ')
+                           break;
+
+                     if(i >= 0) {
+                        output(write, data, i);
+                        data += i + 1;
+                        len -= i + 1;
+                     }
+                     else  // did not find a space to split at => split before data[maxi]
+                     {     // data[maxi] is always the beginning of a character, never a continuation byte
+                        output(write, data, maxi);
+                        data += maxi;
+                        len -= maxi;
+                     }
+                  }
+               }
             }
-            if (!wrote_something)      // if we didn't already write something to make space in the buffer
-                write_one_line(write); // write at most one line of actual output
-        }
+            if(!wrote_something)       // if we didn't already write something to make space in the buffer
+               write_one_line(write);  // write at most one line of actual output
+         }
 
-        /**
+         /**
          * @brief Constructs a LineWrapper that wraps its output to fit into
          * screen columns @c x1 (incl.) to @c x2 (excl.).
          *
          * @c x1 gives the indentation LineWrapper uses if it needs to indent.
          */
-        LineWrapper(int x1, int x2) : x(x1), width(x2 - x1), head(0), tail(bufmask)
-        {
-            if (width < 2) // because of wide characters we need at least width 2 or the code breaks
-                width = 2;
-        }
-    };
+         LineWrapper(int x1, int x2)
+            : x(x1), width(x2 - x1), head(0), tail(bufmask)
+         {
+            if(width < 2)  // because of wide characters we need at least width 2 or the code breaks
+               width = 2;
+         }
+      };
 
-    /**
+      /**
      * @internal
      * @brief This is the implementation that is shared between all printUsage() templates.
      * Because all printUsage() templates share this implementation, there is no template bloat.
      */
-    static void printUsage(IStringWriter& write, const Descriptor usage[], int width = 80, //
-                           int last_column_min_percent = 50, int last_column_own_line_max_percent = 75)
-    {
-        if (width < 1) // protect against nonsense values
+      static void printUsage(IStringWriter& write, const Descriptor usage[], int width = 80,  //
+                             int last_column_min_percent = 50,
+                             int last_column_own_line_max_percent = 75)
+      {
+         if(width < 1)  // protect against nonsense values
             width = 80;
 
-        if (width > 10000) // protect against overflow in the following computation
+         if(width > 10000)  // protect against overflow in the following computation
             width = 10000;
 
-        int last_column_min_width = ((width * last_column_min_percent) + 50) / 100;
-        int last_column_own_line_max_width = ((width * last_column_own_line_max_percent) + 50) / 100;
-        if (last_column_own_line_max_width == 0)
+         int last_column_min_width = ((width * last_column_min_percent) + 50) / 100;
+         int last_column_own_line_max_width = ((width * last_column_own_line_max_percent) + 50) / 100;
+         if(last_column_own_line_max_width == 0)
             last_column_own_line_max_width = 1;
 
-        LinePartIterator part(usage);
-        while (part.nextTable()) {
+         LinePartIterator part(usage);
+         while(part.nextTable()) {
             /***************** Determine column widths *******************************/
 
-            const int maxcolumns = 8; // 8 columns are enough for everyone
+            const int maxcolumns = 8;  // 8 columns are enough for everyone
             int col_width[maxcolumns];
             int lastcolumn;
             int leftwidth;
             int overlong_column_threshold = 10000;
             do {
-                lastcolumn = 0;
-                for (int i = 0; i < maxcolumns; ++i)
-                    col_width[i] = 0;
+               lastcolumn = 0;
+               for(int i = 0; i < maxcolumns; ++i)
+                  col_width[i] = 0;
 
-                part.restartTable();
-                while (part.nextRow()) {
-                    while (part.next()) {
-                        if (part.column() < maxcolumns) {
-                            upmax(lastcolumn, part.column());
-                            if (part.screenLength() < overlong_column_threshold)
-                                // We don't let rows that don't use table separators (\t or \v) influence
-                                // the width of column 0. This allows the user to interject section headers
-                                // or explanatory paragraphs that do not participate in the table layout.
-                                if (part.column() > 0 || part.line() > 0 || part.data()[part.length()] == '\t'
-                                    || part.data()[part.length()] == '\v')
-                                    upmax(col_width[part.column()], part.screenLength());
-                        }
-                    }
-                }
+               part.restartTable();
+               while(part.nextRow()) {
+                  while(part.next()) {
+                     if(part.column() < maxcolumns) {
+                        upmax(lastcolumn, part.column());
+                        if(part.screenLength() < overlong_column_threshold)
+                           // We don't let rows that don't use table separators (\t or \v) influence
+                           // the width of column 0. This allows the user to interject section headers
+                           // or explanatory paragraphs that do not participate in the table layout.
+                           if(part.column() > 0 || part.line() > 0 || part.data()[part.length()] == '\t'
+                              || part.data()[part.length()] == '\v')
+                              upmax(col_width[part.column()], part.screenLength());
+                     }
+                  }
+               }
 
-                /*
+               /*
                  * If the last column doesn't fit on the same
                  * line as the other columns, we can fix that by starting it on its own line.
                  * However we can't do this for any of the columns 0..lastcolumn-1.
@@ -2300,32 +2412,32 @@ struct PrintUsageImplementation
                  * except for a few overlong fragments.
                  * */
 
-                leftwidth = 0;
-                overlong_column_threshold = 0;
-                for (int i = 0; i < lastcolumn; ++i) {
-                    leftwidth += col_width[i];
-                    upmax(overlong_column_threshold, col_width[i]);
-                }
+               leftwidth = 0;
+               overlong_column_threshold = 0;
+               for(int i = 0; i < lastcolumn; ++i) {
+                  leftwidth += col_width[i];
+                  upmax(overlong_column_threshold, col_width[i]);
+               }
 
-            } while (leftwidth > width);
+            } while(leftwidth > width);
 
             /**************** Determine tab stops and last column handling **********************/
 
             int tabstop[maxcolumns];
             tabstop[0] = 0;
-            for (int i = 1; i < maxcolumns; ++i)
-                tabstop[i] = tabstop[i - 1] + col_width[i - 1];
+            for(int i = 1; i < maxcolumns; ++i)
+               tabstop[i] = tabstop[i - 1] + col_width[i - 1];
 
             int rightwidth = width - tabstop[lastcolumn];
             bool print_last_column_on_own_line = false;
-            if (rightwidth < last_column_min_width
-                &&                                  // if we don't have the minimum requested width for the last column
-                (col_width[lastcolumn] == 0 ||      // and all last columns are > overlong_column_threshold
-                 rightwidth < col_width[lastcolumn] // or there is at least one last column that requires more than the
+            if(rightwidth < last_column_min_width
+               &&                                   // if we don't have the minimum requested width for the last column
+               (col_width[lastcolumn] == 0 ||       // and all last columns are > overlong_column_threshold
+                rightwidth < col_width[lastcolumn]  // or there is at least one last column that requires more than the
                                                     // space available
-                 )) {
-                print_last_column_on_own_line = true;
-                rightwidth = last_column_own_line_max_width;
+                )) {
+               print_last_column_on_own_line = true;
+               rightwidth = last_column_own_line_max_width;
             }
 
             // If lastcolumn == 0 we must disable print_last_column_on_own_line because
@@ -2336,8 +2448,8 @@ struct PrintUsageImplementation
             // rightwidth==width => rightwidth>=last_column_min_width  (unless someone passes
             // a bullshit value >100 for last_column_min_percent) => the above if condition
             // is false => print_last_column_on_own_line==false
-            if (lastcolumn == 0)
-                print_last_column_on_own_line = false;
+            if(lastcolumn == 0)
+               print_last_column_on_own_line = false;
 
             LineWrapper lastColumnLineWrapper(width - rightwidth, width);
             LineWrapper interjectionLineWrapper(0, width);
@@ -2346,60 +2458,60 @@ struct PrintUsageImplementation
 
             /***************** Print out all rows of the table *************************************/
 
-            while (part.nextRow()) {
-                int x = -1;
-                while (part.next()) {
-                    if (part.column() > lastcolumn)
-                        continue; // drop excess columns (can happen if lastcolumn == maxcolumns-1)
+            while(part.nextRow()) {
+               int x = -1;
+               while(part.next()) {
+                  if(part.column() > lastcolumn)
+                     continue;  // drop excess columns (can happen if lastcolumn == maxcolumns-1)
 
-                    if (part.column() == 0) {
-                        if (x >= 0)
-                            write("\n", 1);
-                        x = 0;
-                    }
+                  if(part.column() == 0) {
+                     if(x >= 0)
+                        write("\n", 1);
+                     x = 0;
+                  }
 
-                    indent(write, x, tabstop[part.column()]);
+                  indent(write, x, tabstop[part.column()]);
 
-                    if ((part.column() < lastcolumn)
-                        && (part.column() > 0 || part.line() > 0 || part.data()[part.length()] == '\t'
-                            || part.data()[part.length()] == '\v')) {
-                        write(part.data(), part.length());
-                        x += part.screenLength();
-                    } else // either part.column() == lastcolumn or we are in the special case of
-                           // an interjection that doesn't contain \v or \t
-                    {
-                        // NOTE: This code block is not necessarily executed for
-                        // each line, because some rows may have fewer columns.
+                  if((part.column() < lastcolumn)
+                     && (part.column() > 0 || part.line() > 0 || part.data()[part.length()] == '\t'
+                         || part.data()[part.length()] == '\v')) {
+                     write(part.data(), part.length());
+                     x += part.screenLength();
+                  }
+                  else  // either part.column() == lastcolumn or we are in the special case of
+                        // an interjection that doesn't contain \v or \t
+                  {
+                     // NOTE: This code block is not necessarily executed for
+                     // each line, because some rows may have fewer columns.
 
-                        LineWrapper& lineWrapper =
-                            (part.column() == 0) ? interjectionLineWrapper : lastColumnLineWrapper;
+                     LineWrapper& lineWrapper = (part.column() == 0) ? interjectionLineWrapper : lastColumnLineWrapper;
 
-                        if (!print_last_column_on_own_line || part.column() != lastcolumn)
-                            lineWrapper.process(write, part.data(), part.length());
-                    }
-                } // while
+                     if(!print_last_column_on_own_line || part.column() != lastcolumn)
+                        lineWrapper.process(write, part.data(), part.length());
+                  }
+               }  // while
 
-                if (print_last_column_on_own_line) {
-                    part.restartRow();
-                    while (part.next()) {
-                        if (part.column() == lastcolumn) {
-                            write("\n", 1);
-                            int _ = 0;
-                            indent(write, _, width - rightwidth);
-                            lastColumnLineWrapper.process(write, part.data(), part.length());
-                        }
-                    }
-                }
+               if(print_last_column_on_own_line) {
+                  part.restartRow();
+                  while(part.next()) {
+                     if(part.column() == lastcolumn) {
+                        write("\n", 1);
+                        int _ = 0;
+                        indent(write, _, width - rightwidth);
+                        lastColumnLineWrapper.process(write, part.data(), part.length());
+                     }
+                  }
+               }
 
-                write("\n", 1);
-                lastColumnLineWrapper.flush(write);
-                interjectionLineWrapper.flush(write);
+               write("\n", 1);
+               lastColumnLineWrapper.flush(write);
+               interjectionLineWrapper.flush(write);
             }
-        }
-    }
-};
+         }
+      }
+   };
 
-/**
+   /**
  * @brief Outputs a nicely formatted usage string with support for multi-column formatting
  * and line-wrapping.
  *
@@ -2596,52 +2708,42 @@ struct PrintUsageImplementation
  *                67890
  * @endcode
  */
-template <typename OStream>
-void printUsage(OStream& prn, const Descriptor usage[], int width = 80, int last_column_min_percent = 50,
-                int last_column_own_line_max_percent = 75)
-{
-    PrintUsageImplementation::OStreamWriter<OStream> write(prn);
-    PrintUsageImplementation::printUsage(write, usage, width, last_column_min_percent,
-                                         last_column_own_line_max_percent);
-}
+   template<typename OStream>
+   void printUsage(OStream& prn, const Descriptor usage[], int width = 80, int last_column_min_percent = 50, int last_column_own_line_max_percent = 75)
+   {
+      PrintUsageImplementation::OStreamWriter<OStream> write(prn);
+      PrintUsageImplementation::printUsage(write, usage, width, last_column_min_percent, last_column_own_line_max_percent);
+   }
 
-template <typename Function>
-void printUsage(Function* prn, const Descriptor usage[], int width = 80, int last_column_min_percent = 50,
-                int last_column_own_line_max_percent = 75)
-{
-    PrintUsageImplementation::FunctionWriter<Function> write(prn);
-    PrintUsageImplementation::printUsage(write, usage, width, last_column_min_percent,
-                                         last_column_own_line_max_percent);
-}
+   template<typename Function>
+   void printUsage(Function* prn, const Descriptor usage[], int width = 80, int last_column_min_percent = 50, int last_column_own_line_max_percent = 75)
+   {
+      PrintUsageImplementation::FunctionWriter<Function> write(prn);
+      PrintUsageImplementation::printUsage(write, usage, width, last_column_min_percent, last_column_own_line_max_percent);
+   }
 
-template <typename Temporary>
-void printUsage(const Temporary& prn, const Descriptor usage[], int width = 80, int last_column_min_percent = 50,
-                int last_column_own_line_max_percent = 75)
-{
-    PrintUsageImplementation::TemporaryWriter<Temporary> write(prn);
-    PrintUsageImplementation::printUsage(write, usage, width, last_column_min_percent,
-                                         last_column_own_line_max_percent);
-}
+   template<typename Temporary>
+   void printUsage(const Temporary& prn, const Descriptor usage[], int width = 80, int last_column_min_percent = 50, int last_column_own_line_max_percent = 75)
+   {
+      PrintUsageImplementation::TemporaryWriter<Temporary> write(prn);
+      PrintUsageImplementation::printUsage(write, usage, width, last_column_min_percent, last_column_own_line_max_percent);
+   }
 
-template <typename Syscall>
-void printUsage(Syscall* prn, int fd, const Descriptor usage[], int width = 80, int last_column_min_percent = 50,
-                int last_column_own_line_max_percent = 75)
-{
-    PrintUsageImplementation::SyscallWriter<Syscall> write(prn, fd);
-    PrintUsageImplementation::printUsage(write, usage, width, last_column_min_percent,
-                                         last_column_own_line_max_percent);
-}
+   template<typename Syscall>
+   void printUsage(Syscall* prn, int fd, const Descriptor usage[], int width = 80, int last_column_min_percent = 50, int last_column_own_line_max_percent = 75)
+   {
+      PrintUsageImplementation::SyscallWriter<Syscall> write(prn, fd);
+      PrintUsageImplementation::printUsage(write, usage, width, last_column_min_percent, last_column_own_line_max_percent);
+   }
 
-template <typename Function, typename Stream>
-void printUsage(Function* prn, Stream* stream, const Descriptor usage[], int width = 80,
-                int last_column_min_percent = 50, int last_column_own_line_max_percent = 75)
-{
-    PrintUsageImplementation::StreamWriter<Function, Stream> write(prn, stream);
-    PrintUsageImplementation::printUsage(write, usage, width, last_column_min_percent,
-                                         last_column_own_line_max_percent);
-}
+   template<typename Function, typename Stream>
+   void printUsage(Function* prn, Stream* stream, const Descriptor usage[], int width = 80, int last_column_min_percent = 50, int last_column_own_line_max_percent = 75)
+   {
+      PrintUsageImplementation::StreamWriter<Function, Stream> write(prn, stream);
+      PrintUsageImplementation::printUsage(write, usage, width, last_column_min_percent, last_column_own_line_max_percent);
+   }
 
-} // namespace option
+}  // namespace option
 // namespace option
 
 #endif /* OPTIONPARSER_H_ */

@@ -25,20 +25,20 @@
 
 void print(uint16_t v)
 {
-    printf("%#x", v);
+   printf("%#x", v);
 }
 
 void print(uint32_t v)
 {
-    printf("%#x", v);
+   printf("%#x", v);
 }
 
 void print(uint64_t v)
 {
-    printf("%#lx", v);
+   printf("%#lx", v);
 }
 
 void print(bool v)
 {
-    printf("%s", v ? "true" : "false");
+   printf("%s", v ? "true" : "false");
 }

@@ -6,7 +6,7 @@
 
 struct mbstate_t
 {
-    int x, y;
+   int x, y;
 };
 
 typedef unsigned int wint_t;
