@@ -4,7 +4,7 @@
 #pragma once
 
 #include <toyos/x86/arch.hpp>
-#include <x86defs.hpp>
+#include <toyos/x86/x86defs.hpp>
 
 #include <optional>
 

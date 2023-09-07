@@ -1,7 +1,7 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <debugport_interface.h>
+#include <toyos/testhelper/debugport_interface.h>
 
 .code32
 

@@ -7,7 +7,7 @@
 
 #include "idt.hpp"
 
-#include <x86defs.hpp>
+#include <toyos/x86/x86defs.hpp>
 
 struct irqinfo
 {

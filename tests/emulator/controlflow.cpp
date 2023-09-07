@@ -1,13 +1,13 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <debugport_interface.h>
+#include <toyos/testhelper/debugport_interface.h>
 
 
 #include <cbl/baretest/baretest.hpp>
 #include <compiler.hpp>
 #include <toyos/decoder/gdt.hpp>
-#include <usermode.hpp>
+#include <toyos/testhelper/usermode.hpp>
 
 static usermode_helper um;
 

@@ -2,21 +2,21 @@
  *        All rights reserved        */
 
 #include <cbl/baretest/baretest.hpp>
-#include <idt.hpp>
-#include <irq_handler.hpp>
-#include <irqinfo.hpp>
+#include <toyos/testhelper/idt.hpp>
+#include <toyos/testhelper/irq_handler.hpp>
+#include <toyos/testhelper/irqinfo.hpp>
 #include <cbl/literals.hpp>
 #include <cbl/trace.hpp>
-#include <x86asm.hpp>
+#include <toyos/x86/x86asm.hpp>
 
 #include <cbl/cast_helpers.hpp>
-#include <cr0_guard.hpp>
-#include <mm.hpp>
-#include <page_guard.hpp>
+#include <toyos/testhelper/cr0_guard.hpp>
+#include <toyos/mm.hpp>
+#include <toyos/testhelper/page_guard.hpp>
 #include "../../lib/toyos/include/toyos/page_pool.hpp"
-#include <pd.hpp>
-#include <pdpt.hpp>
-#include <pml4.hpp>
+#include <toyos/pd.hpp>
+#include <toyos/pdpt.hpp>
+#include <toyos/pml4.hpp>
 
 #include <cbl/in_place_atomic.hpp>
 

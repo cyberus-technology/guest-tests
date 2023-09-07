@@ -56,8 +56,6 @@ add_guesttest(
   emulator/segment.cpp
   emulator/stack.cpp
   emulator/string_pio.cpp
-  EXTRA_LIBS
-  decoder
   )
 add_guesttest(
   emulator-syscall EXTRA_SOURCES emulator-syscall/compat.S

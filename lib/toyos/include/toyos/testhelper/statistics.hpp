@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "x86asm.hpp"
+#include "../x86/x86asm.hpp"
 
 #include "algorithm"
 #include "numeric"

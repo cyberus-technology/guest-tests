@@ -50,7 +50,7 @@
 #ifndef __ASSEMBLER__
 
 #    include <cbl/interval.hpp>
-#    include <x86defs.hpp>
+#    include <toyos/x86/x86defs.hpp>
 
 static constexpr const cbl::interval DEBUG_PORTS {DEBUGPORT_NUMBER, DEBUGPORT_NUMBER + 1};
 

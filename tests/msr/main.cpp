@@ -2,15 +2,15 @@
  *        All rights reserved        */
 
 #include <cbl/baretest/baretest.hpp>
-#include <hpet.hpp>
-#include <irq_handler.hpp>
-#include <irqinfo.hpp>
-#include <lapic_enabler.hpp>
-#include <lapic_lvt_guard.hpp>
-#include <lapic_test_tools.hpp>
-#include <speculation.hpp>
+#include <toyos/testhelper/hpet.hpp>
+#include <toyos/testhelper/irq_handler.hpp>
+#include <toyos/testhelper/irqinfo.hpp>
+#include <toyos/testhelper/lapic_enabler.hpp>
+#include <toyos/testhelper/lapic_lvt_guard.hpp>
+#include <toyos/testhelper/lapic_test_tools.hpp>
+#include <toyos/testhelper/speculation.hpp>
 #include <cbl/trace.hpp>
-#include <x86asm.hpp>
+#include <toyos/x86/x86asm.hpp>
 
 #include <array>
 

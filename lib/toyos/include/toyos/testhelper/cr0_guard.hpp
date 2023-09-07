@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <x86asm.hpp>
+#include <toyos/x86/x86asm.hpp>
 
 class cr0_guard
 {

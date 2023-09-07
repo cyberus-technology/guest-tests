@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include <mm.hpp>
-#include <pd.hpp>
-#include <pdpt.hpp>
-#include <pml4.hpp>
-#include <pt.hpp>
+#include <toyos/mm.hpp>
+#include <toyos/pd.hpp>
+#include <toyos/pdpt.hpp>
+#include <toyos/pml4.hpp>
+#include <toyos/pt.hpp>
 
 /* A RAII-Style class that will save the value and the reference of the given paging entry and restore its
  * value on destruction.

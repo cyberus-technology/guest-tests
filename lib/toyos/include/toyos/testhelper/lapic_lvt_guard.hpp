@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <lapic_test_tools.hpp>
+#include <toyos/testhelper/lapic_test_tools.hpp>
 
 using lvt_entry = lapic_test_tools::lvt_entry;
 

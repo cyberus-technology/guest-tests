@@ -7,7 +7,7 @@
 
 
 #include <cbl/baretest/baretest.hpp>
-#include <debugport_interface.h>
+#include <toyos/testhelper/debugport_interface.h>
 
 #define STOS(type, width)                                                                                              \
     TEST_CASE(stos_##width)                                                                                            \

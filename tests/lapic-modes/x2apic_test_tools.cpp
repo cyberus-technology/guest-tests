@@ -3,8 +3,8 @@
 
 #include "x2apic_test_tools.hpp"
 
-#include <lapic_test_tools.hpp>
-#include <x86defs.hpp>
+#include <toyos/testhelper/lapic_test_tools.hpp>
+#include <toyos/x86/x86defs.hpp>
 
 using namespace lapic_test_tools;
 using namespace x86;

@@ -3,7 +3,7 @@
 
 #include <cbl/baretest/baretest.hpp>
 #include <cassert>
-#include <debugport_interface.h>
+#include <toyos/testhelper/debugport_interface.h>
 #include <string>
 
 

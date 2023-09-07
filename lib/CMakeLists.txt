@@ -40,7 +40,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(as_subproject
     cbl
-    decoder
     first-fit-heap
     libcxx
     libc-tiny

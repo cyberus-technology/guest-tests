@@ -6,8 +6,8 @@
 #include <map>
 #include <optional>
 
-#include <lapic_test_tools.hpp>
-#include <x86asm.hpp>
+#include <toyos/testhelper/lapic_test_tools.hpp>
+#include <toyos/x86/x86asm.hpp>
 
 /*
  * X2APIC mode can only be disabled by disabling the APIC completely

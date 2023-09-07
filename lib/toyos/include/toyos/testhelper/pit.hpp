@@ -4,7 +4,7 @@
 #pragma once
 
 #include "cbl/math.hpp"
-#include <x86asm.hpp>
+#include <toyos/x86/x86asm.hpp>
 
 /**
  * A driver for the programmable interval timer.

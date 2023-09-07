@@ -4,7 +4,7 @@
 #include <initializer_list>
 #include <tuple>
 
-#include <debugport_interface.h>
+#include <toyos/testhelper/debugport_interface.h>
 
 #include <cbl/baretest/baretest.hpp>
 #include <compiler.hpp>

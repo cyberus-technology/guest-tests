@@ -4,9 +4,9 @@
 
 
 #include <cbl/baretest/baretest.hpp>
-#include <lapic_test_tools.hpp>
-#include <x86asm.hpp>
-#include <x86defs.hpp>
+#include <toyos/testhelper/lapic_test_tools.hpp>
+#include <toyos/x86/x86asm.hpp>
+#include <toyos/x86/x86defs.hpp>
 
 using x86::cr0;
 

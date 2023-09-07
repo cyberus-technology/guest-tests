@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <cpuid.hpp>
-#include <x86asm.hpp>
+#include <toyos/x86/cpuid.hpp>
+#include <toyos/x86/x86asm.hpp>
 
 inline bool ibrs_supported()
 {

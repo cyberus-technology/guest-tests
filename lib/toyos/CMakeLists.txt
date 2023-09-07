@@ -15,6 +15,7 @@ add_library(toyos STATIC
         src/decoder/gdt.cpp
         src/decoder/operand.cpp
         src/decoder/udis_decoder.cpp
+        src/testhelper/entry.S
         src/testhelper/ioapic.cpp
         src/testhelper/irq_handler.cpp
         src/testhelper/lapic_test_tools.cpp
@@ -31,7 +32,7 @@ add_library(toyos STATIC
 find_package(first-fit-heap REQUIRED)
 
 target_include_directories(
-  toyos PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  toyos PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                              $<INSTALL_INTERFACE:include>
   )
 

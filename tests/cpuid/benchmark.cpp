@@ -4,8 +4,8 @@
 #include <cstdint>
 
 #include <cbl/baretest/baretest.hpp>
-#include <cbl/statistics.hpp>
-#include <x86asm.hpp>
+#include <toyos/testhelper/statistics.hpp>
+#include <toyos/x86/x86asm.hpp>
 
 TEST_CASE(benchmark_cycles)
 {

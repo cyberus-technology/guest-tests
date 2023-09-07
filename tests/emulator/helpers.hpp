@@ -4,7 +4,7 @@
 #pragma once
 
 #include <compiler.hpp>
-#include <debugport_interface.h>
+#include <toyos/testhelper/debugport_interface.h>
 
 
 static constexpr const uint16_t SEL_DATA {0x10};

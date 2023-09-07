@@ -2,17 +2,17 @@
  *        All rights reserved        */
 
 #include <cbl/baretest/baretest.hpp>
-#include <debugport_interface.h>
-#include <idt.hpp>
-#include <irq_handler.hpp>
-#include <irqinfo.hpp>
-#include <lapic_enabler.hpp>
-#include <lapic_test_tools.hpp>
-#include <pic.hpp>
+#include <toyos/testhelper/debugport_interface.h>
+#include <toyos/testhelper/idt.hpp>
+#include <toyos/testhelper/irq_handler.hpp>
+#include <toyos/testhelper/irqinfo.hpp>
+#include <toyos/testhelper/lapic_enabler.hpp>
+#include <toyos/testhelper/lapic_test_tools.hpp>
+#include <toyos/testhelper/pic.hpp>
 #include <cbl/sotest.hpp>
 #include <cbl/trace.hpp>
-#include <usermode.hpp>
-#include <x86asm.hpp>
+#include <toyos/testhelper/usermode.hpp>
+#include <toyos/x86/x86asm.hpp>
 
 using x86::exception;
 

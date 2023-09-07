@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <lapic_test_tools.hpp>
+#include <toyos/testhelper/lapic_test_tools.hpp>
 
 // A class that enables the LAPIC upon construction and restores it state upon destruction.
 class lapic_enabler

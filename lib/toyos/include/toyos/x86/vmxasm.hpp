@@ -12,7 +12,7 @@
  * other.
  */
 
-#include <x86defs.hpp>
+#include <toyos/x86/x86defs.hpp>
 
 #include <assert.h>
 

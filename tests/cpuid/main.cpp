@@ -7,10 +7,10 @@
 #include <string>
 #include <vector>
 
-#include <cpuid.hpp>
-#include <debugport_interface.h>
-#include <x86asm.hpp>
-#include <x86fpu.hpp>
+#include <toyos/x86/cpuid.hpp>
+#include <toyos/testhelper/debugport_interface.h>
+#include <toyos/x86/x86asm.hpp>
+#include <toyos/x86/x86fpu.hpp>
 
 #include <cbl/baretest/baretest.hpp>
 

@@ -5,7 +5,7 @@
 
 #include <cbl/baretest/baretest.hpp>
 #include <compiler.hpp>
-#include <debugport_interface.h>
+#include <toyos/testhelper/debugport_interface.h>
 
 
 using namespace x86;

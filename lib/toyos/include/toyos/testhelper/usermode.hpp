@@ -4,10 +4,10 @@
 #pragma once
 
 #include <compiler.hpp>
-#include <debugport_interface.h>
-#include <segmentation.hpp>
-#include <x86asm.hpp>
-#include <x86defs.hpp>
+#include <toyos/testhelper/debugport_interface.h>
+#include <toyos/x86/segmentation.hpp>
+#include <toyos/x86/x86asm.hpp>
+#include <toyos/x86/x86defs.hpp>
 
 EXTERN_C void syscall_entry();
 

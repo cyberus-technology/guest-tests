@@ -5,11 +5,11 @@
 #include <stdint.h>
 
 #include <cbl/baretest/baretest.hpp>
-#include <irq_handler.hpp>
-#include <irqinfo.hpp>
-#include <lapic_test_tools.hpp>
-#include <cbl/statistics.hpp>
-#include <x86asm.hpp>
+#include <toyos/testhelper/irq_handler.hpp>
+#include <toyos/testhelper/irqinfo.hpp>
+#include <toyos/testhelper/lapic_test_tools.hpp>
+#include <toyos/testhelper/statistics.hpp>
+#include <toyos/x86/x86asm.hpp>
 
 using namespace lapic_test_tools;
 void drain_interrupts();
