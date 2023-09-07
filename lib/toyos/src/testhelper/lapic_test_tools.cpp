@@ -2,10 +2,10 @@
  *        All rights reserved        */
 
 #include <assert.h>
-#include <toyos/util/cast_helpers.hpp>
 #include <toyos/testhelper/idt.hpp>
 #include <toyos/testhelper/int_guard.hpp>
 #include <toyos/testhelper/lapic_test_tools.hpp>
+#include <toyos/util/cast_helpers.hpp>
 #include <toyos/x86/x86asm.hpp>
 
 using x86::msr;

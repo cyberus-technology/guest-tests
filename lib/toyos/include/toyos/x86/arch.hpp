@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include <toyos/util/interval.hpp>
-#include <toyos/util/traits.hpp>
 #include "toyos/util/math.hpp"
 #include "x86asm.hpp"
 #include "x86defs.hpp"
+#include <toyos/util/interval.hpp>
+#include <toyos/util/traits.hpp>
 
 constexpr uint64_t addr2pn(uint64_t addr)
 {

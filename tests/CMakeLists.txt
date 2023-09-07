@@ -32,8 +32,7 @@ function(add_guesttest test_name)
   add_executable(${test_name}_guesttest ${test_name}/main.cpp)
 
   target_link_libraries(
-    ${test_name}_guesttest
-    PRIVATE toyos ${GUESTTEST_ARGS_EXTRA_LIBS}
+    ${test_name}_guesttest PRIVATE toyos ${GUESTTEST_ARGS_EXTRA_LIBS}
     )
 
   target_sources(${test_name}_guesttest PRIVATE ${GUESTTEST_ARGS_EXTRA_SOURCES})
@@ -57,9 +56,7 @@ add_guesttest(
   emulator/stack.cpp
   emulator/string_pio.cpp
   )
-add_guesttest(
-  emulator-syscall EXTRA_SOURCES emulator-syscall/compat.S
-  )
+add_guesttest(emulator-syscall EXTRA_SOURCES emulator-syscall/compat.S)
 add_guesttest(exceptions)
 add_guesttest(fpu)
 add_guesttest(lapic-modes EXTRA_SOURCES lapic-modes/x2apic_test_tools.cpp)

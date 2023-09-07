@@ -5,8 +5,8 @@
 
 #include "array"
 
-#include <compiler.hpp>
 #include "toyos/util/math.hpp"
+#include <compiler.hpp>
 
 #include "usb_strings.hpp"
 

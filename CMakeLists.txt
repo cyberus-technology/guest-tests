@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
 
-
 # Let cmake try to build a static library to check if the compiler is working.
 # The default method is to compile a complete app for the chosen architecture,
 # which might fail when cross-compiling (e.g., on mac). For our purposes,
@@ -22,13 +21,13 @@ set(default_build_type "Develop")
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(
-          STATUS
-          "Setting build type to '${default_build_type}' as none was specified."
-  )
+    STATUS
+      "Setting build type to '${default_build_type}' as none was specified."
+    )
   set(CMAKE_BUILD_TYPE
-          "${default_build_type}"
-          CACHE STRING "Choose the type of build." FORCE
-  )
+      "${default_build_type}"
+      CACHE STRING "Choose the type of build." FORCE
+    )
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Develop" "Release")
 endif()
 

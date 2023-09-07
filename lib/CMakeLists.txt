@@ -38,11 +38,7 @@ set(CMAKE_CXX_STANDARD 17)
 #
 # set(as_subproject LibA LibB LibC)
 
-set(as_subproject
-    libcxx
-    libc-tiny
-    toyos
-  )
+set(as_subproject libcxx libc-tiny toyos)
 
 # Globally define following compile options used for all sub-projects.
 #
@@ -52,7 +48,6 @@ set(as_subproject
 # out.
 add_compile_options(
   -Wall
-
   -Wextra
   -Wfatal-errors
   "$<$<C_COMPILER_ID:GNU>:-Wlogical-op>"

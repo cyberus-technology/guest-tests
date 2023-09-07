@@ -8,9 +8,9 @@
 
 #include "../x86/arch.hpp"
 #include "toyos/util/cast_helpers.hpp"
-#include <compiler.hpp>
 #include "toyos/util/device_driver_adapter.hpp"
 #include "toyos/util/math.hpp"
+#include <compiler.hpp>
 
 #include "capability_registers.hpp"
 #include "legsup_capability.hpp"

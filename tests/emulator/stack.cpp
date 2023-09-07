@@ -6,9 +6,8 @@
 
 #include <toyos/testhelper/debugport_interface.h>
 
-#include <toyos/baretest/baretest.hpp>
 #include <compiler.hpp>
-
+#include <toyos/baretest/baretest.hpp>
 
 TEST_CASE(push_register)
 {

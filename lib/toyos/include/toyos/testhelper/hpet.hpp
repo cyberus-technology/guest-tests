@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <toyos/x86/arch.hpp>
-#include <toyos/util/cast_helpers.hpp>
 #include "ioapic.hpp"
+#include <toyos/util/cast_helpers.hpp>
+#include <toyos/x86/arch.hpp>
 
 /**
  * Simple HPET abstraction.

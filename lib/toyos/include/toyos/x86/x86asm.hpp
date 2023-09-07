@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include <toyos/util/traits.hpp>
 #include "cpuid.hpp"
-#include "toyos/util/math.hpp"
 #include "segmentation.hpp"
+#include "toyos/util/math.hpp"
 #include "x86defs.hpp"
+#include <toyos/util/traits.hpp>
 
 #define CONCAT3(A, B, C) A##B##C
 

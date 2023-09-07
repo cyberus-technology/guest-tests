@@ -6,10 +6,10 @@
 #include <arch.h>
 #include <stdint.h>
 
-#include <toyos/util/interval.hpp>
-#include <compiler.hpp>
-#include "toyos/util/math.hpp"
 #include "segmentation.hpp"
+#include "toyos/util/math.hpp"
+#include <compiler.hpp>
+#include <toyos/util/interval.hpp>
 
 namespace x86
 {

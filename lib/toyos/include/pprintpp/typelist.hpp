@@ -23,6 +23,8 @@
  */
 #pragma once
 
+// clang-format off
+
 namespace typelist {
 
 struct null_t {

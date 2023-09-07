@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 
-#include <toyos/x86/cpuid.hpp>
 #include <toyos/testhelper/debugport_interface.h>
+#include <toyos/x86/cpuid.hpp>
 #include <toyos/x86/x86asm.hpp>
 #include <toyos/x86/x86fpu.hpp>
 

@@ -10,41 +10,41 @@
 // On Solaris, we need to define something to make the C99 parts of localeconv
 // visible.
 #ifdef __sun__
-#define _LCONV_C99
+#    define _LCONV_C99
 #endif
 
-#include "string"
 #include "locale"
-#include "codecvt"
-#include "vector"
 #include "algorithm"
+#include "codecvt"
+#include "string"
 #include "typeinfo"
+#include "vector"
 #ifndef _LIBCPP_NO_EXCEPTIONS
-#  include "type_traits"
+#    include "type_traits"
 #endif
 #if 0
-#include "clocale"
-#include "cstring"
-#if defined(_LIBCPP_MSVCRT)
-#define _CTYPE_DISABLE_MACROS
+#    include "clocale"
+#    include "cstring"
+#    if defined(_LIBCPP_MSVCRT)
+#        define _CTYPE_DISABLE_MACROS
+#    endif
+#    include "__sso_allocator"
+#    include "cwctype"
+#    if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
+#        include "support/win32/locale_win32.h"
+#    elif !defined(__BIONIC__)
+#        include <langinfo.h>
+#    endif
 #endif
-#include "cwctype"
-#include "__sso_allocator"
-#if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
-#include "support/win32/locale_win32.h"
-#elif !defined(__BIONIC__)
-#include <langinfo.h>
-#endif
-#endif
-#include <stdlib.h>
-#include <stdio.h>
-#include "include/atomic_support.h"
 #include "__undef_macros"
+#include "include/atomic_support.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 // On Linux, wint_t and wchar_t have different signed-ness, and this causes
-// lots of noise in the build log, but no bugs that I know of. 
+// lots of noise in the build log, but no bugs that I know of.
 #if defined(__clang__)
-#pragma clang diagnostic ignored "-Wsign-conversion"
+#    pragma clang diagnostic ignored "-Wsign-conversion"
 #endif
 
 _LIBCPP_BEGIN_NAMESPACE_STD
@@ -68,7 +68,7 @@ private:
   __libcpp_unique_locale& operator=(__libcpp_unique_locale const&);
 };
 
-#ifdef __cloc_defined
+#    ifdef __cloc_defined
 locale_t __cloc() {
   // In theory this could create a race condition. In practice
   // the race condition is non-fatal since it will just create
@@ -76,10 +76,11 @@ locale_t __cloc() {
   static locale_t result = newlocale(LC_ALL_MASK, "C", 0);
   return result;
 }
-#endif // __cloc_defined
+#    endif // __cloc_defined
 #endif
 
-namespace {
+    namespace
+    {
 
 #if 0
 struct release
@@ -136,23 +137,23 @@ countof(const T * const begin, const T * const end)
 }
 #endif
 
-_LIBCPP_NORETURN static void __throw_runtime_error(const string &msg)
-{
+    _LIBCPP_NORETURN static void __throw_runtime_error(const string& msg)
+    {
 #ifndef _LIBCPP_NO_EXCEPTIONS
-    throw runtime_error(msg);
+        throw runtime_error(msg);
 #else
-    (void)msg;
-    _VSTD::abort();
+        (void) msg;
+        _VSTD::abort();
 #endif
-}
+    }
 
-}
+    } // namespace
 
 #if 0
-#if defined(_AIX)
+#    if defined(_AIX)
 // Set priority to INT_MIN + 256 + 150
-# pragma priority ( -2147483242 )
-#endif
+#        pragma priority(-2147483242)
+#    endif
 
 const locale::category locale::none;
 const locale::category locale::collate;
@@ -167,14 +168,14 @@ class _LIBCPP_HIDDEN locale::__imp
     : public facet
 {
     enum {N = 28};
-#if defined(_LIBCPP_COMPILER_MSVC)
+#    if defined(_LIBCPP_COMPILER_MSVC)
 // FIXME: MSVC doesn't support aligned parameters by value.
 // I can't get the __sso_allocator to work here
 // for MSVC I think for this reason.
     vector<facet*> facets_;
-#else
+#    else
     vector<facet*, __sso_allocator<facet*, N> > facets_;
-#endif
+#    endif
     string         name_;
 public:
     explicit __imp(size_t refs = 0);
@@ -239,10 +240,10 @@ locale::__imp::__imp(const string& name, size_t refs)
       facets_(N),
       name_(name)
 {
-#ifndef _LIBCPP_NO_EXCEPTIONS
+#    ifndef _LIBCPP_NO_EXCEPTIONS
     try
     {
-#endif  // _LIBCPP_NO_EXCEPTIONS
+#    endif // _LIBCPP_NO_EXCEPTIONS
         facets_ = locale::classic().__locale_->facets_;
         for (unsigned i = 0; i < facets_.size(); ++i)
             if (facets_[i])
@@ -267,7 +268,7 @@ locale::__imp::__imp(const string& name, size_t refs)
         install(new time_put_byname<wchar_t>(name_));
         install(new messages_byname<char>(name_));
         install(new messages_byname<wchar_t>(name_));
-#ifndef _LIBCPP_NO_EXCEPTIONS
+#    ifndef _LIBCPP_NO_EXCEPTIONS
     }
     catch (...)
     {
@@ -276,15 +277,15 @@ locale::__imp::__imp(const string& name, size_t refs)
                 facets_[i]->__release_shared();
         throw;
     }
-#endif  // _LIBCPP_NO_EXCEPTIONS
+#    endif // _LIBCPP_NO_EXCEPTIONS
 }
 
 // NOTE avoid the `base class should be explicitly initialized in the
 // copy constructor` warning emitted by GCC
-#if defined(__clang__) || _GNUC_VER >= 406
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wextra"
-#endif
+#    if defined(__clang__) || _GNUC_VER >= 406
+#        pragma GCC diagnostic push
+#        pragma GCC diagnostic ignored "-Wextra"
+#    endif
 
 locale::__imp::__imp(const __imp& other)
     : facets_(max<size_t>(N, other.facets_.size())),
@@ -296,9 +297,9 @@ locale::__imp::__imp(const __imp& other)
             facets_[i]->__add_shared();
 }
 
-#if defined(__clang__) || _GNUC_VER >= 406
-#pragma GCC diagnostic pop
-#endif
+#    if defined(__clang__) || _GNUC_VER >= 406
+#        pragma GCC diagnostic pop
+#    endif
 
 locale::__imp::__imp(const __imp& other, const string& name, locale::category c)
     : facets_(N),
@@ -308,10 +309,10 @@ locale::__imp::__imp(const __imp& other, const string& name, locale::category c)
     for (unsigned i = 0; i < facets_.size(); ++i)
         if (facets_[i])
             facets_[i]->__add_shared();
-#ifndef _LIBCPP_NO_EXCEPTIONS
+#    ifndef _LIBCPP_NO_EXCEPTIONS
     try
     {
-#endif  // _LIBCPP_NO_EXCEPTIONS
+#    endif // _LIBCPP_NO_EXCEPTIONS
         if (c & locale::collate)
         {
             install(new collate_byname<char>(name));
@@ -350,7 +351,7 @@ locale::__imp::__imp(const __imp& other, const string& name, locale::category c)
             install(new messages_byname<char>(name));
             install(new messages_byname<wchar_t>(name));
         }
-#ifndef _LIBCPP_NO_EXCEPTIONS
+#    ifndef _LIBCPP_NO_EXCEPTIONS
     }
     catch (...)
     {
@@ -359,7 +360,7 @@ locale::__imp::__imp(const __imp& other, const string& name, locale::category c)
                 facets_[i]->__release_shared();
         throw;
     }
-#endif  // _LIBCPP_NO_EXCEPTIONS
+#    endif // _LIBCPP_NO_EXCEPTIONS
 }
 
 template<class F>
@@ -379,10 +380,10 @@ locale::__imp::__imp(const __imp& other, const __imp& one, locale::category c)
     for (unsigned i = 0; i < facets_.size(); ++i)
         if (facets_[i])
             facets_[i]->__add_shared();
-#ifndef _LIBCPP_NO_EXCEPTIONS
+#    ifndef _LIBCPP_NO_EXCEPTIONS
     try
     {
-#endif  // _LIBCPP_NO_EXCEPTIONS
+#    endif // _LIBCPP_NO_EXCEPTIONS
         if (c & locale::collate)
         {
             install_from<_VSTD::collate<char> >(one);
@@ -429,7 +430,7 @@ locale::__imp::__imp(const __imp& other, const __imp& one, locale::category c)
             install_from<_VSTD::messages<char> >(one);
             install_from<_VSTD::messages<wchar_t> >(one);
         }
-#ifndef _LIBCPP_NO_EXCEPTIONS
+#    ifndef _LIBCPP_NO_EXCEPTIONS
     }
     catch (...)
     {
@@ -438,7 +439,7 @@ locale::__imp::__imp(const __imp& other, const __imp& one, locale::category c)
                 facets_[i]->__release_shared();
         throw;
     }
-#endif  // _LIBCPP_NO_EXCEPTIONS
+#    endif // _LIBCPP_NO_EXCEPTIONS
 }
 
 locale::__imp::__imp(const __imp& other, facet* f, long id)
@@ -476,10 +477,10 @@ locale::__imp::install(facet* f, long id)
 const locale::facet*
 locale::__imp::use_facet(long id) const
 {
-#ifndef _LIBCPP_NO_EXCEPTIONS
+#    ifndef _LIBCPP_NO_EXCEPTIONS
     if (!has_facet(id))
         throw bad_cast();
-#endif  // _LIBCPP_NO_EXCEPTIONS
+#    endif // _LIBCPP_NO_EXCEPTIONS
     return facets_[static_cast<size_t>(id)];
 }
 
@@ -545,12 +546,12 @@ locale::operator=(const locale& other)  _NOEXCEPT
 }
 
 locale::locale(const char* name)
-#ifndef _LIBCPP_NO_EXCEPTIONS
+#    ifndef _LIBCPP_NO_EXCEPTIONS
     : __locale_(name ? new __imp(name)
                      : throw runtime_error("locale constructed with null"))
-#else  // _LIBCPP_NO_EXCEPTIONS
+#    else // _LIBCPP_NO_EXCEPTIONS
     : __locale_(new __imp(name))
-#endif
+#    endif
 {
     __locale_->__add_shared();
 }
@@ -562,12 +563,12 @@ locale::locale(const string& name)
 }
 
 locale::locale(const locale& other, const char* name, category c)
-#ifndef _LIBCPP_NO_EXCEPTIONS
+#    ifndef _LIBCPP_NO_EXCEPTIONS
     : __locale_(name ? new __imp(*other.__locale_, name, c)
                      : throw runtime_error("locale constructed with null"))
-#else  // _LIBCPP_NO_EXCEPTIONS
+#    else // _LIBCPP_NO_EXCEPTIONS
     : __locale_(new __imp(*other.__locale_, name, c))
-#endif
+#    endif
 {
     __locale_->__add_shared();
 }
@@ -631,19 +632,17 @@ locale::operator==(const locale& y) const
 }
 #endif
 
-// locale::facet
+    // locale::facet
 
-locale::facet::~facet()
-{
-}
+    locale::facet::~facet()
+    {}
 
-void
-locale::facet::__on_zero_shared() _NOEXCEPT
-{
-    delete this;
-}
+    void locale::facet::__on_zero_shared() _NOEXCEPT
+    {
+        delete this;
+    }
 
-// locale::id
+    // locale::id
 
 #if 0
 int32_t locale::id::__next_id = 0;
@@ -833,58 +832,54 @@ ctype<wchar_t>::do_scan_not(mask m, const char_type* low, const char_type* high)
 wchar_t
 ctype<wchar_t>::do_toupper(char_type c) const
 {
-#ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
+#    ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
     return isascii(c) ? _DefaultRuneLocale.__mapupper[c] : c;
-#elif defined(__GLIBC__) || defined(__EMSCRIPTEN__) || \
-      defined(__NetBSD__)
+#    elif defined(__GLIBC__) || defined(__EMSCRIPTEN__) || defined(__NetBSD__)
     return isascii(c) ? ctype<char>::__classic_upper_table()[c] : c;
-#else
+#    else
     return (isascii(c) && iswlower_l(c, _LIBCPP_GET_C_LOCALE)) ? c-L'a'+L'A' : c;
-#endif
+#    endif
 }
 
 const wchar_t*
 ctype<wchar_t>::do_toupper(char_type* low, const char_type* high) const
 {
     for (; low != high; ++low)
-#ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
+#    ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
         *low = isascii(*low) ? _DefaultRuneLocale.__mapupper[*low] : *low;
-#elif defined(__GLIBC__) || defined(__EMSCRIPTEN__) || \
-      defined(__NetBSD__)
+#    elif defined(__GLIBC__) || defined(__EMSCRIPTEN__) || defined(__NetBSD__)
         *low = isascii(*low) ? ctype<char>::__classic_upper_table()[*low]
                              : *low;
-#else
+#    else
         *low = (isascii(*low) && islower_l(*low, _LIBCPP_GET_C_LOCALE)) ? (*low-L'a'+L'A') : *low;
-#endif
+#    endif
     return low;
 }
 
 wchar_t
 ctype<wchar_t>::do_tolower(char_type c) const
 {
-#ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
+#    ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
     return isascii(c) ? _DefaultRuneLocale.__maplower[c] : c;
-#elif defined(__GLIBC__) || defined(__EMSCRIPTEN__) || \
-      defined(__NetBSD__)
+#    elif defined(__GLIBC__) || defined(__EMSCRIPTEN__) || defined(__NetBSD__)
     return isascii(c) ? ctype<char>::__classic_lower_table()[c] : c;
-#else
+#    else
     return (isascii(c) && isupper_l(c, _LIBCPP_GET_C_LOCALE)) ? c-L'A'+'a' : c;
-#endif
+#    endif
 }
 
 const wchar_t*
 ctype<wchar_t>::do_tolower(char_type* low, const char_type* high) const
 {
     for (; low != high; ++low)
-#ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
+#    ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
         *low = isascii(*low) ? _DefaultRuneLocale.__maplower[*low] : *low;
-#elif defined(__GLIBC__) || defined(__EMSCRIPTEN__) || \
-      defined(__NetBSD__)
+#    elif defined(__GLIBC__) || defined(__EMSCRIPTEN__) || defined(__NetBSD__)
         *low = isascii(*low) ? ctype<char>::__classic_lower_table()[*low]
                              : *low;
-#else
+#    else
         *low = (isascii(*low) && isupper_l(*low, _LIBCPP_GET_C_LOCALE)) ? *low-L'A'+L'a' : *low;
-#endif
+#    endif
     return low;
 }
 
@@ -943,66 +938,66 @@ ctype<char>::~ctype()
 char
 ctype<char>::do_toupper(char_type c) const
 {
-#ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
+#    ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
     return isascii(c) ?
       static_cast<char>(_DefaultRuneLocale.__mapupper[static_cast<ptrdiff_t>(c)]) : c;
-#elif defined(__NetBSD__)
+#    elif defined(__NetBSD__)
     return static_cast<char>(__classic_upper_table()[static_cast<unsigned char>(c)]);
-#elif defined(__GLIBC__) || defined(__EMSCRIPTEN__)
+#    elif defined(__GLIBC__) || defined(__EMSCRIPTEN__)
     return isascii(c) ?
       static_cast<char>(__classic_upper_table()[static_cast<unsigned char>(c)]) : c;
-#else
+#    else
     return (isascii(c) && islower_l(c, _LIBCPP_GET_C_LOCALE)) ? c-'a'+'A' : c;
-#endif
+#    endif
 }
 
 const char*
 ctype<char>::do_toupper(char_type* low, const char_type* high) const
 {
     for (; low != high; ++low)
-#ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
+#    ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
         *low = isascii(*low) ?
           static_cast<char>(_DefaultRuneLocale.__mapupper[static_cast<ptrdiff_t>(*low)]) : *low;
-#elif defined(__NetBSD__)
+#    elif defined(__NetBSD__)
         *low = static_cast<char>(__classic_upper_table()[static_cast<unsigned char>(*low)]);
-#elif defined(__GLIBC__) || defined(__EMSCRIPTEN__)
+#    elif defined(__GLIBC__) || defined(__EMSCRIPTEN__)
         *low = isascii(*low) ?
           static_cast<char>(__classic_upper_table()[static_cast<size_t>(*low)]) : *low;
-#else
+#    else
         *low = (isascii(*low) && islower_l(*low, _LIBCPP_GET_C_LOCALE)) ? *low-'a'+'A' : *low;
-#endif
+#    endif
     return low;
 }
 
 char
 ctype<char>::do_tolower(char_type c) const
 {
-#ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
+#    ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
     return isascii(c) ?
       static_cast<char>(_DefaultRuneLocale.__maplower[static_cast<ptrdiff_t>(c)]) : c;
-#elif defined(__NetBSD__)
+#    elif defined(__NetBSD__)
     return static_cast<char>(__classic_lower_table()[static_cast<unsigned char>(c)]);
-#elif defined(__GLIBC__) || defined(__EMSCRIPTEN__)
+#    elif defined(__GLIBC__) || defined(__EMSCRIPTEN__)
     return isascii(c) ?
       static_cast<char>(__classic_lower_table()[static_cast<size_t>(c)]) : c;
-#else
+#    else
     return (isascii(c) && isupper_l(c, _LIBCPP_GET_C_LOCALE)) ? c-'A'+'a' : c;
-#endif
+#    endif
 }
 
 const char*
 ctype<char>::do_tolower(char_type* low, const char_type* high) const
 {
     for (; low != high; ++low)
-#ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
+#    ifdef _LIBCPP_HAS_DEFAULTRUNELOCALE
         *low = isascii(*low) ? static_cast<char>(_DefaultRuneLocale.__maplower[static_cast<ptrdiff_t>(*low)]) : *low;
-#elif defined(__NetBSD__)
+#    elif defined(__NetBSD__)
         *low = static_cast<char>(__classic_lower_table()[static_cast<unsigned char>(*low)]);
-#elif defined(__GLIBC__) || defined(__EMSCRIPTEN__)
+#    elif defined(__GLIBC__) || defined(__EMSCRIPTEN__)
         *low = isascii(*low) ? static_cast<char>(__classic_lower_table()[static_cast<size_t>(*low)]) : *low;
-#else
+#    else
         *low = (isascii(*low) && isupper_l(*low, _LIBCPP_GET_C_LOCALE)) ? *low-'A'+'a' : *low;
-#endif
+#    endif
     return low;
 }
 
@@ -1039,13 +1034,13 @@ ctype<char>::do_narrow(const char_type* low, const char_type* high, char dfault,
     return low;
 }
 
-#if defined(__EMSCRIPTEN__)
+#    if defined(__EMSCRIPTEN__)
 extern "C" const unsigned short ** __ctype_b_loc();
 extern "C" const int ** __ctype_tolower_loc();
 extern "C" const int ** __ctype_toupper_loc();
-#endif
+#    endif
 
-#ifdef _LIBCPP_PROVIDES_DEFAULT_RUNE_TABLE
+#    ifdef _LIBCPP_PROVIDES_DEFAULT_RUNE_TABLE
 const ctype<char>::mask*
 ctype<char>::classic_table()  _NOEXCEPT
 {
@@ -1125,39 +1120,39 @@ ctype<char>::classic_table()  _NOEXCEPT
     };
     return builtin_table;
 }
-#else
+#    else
 const ctype<char>::mask*
 ctype<char>::classic_table()  _NOEXCEPT
 {
-#if defined(__APPLE__) || defined(__FreeBSD__)
+#        if defined(__APPLE__) || defined(__FreeBSD__)
     return _DefaultRuneLocale.__runetype;
-#elif defined(__NetBSD__)
+#        elif defined(__NetBSD__)
     return _C_ctype_tab_ + 1;
-#elif defined(__GLIBC__)
+#        elif defined(__GLIBC__)
     return _LIBCPP_GET_C_LOCALE->__ctype_b;
-#elif __sun__
+#        elif __sun__
     return __ctype_mask;
-#elif defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
+#        elif defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
     return __pctype_func();
-#elif defined(__EMSCRIPTEN__)
+#        elif defined(__EMSCRIPTEN__)
     return *__ctype_b_loc();
-#elif defined(_NEWLIB_VERSION)
+#        elif defined(_NEWLIB_VERSION)
     // Newlib has a 257-entry table in ctype_.c, where (char)0 starts at [1].
     return _ctype_ + 1;
-#elif defined(_AIX)
+#        elif defined(_AIX)
     return (const unsigned int *)__lc_ctype_ptr->obj->mask;
-#else
+#        else
     // Platform not supported: abort so the person doing the port knows what to
     // fix
-# warning  ctype<char>::classic_table() is not implemented
+#            warning ctype<char>::classic_table() is not implemented
     printf("ctype<char>::classic_table() is not implemented\n");
     abort();
     return NULL;
-#endif
+#        endif
 }
-#endif
+#    endif
 
-#if defined(__GLIBC__)
+#    if defined(__GLIBC__)
 const int*
 ctype<char>::__classic_lower_table() _NOEXCEPT
 {
@@ -1169,7 +1164,7 @@ ctype<char>::__classic_upper_table() _NOEXCEPT
 {
     return _LIBCPP_GET_C_LOCALE->__ctype_toupper;
 }
-#elif __NetBSD__
+#    elif __NetBSD__
 const short*
 ctype<char>::__classic_lower_table() _NOEXCEPT
 {
@@ -1182,7 +1177,7 @@ ctype<char>::__classic_upper_table() _NOEXCEPT
     return _C_toupper_tab_ + 1;
 }
 
-#elif defined(__EMSCRIPTEN__)
+#    elif defined(__EMSCRIPTEN__)
 const int*
 ctype<char>::__classic_lower_table() _NOEXCEPT
 {
@@ -1194,7 +1189,7 @@ ctype<char>::__classic_upper_table() _NOEXCEPT
 {
     return *__ctype_toupper_loc();
 }
-#endif // __GLIBC__ || __NETBSD__ || __EMSCRIPTEN__
+#    endif // __GLIBC__ || __NETBSD__ || __EMSCRIPTEN__
 
 // template <> class ctype_byname<char>
 
@@ -1277,9 +1272,9 @@ ctype_byname<wchar_t>::~ctype_byname()
 bool
 ctype_byname<wchar_t>::do_is(mask m, char_type c) const
 {
-#ifdef _LIBCPP_WCTYPE_IS_MASK
+#    ifdef _LIBCPP_WCTYPE_IS_MASK
     return static_cast<bool>(iswctype_l(c, m, __l));
-#else
+#    else
     bool result = false;
     wint_t ch = static_cast<wint_t>(c);
     if ((m & space) == space) result |= (iswspace_l(ch, __l) != 0);
@@ -1293,7 +1288,7 @@ ctype_byname<wchar_t>::do_is(mask m, char_type c) const
     if ((m & xdigit) == xdigit) result |= (iswxdigit_l(ch, __l) != 0);
     if ((m & blank) == blank) result |= (iswblank_l(ch, __l) != 0);
     return result;
-#endif
+#    endif
 }
 
 const wchar_t*
@@ -1309,32 +1304,32 @@ ctype_byname<wchar_t>::do_is(const char_type* low, const char_type* high, mask* 
             wint_t ch = static_cast<wint_t>(*low);
             if (iswspace_l(ch, __l))
                 *vec |= space;
-#ifndef _LIBCPP_CTYPE_MASK_IS_COMPOSITE_PRINT
+#    ifndef _LIBCPP_CTYPE_MASK_IS_COMPOSITE_PRINT
             if (iswprint_l(ch, __l))
                 *vec |= print;
-#endif
+#    endif
             if (iswcntrl_l(ch, __l))
                 *vec |= cntrl;
             if (iswupper_l(ch, __l))
                 *vec |= upper;
             if (iswlower_l(ch, __l))
                 *vec |= lower;
-#ifndef _LIBCPP_CTYPE_MASK_IS_COMPOSITE_ALPHA
+#    ifndef _LIBCPP_CTYPE_MASK_IS_COMPOSITE_ALPHA
             if (iswalpha_l(ch, __l))
                 *vec |= alpha;
-#endif
+#    endif
             if (iswdigit_l(ch, __l))
                 *vec |= digit;
             if (iswpunct_l(ch, __l))
                 *vec |= punct;
-#ifndef _LIBCPP_CTYPE_MASK_IS_COMPOSITE_XDIGIT
+#    ifndef _LIBCPP_CTYPE_MASK_IS_COMPOSITE_XDIGIT
             if (iswxdigit_l(ch, __l))
                 *vec |= xdigit;
-#endif
-#if !defined(__sun__)
+#    endif
+#    if !defined(__sun__)
             if (iswblank_l(ch, __l))
                 *vec |= blank;
-#endif
+#    endif
         }
     }
     return low;
@@ -1345,10 +1340,10 @@ ctype_byname<wchar_t>::do_scan_is(mask m, const char_type* low, const char_type*
 {
     for (; low != high; ++low)
     {
-#ifdef _LIBCPP_WCTYPE_IS_MASK
+#    ifdef _LIBCPP_WCTYPE_IS_MASK
         if (iswctype_l(*low, m, __l))
             break;
-#else
+#    else
         wint_t ch = static_cast<wint_t>(*low);
         if ((m & space) == space && iswspace_l(ch, __l)) break;
         if ((m & print) == print && iswprint_l(ch, __l)) break;
@@ -1360,7 +1355,7 @@ ctype_byname<wchar_t>::do_scan_is(mask m, const char_type* low, const char_type*
         if ((m & punct) == punct && iswpunct_l(ch, __l)) break;
         if ((m & xdigit) == xdigit && iswxdigit_l(ch, __l)) break;
         if ((m & blank) == blank && iswblank_l(ch, __l)) break;
-#endif
+#    endif
     }
     return low;
 }
@@ -1370,10 +1365,10 @@ ctype_byname<wchar_t>::do_scan_not(mask m, const char_type* low, const char_type
 {
     for (; low != high; ++low)
     {
-#ifdef _LIBCPP_WCTYPE_IS_MASK
+#    ifdef _LIBCPP_WCTYPE_IS_MASK
         if (!iswctype_l(*low, m, __l))
             break;
-#else
+#    else
         wint_t ch = static_cast<wint_t>(*low);
         if ((m & space) == space && iswspace_l(ch, __l)) continue;
         if ((m & print) == print && iswprint_l(ch, __l)) continue;
@@ -1386,7 +1381,7 @@ ctype_byname<wchar_t>::do_scan_not(mask m, const char_type* low, const char_type
         if ((m & xdigit) == xdigit && iswxdigit_l(ch, __l)) continue;
         if ((m & blank) == blank && iswblank_l(ch, __l)) continue;
         break;
-#endif
+#    endif
     }
     return low;
 }
@@ -1728,829 +1723,659 @@ codecvt<wchar_t, char, mbstate_t>::do_max_length() const  _NOEXCEPT
 }
 #endif
 
-//                                     Valid UTF ranges
-//     UTF-32               UTF-16                          UTF-8               # of code points
-//                     first      second       first   second    third   fourth
-// 000000 - 00007F  0000 - 007F               00 - 7F                                 127
-// 000080 - 0007FF  0080 - 07FF               C2 - DF, 80 - BF                       1920
-// 000800 - 000FFF  0800 - 0FFF               E0 - E0, A0 - BF, 80 - BF              2048
-// 001000 - 00CFFF  1000 - CFFF               E1 - EC, 80 - BF, 80 - BF             49152
-// 00D000 - 00D7FF  D000 - D7FF               ED - ED, 80 - 9F, 80 - BF              2048
-// 00D800 - 00DFFF                invalid
-// 00E000 - 00FFFF  E000 - FFFF               EE - EF, 80 - BF, 80 - BF              8192
-// 010000 - 03FFFF  D800 - D8BF, DC00 - DFFF  F0 - F0, 90 - BF, 80 - BF, 80 - BF   196608
-// 040000 - 0FFFFF  D8C0 - DBBF, DC00 - DFFF  F1 - F3, 80 - BF, 80 - BF, 80 - BF   786432
-// 100000 - 10FFFF  DBC0 - DBFF, DC00 - DFFF  F4 - F4, 80 - 8F, 80 - BF, 80 - BF    65536
+    //                                     Valid UTF ranges
+    //     UTF-32               UTF-16                          UTF-8               # of code points
+    //                     first      second       first   second    third   fourth
+    // 000000 - 00007F  0000 - 007F               00 - 7F                                 127
+    // 000080 - 0007FF  0080 - 07FF               C2 - DF, 80 - BF                       1920
+    // 000800 - 000FFF  0800 - 0FFF               E0 - E0, A0 - BF, 80 - BF              2048
+    // 001000 - 00CFFF  1000 - CFFF               E1 - EC, 80 - BF, 80 - BF             49152
+    // 00D000 - 00D7FF  D000 - D7FF               ED - ED, 80 - 9F, 80 - BF              2048
+    // 00D800 - 00DFFF                invalid
+    // 00E000 - 00FFFF  E000 - FFFF               EE - EF, 80 - BF, 80 - BF              8192
+    // 010000 - 03FFFF  D800 - D8BF, DC00 - DFFF  F0 - F0, 90 - BF, 80 - BF, 80 - BF   196608
+    // 040000 - 0FFFFF  D8C0 - DBBF, DC00 - DFFF  F1 - F3, 80 - BF, 80 - BF, 80 - BF   786432
+    // 100000 - 10FFFF  DBC0 - DBFF, DC00 - DFFF  F4 - F4, 80 - 8F, 80 - BF, 80 - BF    65536
 
-static
-codecvt_base::result
-utf16_to_utf8(const uint16_t* frm, const uint16_t* frm_end, const uint16_t*& frm_nxt,
-              uint8_t* to, uint8_t* to_end, uint8_t*& to_nxt,
-              unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
-{
-    frm_nxt = frm;
-    to_nxt = to;
-    if (mode & generate_header)
+    static codecvt_base::result utf16_to_utf8(const uint16_t* frm, const uint16_t* frm_end, const uint16_t*& frm_nxt,
+                                              uint8_t* to, uint8_t* to_end, uint8_t*& to_nxt,
+                                              unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
     {
-        if (to_end-to_nxt < 3)
-            return codecvt_base::partial;
-        *to_nxt++ = static_cast<uint8_t>(0xEF);
-        *to_nxt++ = static_cast<uint8_t>(0xBB);
-        *to_nxt++ = static_cast<uint8_t>(0xBF);
-    }
-    for (; frm_nxt < frm_end; ++frm_nxt)
-    {
-        uint16_t wc1 = *frm_nxt;
-        if (wc1 > Maxcode)
-            return codecvt_base::error;
-        if (wc1 < 0x0080)
-        {
-            if (to_end-to_nxt < 1)
+        frm_nxt = frm;
+        to_nxt = to;
+        if (mode & generate_header) {
+            if (to_end - to_nxt < 3)
                 return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(wc1);
+            *to_nxt++ = static_cast<uint8_t>(0xEF);
+            *to_nxt++ = static_cast<uint8_t>(0xBB);
+            *to_nxt++ = static_cast<uint8_t>(0xBF);
         }
-        else if (wc1 < 0x0800)
-        {
-            if (to_end-to_nxt < 2)
-                return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(0xC0 | (wc1 >> 6));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | (wc1 & 0x03F));
-        }
-        else if (wc1 < 0xD800)
-        {
-            if (to_end-to_nxt < 3)
-                return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(0xE0 |  (wc1 >> 12));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc1 & 0x0FC0) >> 6));
-            *to_nxt++ = static_cast<uint8_t>(0x80 |  (wc1 & 0x003F));
-        }
-        else if (wc1 < 0xDC00)
-        {
-            if (frm_end-frm_nxt < 2)
-                return codecvt_base::partial;
-            uint16_t wc2 = frm_nxt[1];
-            if ((wc2 & 0xFC00) != 0xDC00)
+        for (; frm_nxt < frm_end; ++frm_nxt) {
+            uint16_t wc1 = *frm_nxt;
+            if (wc1 > Maxcode)
                 return codecvt_base::error;
-            if (to_end-to_nxt < 4)
-                return codecvt_base::partial;
-            if (((((wc1 & 0x03C0UL) >> 6) + 1) << 16) +
-                ((wc1 & 0x003FUL) << 10) + (wc2 & 0x03FF) > Maxcode)
-                return codecvt_base::error;
-            ++frm_nxt;
-            uint8_t z = ((wc1 & 0x03C0) >> 6) + 1;
-            *to_nxt++ = static_cast<uint8_t>(0xF0 | (z >> 2));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | ((z & 0x03) << 4)     | ((wc1 & 0x003C) >> 2));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc1 & 0x0003) << 4) | ((wc2 & 0x03C0) >> 6));
-            *to_nxt++ = static_cast<uint8_t>(0x80 |  (wc2 & 0x003F));
-        }
-        else if (wc1 < 0xE000)
-        {
-            return codecvt_base::error;
-        }
-        else
-        {
-            if (to_end-to_nxt < 3)
-                return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(0xE0 |  (wc1 >> 12));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc1 & 0x0FC0) >> 6));
-            *to_nxt++ = static_cast<uint8_t>(0x80 |  (wc1 & 0x003F));
-        }
-    }
-    return codecvt_base::ok;
-}
-
-static
-codecvt_base::result
-utf16_to_utf8(const uint32_t* frm, const uint32_t* frm_end, const uint32_t*& frm_nxt,
-              uint8_t* to, uint8_t* to_end, uint8_t*& to_nxt,
-              unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
-{
-    frm_nxt = frm;
-    to_nxt = to;
-    if (mode & generate_header)
-    {
-        if (to_end-to_nxt < 3)
-            return codecvt_base::partial;
-        *to_nxt++ = static_cast<uint8_t>(0xEF);
-        *to_nxt++ = static_cast<uint8_t>(0xBB);
-        *to_nxt++ = static_cast<uint8_t>(0xBF);
-    }
-    for (; frm_nxt < frm_end; ++frm_nxt)
-    {
-        uint16_t wc1 = static_cast<uint16_t>(*frm_nxt);
-        if (wc1 > Maxcode)
-            return codecvt_base::error;
-        if (wc1 < 0x0080)
-        {
-            if (to_end-to_nxt < 1)
-                return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(wc1);
-        }
-        else if (wc1 < 0x0800)
-        {
-            if (to_end-to_nxt < 2)
-                return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(0xC0 | (wc1 >> 6));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | (wc1 & 0x03F));
-        }
-        else if (wc1 < 0xD800)
-        {
-            if (to_end-to_nxt < 3)
-                return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(0xE0 |  (wc1 >> 12));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc1 & 0x0FC0) >> 6));
-            *to_nxt++ = static_cast<uint8_t>(0x80 |  (wc1 & 0x003F));
-        }
-        else if (wc1 < 0xDC00)
-        {
-            if (frm_end-frm_nxt < 2)
-                return codecvt_base::partial;
-            uint16_t wc2 = static_cast<uint16_t>(frm_nxt[1]);
-            if ((wc2 & 0xFC00) != 0xDC00)
-                return codecvt_base::error;
-            if (to_end-to_nxt < 4)
-                return codecvt_base::partial;
-            if (((((wc1 & 0x03C0UL) >> 6) + 1) << 16) +
-                ((wc1 & 0x003FUL) << 10) + (wc2 & 0x03FF) > Maxcode)
-                return codecvt_base::error;
-            ++frm_nxt;
-            uint8_t z = ((wc1 & 0x03C0) >> 6) + 1;
-            *to_nxt++ = static_cast<uint8_t>(0xF0 | (z >> 2));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | ((z & 0x03) << 4)     | ((wc1 & 0x003C) >> 2));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc1 & 0x0003) << 4) | ((wc2 & 0x03C0) >> 6));
-            *to_nxt++ = static_cast<uint8_t>(0x80 |  (wc2 & 0x003F));
-        }
-        else if (wc1 < 0xE000)
-        {
-            return codecvt_base::error;
-        }
-        else
-        {
-            if (to_end-to_nxt < 3)
-                return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(0xE0 |  (wc1 >> 12));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc1 & 0x0FC0) >> 6));
-            *to_nxt++ = static_cast<uint8_t>(0x80 |  (wc1 & 0x003F));
-        }
-    }
-    return codecvt_base::ok;
-}
-
-static
-codecvt_base::result
-utf8_to_utf16(const uint8_t* frm, const uint8_t* frm_end, const uint8_t*& frm_nxt,
-              uint16_t* to, uint16_t* to_end, uint16_t*& to_nxt,
-              unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
-{
-    frm_nxt = frm;
-    to_nxt = to;
-    if (mode & consume_header)
-    {
-        if (frm_end-frm_nxt >= 3 && frm_nxt[0] == 0xEF && frm_nxt[1] == 0xBB &&
-                                                          frm_nxt[2] == 0xBF)
-            frm_nxt += 3;
-    }
-    for (; frm_nxt < frm_end && to_nxt < to_end; ++to_nxt)
-    {
-        uint8_t c1 = *frm_nxt;
-        if (c1 > Maxcode)
-            return codecvt_base::error;
-        if (c1 < 0x80)
-        {
-            *to_nxt = static_cast<uint16_t>(c1);
-            ++frm_nxt;
-        }
-        else if (c1 < 0xC2)
-        {
-            return codecvt_base::error;
-        }
-        else if (c1 < 0xE0)
-        {
-            if (frm_end-frm_nxt < 2)
-                return codecvt_base::partial;
-            uint8_t c2 = frm_nxt[1];
-            if ((c2 & 0xC0) != 0x80)
-                return codecvt_base::error;
-            uint16_t t = static_cast<uint16_t>(((c1 & 0x1F) << 6) | (c2 & 0x3F));
-            if (t > Maxcode)
-                return codecvt_base::error;
-            *to_nxt = t;
-            frm_nxt += 2;
-        }
-        else if (c1 < 0xF0)
-        {
-            if (frm_end-frm_nxt < 3)
-                return codecvt_base::partial;
-            uint8_t c2 = frm_nxt[1];
-            uint8_t c3 = frm_nxt[2];
-            switch (c1)
-            {
-            case 0xE0:
-                if ((c2 & 0xE0) != 0xA0)
+            if (wc1 < 0x0080) {
+                if (to_end - to_nxt < 1)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(wc1);
+            } else if (wc1 < 0x0800) {
+                if (to_end - to_nxt < 2)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(0xC0 | (wc1 >> 6));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | (wc1 & 0x03F));
+            } else if (wc1 < 0xD800) {
+                if (to_end - to_nxt < 3)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(0xE0 | (wc1 >> 12));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc1 & 0x0FC0) >> 6));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | (wc1 & 0x003F));
+            } else if (wc1 < 0xDC00) {
+                if (frm_end - frm_nxt < 2)
+                    return codecvt_base::partial;
+                uint16_t wc2 = frm_nxt[1];
+                if ((wc2 & 0xFC00) != 0xDC00)
                     return codecvt_base::error;
-                 break;
-            case 0xED:
-                if ((c2 & 0xE0) != 0x80)
+                if (to_end - to_nxt < 4)
+                    return codecvt_base::partial;
+                if (((((wc1 & 0x03C0UL) >> 6) + 1) << 16) + ((wc1 & 0x003FUL) << 10) + (wc2 & 0x03FF) > Maxcode)
                     return codecvt_base::error;
-                 break;
-            default:
-                if ((c2 & 0xC0) != 0x80)
-                    return codecvt_base::error;
-                 break;
+                ++frm_nxt;
+                uint8_t z = ((wc1 & 0x03C0) >> 6) + 1;
+                *to_nxt++ = static_cast<uint8_t>(0xF0 | (z >> 2));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | ((z & 0x03) << 4) | ((wc1 & 0x003C) >> 2));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc1 & 0x0003) << 4) | ((wc2 & 0x03C0) >> 6));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | (wc2 & 0x003F));
+            } else if (wc1 < 0xE000) {
+                return codecvt_base::error;
+            } else {
+                if (to_end - to_nxt < 3)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(0xE0 | (wc1 >> 12));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc1 & 0x0FC0) >> 6));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | (wc1 & 0x003F));
             }
-            if ((c3 & 0xC0) != 0x80)
-                return codecvt_base::error;
-            uint16_t t = static_cast<uint16_t>(((c1 & 0x0F) << 12)
-                                             | ((c2 & 0x3F) << 6)
-                                             |  (c3 & 0x3F));
-            if (t > Maxcode)
-                return codecvt_base::error;
-            *to_nxt = t;
-            frm_nxt += 3;
         }
-        else if (c1 < 0xF5)
-        {
-            if (frm_end-frm_nxt < 4)
-                return codecvt_base::partial;
-            uint8_t c2 = frm_nxt[1];
-            uint8_t c3 = frm_nxt[2];
-            uint8_t c4 = frm_nxt[3];
-            switch (c1)
-            {
-            case 0xF0:
-                if (!(0x90 <= c2 && c2 <= 0xBF))
-                    return codecvt_base::error;
-                 break;
-            case 0xF4:
-                if ((c2 & 0xF0) != 0x80)
-                    return codecvt_base::error;
-                 break;
-            default:
-                if ((c2 & 0xC0) != 0x80)
-                    return codecvt_base::error;
-                 break;
-            }
-            if ((c3 & 0xC0) != 0x80 || (c4 & 0xC0) != 0x80)
-                return codecvt_base::error;
-            if (to_end-to_nxt < 2)
-                return codecvt_base::partial;
-            if ((((c1 & 7UL) << 18) +
-                ((c2 & 0x3FUL) << 12) +
-                ((c3 & 0x3FUL) << 6) + (c4 & 0x3F)) > Maxcode)
-                return codecvt_base::error;
-            *to_nxt = static_cast<uint16_t>(
-                    0xD800
-                  | (((((c1 & 0x07) << 2) | ((c2 & 0x30) >> 4)) - 1) << 6)
-                  | ((c2 & 0x0F) << 2)
-                  | ((c3 & 0x30) >> 4));
-            *++to_nxt = static_cast<uint16_t>(
-                    0xDC00
-                  | ((c3 & 0x0F) << 6)
-                  |  (c4 & 0x3F));
-            frm_nxt += 4;
-        }
-        else
-        {
-            return codecvt_base::error;
-        }
+        return codecvt_base::ok;
     }
-    return frm_nxt < frm_end ? codecvt_base::partial : codecvt_base::ok;
-}
 
-static
-codecvt_base::result
-utf8_to_utf16(const uint8_t* frm, const uint8_t* frm_end, const uint8_t*& frm_nxt,
-              uint32_t* to, uint32_t* to_end, uint32_t*& to_nxt,
-              unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
-{
-    frm_nxt = frm;
-    to_nxt = to;
-    if (mode & consume_header)
+    static codecvt_base::result utf16_to_utf8(const uint32_t* frm, const uint32_t* frm_end, const uint32_t*& frm_nxt,
+                                              uint8_t* to, uint8_t* to_end, uint8_t*& to_nxt,
+                                              unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
     {
-        if (frm_end-frm_nxt >= 3 && frm_nxt[0] == 0xEF && frm_nxt[1] == 0xBB &&
-                                                          frm_nxt[2] == 0xBF)
-            frm_nxt += 3;
-    }
-    for (; frm_nxt < frm_end && to_nxt < to_end; ++to_nxt)
-    {
-        uint8_t c1 = *frm_nxt;
-        if (c1 > Maxcode)
-            return codecvt_base::error;
-        if (c1 < 0x80)
-        {
-            *to_nxt = static_cast<uint32_t>(c1);
-            ++frm_nxt;
-        }
-        else if (c1 < 0xC2)
-        {
-            return codecvt_base::error;
-        }
-        else if (c1 < 0xE0)
-        {
-            if (frm_end-frm_nxt < 2)
+        frm_nxt = frm;
+        to_nxt = to;
+        if (mode & generate_header) {
+            if (to_end - to_nxt < 3)
                 return codecvt_base::partial;
-            uint8_t c2 = frm_nxt[1];
-            if ((c2 & 0xC0) != 0x80)
-                return codecvt_base::error;
-            uint16_t t = static_cast<uint16_t>(((c1 & 0x1F) << 6) | (c2 & 0x3F));
-            if (t > Maxcode)
-                return codecvt_base::error;
-            *to_nxt = static_cast<uint32_t>(t);
-            frm_nxt += 2;
+            *to_nxt++ = static_cast<uint8_t>(0xEF);
+            *to_nxt++ = static_cast<uint8_t>(0xBB);
+            *to_nxt++ = static_cast<uint8_t>(0xBF);
         }
-        else if (c1 < 0xF0)
-        {
-            if (frm_end-frm_nxt < 3)
-                return codecvt_base::partial;
-            uint8_t c2 = frm_nxt[1];
-            uint8_t c3 = frm_nxt[2];
-            switch (c1)
-            {
-            case 0xE0:
-                if ((c2 & 0xE0) != 0xA0)
+        for (; frm_nxt < frm_end; ++frm_nxt) {
+            uint16_t wc1 = static_cast<uint16_t>(*frm_nxt);
+            if (wc1 > Maxcode)
+                return codecvt_base::error;
+            if (wc1 < 0x0080) {
+                if (to_end - to_nxt < 1)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(wc1);
+            } else if (wc1 < 0x0800) {
+                if (to_end - to_nxt < 2)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(0xC0 | (wc1 >> 6));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | (wc1 & 0x03F));
+            } else if (wc1 < 0xD800) {
+                if (to_end - to_nxt < 3)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(0xE0 | (wc1 >> 12));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc1 & 0x0FC0) >> 6));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | (wc1 & 0x003F));
+            } else if (wc1 < 0xDC00) {
+                if (frm_end - frm_nxt < 2)
+                    return codecvt_base::partial;
+                uint16_t wc2 = static_cast<uint16_t>(frm_nxt[1]);
+                if ((wc2 & 0xFC00) != 0xDC00)
                     return codecvt_base::error;
-                 break;
-            case 0xED:
-                if ((c2 & 0xE0) != 0x80)
+                if (to_end - to_nxt < 4)
+                    return codecvt_base::partial;
+                if (((((wc1 & 0x03C0UL) >> 6) + 1) << 16) + ((wc1 & 0x003FUL) << 10) + (wc2 & 0x03FF) > Maxcode)
                     return codecvt_base::error;
-                 break;
-            default:
-                if ((c2 & 0xC0) != 0x80)
-                    return codecvt_base::error;
-                 break;
+                ++frm_nxt;
+                uint8_t z = ((wc1 & 0x03C0) >> 6) + 1;
+                *to_nxt++ = static_cast<uint8_t>(0xF0 | (z >> 2));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | ((z & 0x03) << 4) | ((wc1 & 0x003C) >> 2));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc1 & 0x0003) << 4) | ((wc2 & 0x03C0) >> 6));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | (wc2 & 0x003F));
+            } else if (wc1 < 0xE000) {
+                return codecvt_base::error;
+            } else {
+                if (to_end - to_nxt < 3)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(0xE0 | (wc1 >> 12));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc1 & 0x0FC0) >> 6));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | (wc1 & 0x003F));
             }
-            if ((c3 & 0xC0) != 0x80)
-                return codecvt_base::error;
-            uint16_t t = static_cast<uint16_t>(((c1 & 0x0F) << 12)
-                                             | ((c2 & 0x3F) << 6)
-                                             |  (c3 & 0x3F));
-            if (t > Maxcode)
-                return codecvt_base::error;
-            *to_nxt = static_cast<uint32_t>(t);
-            frm_nxt += 3;
         }
-        else if (c1 < 0xF5)
-        {
-            if (frm_end-frm_nxt < 4)
-                return codecvt_base::partial;
-            uint8_t c2 = frm_nxt[1];
-            uint8_t c3 = frm_nxt[2];
-            uint8_t c4 = frm_nxt[3];
-            switch (c1)
-            {
-            case 0xF0:
-                if (!(0x90 <= c2 && c2 <= 0xBF))
-                    return codecvt_base::error;
-                 break;
-            case 0xF4:
-                if ((c2 & 0xF0) != 0x80)
-                    return codecvt_base::error;
-                 break;
-            default:
-                if ((c2 & 0xC0) != 0x80)
-                    return codecvt_base::error;
-                 break;
-            }
-            if ((c3 & 0xC0) != 0x80 || (c4 & 0xC0) != 0x80)
-                return codecvt_base::error;
-            if (to_end-to_nxt < 2)
-                return codecvt_base::partial;
-            if ((((c1 & 7UL) << 18) +
-                ((c2 & 0x3FUL) << 12) +
-                ((c3 & 0x3FUL) << 6) + (c4 & 0x3F)) > Maxcode)
-                return codecvt_base::error;
-            *to_nxt = static_cast<uint32_t>(
-                    0xD800
-                  | (((((c1 & 0x07) << 2) | ((c2 & 0x30) >> 4)) - 1) << 6)
-                  | ((c2 & 0x0F) << 2)
-                  | ((c3 & 0x30) >> 4));
-            *++to_nxt = static_cast<uint32_t>(
-                    0xDC00
-                  | ((c3 & 0x0F) << 6)
-                  |  (c4 & 0x3F));
-            frm_nxt += 4;
-        }
-        else
-        {
-            return codecvt_base::error;
-        }
+        return codecvt_base::ok;
     }
-    return frm_nxt < frm_end ? codecvt_base::partial : codecvt_base::ok;
-}
 
-static
-int
-utf8_to_utf16_length(const uint8_t* frm, const uint8_t* frm_end,
-                     size_t mx, unsigned long Maxcode = 0x10FFFF,
-                     codecvt_mode mode = codecvt_mode(0))
-{
-    const uint8_t* frm_nxt = frm;
-    if (mode & consume_header)
+    static codecvt_base::result utf8_to_utf16(const uint8_t* frm, const uint8_t* frm_end, const uint8_t*& frm_nxt,
+                                              uint16_t* to, uint16_t* to_end, uint16_t*& to_nxt,
+                                              unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
     {
-        if (frm_end-frm_nxt >= 3 && frm_nxt[0] == 0xEF && frm_nxt[1] == 0xBB &&
-                                                          frm_nxt[2] == 0xBF)
-            frm_nxt += 3;
-    }
-    for (size_t nchar16_t = 0; frm_nxt < frm_end && nchar16_t < mx; ++nchar16_t)
-    {
-        uint8_t c1 = *frm_nxt;
-        if (c1 > Maxcode)
-            break;
-        if (c1 < 0x80)
-        {
-            ++frm_nxt;
+        frm_nxt = frm;
+        to_nxt = to;
+        if (mode & consume_header) {
+            if (frm_end - frm_nxt >= 3 && frm_nxt[0] == 0xEF && frm_nxt[1] == 0xBB && frm_nxt[2] == 0xBF)
+                frm_nxt += 3;
         }
-        else if (c1 < 0xC2)
-        {
-            break;
-        }
-        else if (c1 < 0xE0)
-        {
-            if ((frm_end-frm_nxt < 2) || (frm_nxt[1] & 0xC0) != 0x80)
-                break;
-            uint16_t t = static_cast<uint16_t>(((c1 & 0x1F) << 6) | (frm_nxt[1] & 0x3F));
-            if (t > Maxcode)
-                break;
-            frm_nxt += 2;
-        }
-        else if (c1 < 0xF0)
-        {
-            if (frm_end-frm_nxt < 3)
-                break;
-            uint8_t c2 = frm_nxt[1];
-            uint8_t c3 = frm_nxt[2];
-            switch (c1)
-            {
-            case 0xE0:
-                if ((c2 & 0xE0) != 0xA0)
-                    return static_cast<int>(frm_nxt - frm);
-                break;
-            case 0xED:
-                if ((c2 & 0xE0) != 0x80)
-                    return static_cast<int>(frm_nxt - frm);
-                 break;
-            default:
-                if ((c2 & 0xC0) != 0x80)
-                    return static_cast<int>(frm_nxt - frm);
-                 break;
-            }
-            if ((c3 & 0xC0) != 0x80)
-                break;
-            if ((((c1 & 0x0Fu) << 12) | ((c2 & 0x3Fu) << 6) | (c3 & 0x3Fu)) > Maxcode)
-                break;
-            frm_nxt += 3;
-        }
-        else if (c1 < 0xF5)
-        {
-            if (frm_end-frm_nxt < 4 || mx-nchar16_t < 2)
-                break;
-            uint8_t c2 = frm_nxt[1];
-            uint8_t c3 = frm_nxt[2];
-            uint8_t c4 = frm_nxt[3];
-            switch (c1)
-            {
-            case 0xF0:
-                if (!(0x90 <= c2 && c2 <= 0xBF))
-                    return static_cast<int>(frm_nxt - frm);
-                 break;
-            case 0xF4:
-                if ((c2 & 0xF0) != 0x80)
-                    return static_cast<int>(frm_nxt - frm);
-                 break;
-            default:
-                if ((c2 & 0xC0) != 0x80)
-                    return static_cast<int>(frm_nxt - frm);
-                 break;
-            }
-            if ((c3 & 0xC0) != 0x80 || (c4 & 0xC0) != 0x80)
-                break;
-            if ((((c1 & 7UL) << 18) +
-                ((c2 & 0x3FUL) << 12) +
-                ((c3 & 0x3FUL) << 6) + (c4 & 0x3F)) > Maxcode)
-                break;
-            ++nchar16_t;
-            frm_nxt += 4;
-        }
-        else
-        {
-            break;
-        }
-    }
-    return static_cast<int>(frm_nxt - frm);
-}
-
-static
-codecvt_base::result
-ucs4_to_utf8(const uint32_t* frm, const uint32_t* frm_end, const uint32_t*& frm_nxt,
-             uint8_t* to, uint8_t* to_end, uint8_t*& to_nxt,
-             unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
-{
-    frm_nxt = frm;
-    to_nxt = to;
-    if (mode & generate_header)
-    {
-        if (to_end-to_nxt < 3)
-            return codecvt_base::partial;
-        *to_nxt++ = static_cast<uint8_t>(0xEF);
-        *to_nxt++ = static_cast<uint8_t>(0xBB);
-        *to_nxt++ = static_cast<uint8_t>(0xBF);
-    }
-    for (; frm_nxt < frm_end; ++frm_nxt)
-    {
-        uint32_t wc = *frm_nxt;
-        if ((wc & 0xFFFFF800) == 0x00D800 || wc > Maxcode)
-            return codecvt_base::error;
-        if (wc < 0x000080)
-        {
-            if (to_end-to_nxt < 1)
-                return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(wc);
-        }
-        else if (wc < 0x000800)
-        {
-            if (to_end-to_nxt < 2)
-                return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(0xC0 | (wc >> 6));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | (wc & 0x03F));
-        }
-        else if (wc < 0x010000)
-        {
-            if (to_end-to_nxt < 3)
-                return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(0xE0 |  (wc >> 12));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc & 0x0FC0) >> 6));
-            *to_nxt++ = static_cast<uint8_t>(0x80 |  (wc & 0x003F));
-        }
-        else // if (wc < 0x110000)
-        {
-            if (to_end-to_nxt < 4)
-                return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(0xF0 |  (wc >> 18));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc & 0x03F000) >> 12));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc & 0x000FC0) >> 6));
-            *to_nxt++ = static_cast<uint8_t>(0x80 |  (wc & 0x00003F));
-        }
-    }
-    return codecvt_base::ok;
-}
-
-static
-codecvt_base::result
-utf8_to_ucs4(const uint8_t* frm, const uint8_t* frm_end, const uint8_t*& frm_nxt,
-             uint32_t* to, uint32_t* to_end, uint32_t*& to_nxt,
-             unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
-{
-    frm_nxt = frm;
-    to_nxt = to;
-    if (mode & consume_header)
-    {
-        if (frm_end-frm_nxt >= 3 && frm_nxt[0] == 0xEF && frm_nxt[1] == 0xBB &&
-                                                          frm_nxt[2] == 0xBF)
-            frm_nxt += 3;
-    }
-    for (; frm_nxt < frm_end && to_nxt < to_end; ++to_nxt)
-    {
-        uint8_t c1 = static_cast<uint8_t>(*frm_nxt);
-        if (c1 < 0x80)
-        {
+        for (; frm_nxt < frm_end && to_nxt < to_end; ++to_nxt) {
+            uint8_t c1 = *frm_nxt;
             if (c1 > Maxcode)
                 return codecvt_base::error;
-            *to_nxt = static_cast<uint32_t>(c1);
-            ++frm_nxt;
-        }
-        else if (c1 < 0xC2)
-        {
-            return codecvt_base::error;
-        }
-        else if (c1 < 0xE0)
-        {
-            if (frm_end-frm_nxt < 2)
-                return codecvt_base::partial;
-            uint8_t c2 = frm_nxt[1];
-            if ((c2 & 0xC0) != 0x80)
+            if (c1 < 0x80) {
+                *to_nxt = static_cast<uint16_t>(c1);
+                ++frm_nxt;
+            } else if (c1 < 0xC2) {
                 return codecvt_base::error;
-            uint32_t t = static_cast<uint32_t>(((c1 & 0x1F) << 6)
-                                              | (c2 & 0x3F));
-            if (t > Maxcode)
-                return codecvt_base::error;
-            *to_nxt = t;
-            frm_nxt += 2;
-        }
-        else if (c1 < 0xF0)
-        {
-            if (frm_end-frm_nxt < 3)
-                return codecvt_base::partial;
-            uint8_t c2 = frm_nxt[1];
-            uint8_t c3 = frm_nxt[2];
-            switch (c1)
-            {
-            case 0xE0:
-                if ((c2 & 0xE0) != 0xA0)
-                    return codecvt_base::error;
-                 break;
-            case 0xED:
-                if ((c2 & 0xE0) != 0x80)
-                    return codecvt_base::error;
-                 break;
-            default:
+            } else if (c1 < 0xE0) {
+                if (frm_end - frm_nxt < 2)
+                    return codecvt_base::partial;
+                uint8_t c2 = frm_nxt[1];
                 if ((c2 & 0xC0) != 0x80)
                     return codecvt_base::error;
-                 break;
+                uint16_t t = static_cast<uint16_t>(((c1 & 0x1F) << 6) | (c2 & 0x3F));
+                if (t > Maxcode)
+                    return codecvt_base::error;
+                *to_nxt = t;
+                frm_nxt += 2;
+            } else if (c1 < 0xF0) {
+                if (frm_end - frm_nxt < 3)
+                    return codecvt_base::partial;
+                uint8_t c2 = frm_nxt[1];
+                uint8_t c3 = frm_nxt[2];
+                switch (c1) {
+                case 0xE0:
+                    if ((c2 & 0xE0) != 0xA0)
+                        return codecvt_base::error;
+                    break;
+                case 0xED:
+                    if ((c2 & 0xE0) != 0x80)
+                        return codecvt_base::error;
+                    break;
+                default:
+                    if ((c2 & 0xC0) != 0x80)
+                        return codecvt_base::error;
+                    break;
+                }
+                if ((c3 & 0xC0) != 0x80)
+                    return codecvt_base::error;
+                uint16_t t = static_cast<uint16_t>(((c1 & 0x0F) << 12) | ((c2 & 0x3F) << 6) | (c3 & 0x3F));
+                if (t > Maxcode)
+                    return codecvt_base::error;
+                *to_nxt = t;
+                frm_nxt += 3;
+            } else if (c1 < 0xF5) {
+                if (frm_end - frm_nxt < 4)
+                    return codecvt_base::partial;
+                uint8_t c2 = frm_nxt[1];
+                uint8_t c3 = frm_nxt[2];
+                uint8_t c4 = frm_nxt[3];
+                switch (c1) {
+                case 0xF0:
+                    if (!(0x90 <= c2 && c2 <= 0xBF))
+                        return codecvt_base::error;
+                    break;
+                case 0xF4:
+                    if ((c2 & 0xF0) != 0x80)
+                        return codecvt_base::error;
+                    break;
+                default:
+                    if ((c2 & 0xC0) != 0x80)
+                        return codecvt_base::error;
+                    break;
+                }
+                if ((c3 & 0xC0) != 0x80 || (c4 & 0xC0) != 0x80)
+                    return codecvt_base::error;
+                if (to_end - to_nxt < 2)
+                    return codecvt_base::partial;
+                if ((((c1 & 7UL) << 18) + ((c2 & 0x3FUL) << 12) + ((c3 & 0x3FUL) << 6) + (c4 & 0x3F)) > Maxcode)
+                    return codecvt_base::error;
+                *to_nxt = static_cast<uint16_t>(0xD800 | (((((c1 & 0x07) << 2) | ((c2 & 0x30) >> 4)) - 1) << 6)
+                                                | ((c2 & 0x0F) << 2) | ((c3 & 0x30) >> 4));
+                *++to_nxt = static_cast<uint16_t>(0xDC00 | ((c3 & 0x0F) << 6) | (c4 & 0x3F));
+                frm_nxt += 4;
+            } else {
+                return codecvt_base::error;
             }
-            if ((c3 & 0xC0) != 0x80)
-                return codecvt_base::error;
-            uint32_t t = static_cast<uint32_t>(((c1 & 0x0F) << 12)
-                                             | ((c2 & 0x3F) << 6)
-                                             |  (c3 & 0x3F));
-            if (t > Maxcode)
-                return codecvt_base::error;
-            *to_nxt = t;
-            frm_nxt += 3;
         }
-        else if (c1 < 0xF5)
-        {
-            if (frm_end-frm_nxt < 4)
-                return codecvt_base::partial;
-            uint8_t c2 = frm_nxt[1];
-            uint8_t c3 = frm_nxt[2];
-            uint8_t c4 = frm_nxt[3];
-            switch (c1)
-            {
-            case 0xF0:
-                if (!(0x90 <= c2 && c2 <= 0xBF))
-                    return codecvt_base::error;
-                 break;
-            case 0xF4:
-                if ((c2 & 0xF0) != 0x80)
-                    return codecvt_base::error;
-                 break;
-            default:
-                if ((c2 & 0xC0) != 0x80)
-                    return codecvt_base::error;
-                 break;
-            }
-            if ((c3 & 0xC0) != 0x80 || (c4 & 0xC0) != 0x80)
-                return codecvt_base::error;
-            uint32_t t = static_cast<uint32_t>(((c1 & 0x07) << 18)
-                                             | ((c2 & 0x3F) << 12)
-                                             | ((c3 & 0x3F) << 6)
-                                             |  (c4 & 0x3F));
-            if (t > Maxcode)
-                return codecvt_base::error;
-            *to_nxt = t;
-            frm_nxt += 4;
-        }
-        else
-        {
-            return codecvt_base::error;
-        }
+        return frm_nxt < frm_end ? codecvt_base::partial : codecvt_base::ok;
     }
-    return frm_nxt < frm_end ? codecvt_base::partial : codecvt_base::ok;
-}
 
-static
-int
-utf8_to_ucs4_length(const uint8_t* frm, const uint8_t* frm_end,
-                    size_t mx, unsigned long Maxcode = 0x10FFFF,
-                    codecvt_mode mode = codecvt_mode(0))
-{
-    const uint8_t* frm_nxt = frm;
-    if (mode & consume_header)
+    static codecvt_base::result utf8_to_utf16(const uint8_t* frm, const uint8_t* frm_end, const uint8_t*& frm_nxt,
+                                              uint32_t* to, uint32_t* to_end, uint32_t*& to_nxt,
+                                              unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
     {
-        if (frm_end-frm_nxt >= 3 && frm_nxt[0] == 0xEF && frm_nxt[1] == 0xBB &&
-                                                          frm_nxt[2] == 0xBF)
-            frm_nxt += 3;
+        frm_nxt = frm;
+        to_nxt = to;
+        if (mode & consume_header) {
+            if (frm_end - frm_nxt >= 3 && frm_nxt[0] == 0xEF && frm_nxt[1] == 0xBB && frm_nxt[2] == 0xBF)
+                frm_nxt += 3;
+        }
+        for (; frm_nxt < frm_end && to_nxt < to_end; ++to_nxt) {
+            uint8_t c1 = *frm_nxt;
+            if (c1 > Maxcode)
+                return codecvt_base::error;
+            if (c1 < 0x80) {
+                *to_nxt = static_cast<uint32_t>(c1);
+                ++frm_nxt;
+            } else if (c1 < 0xC2) {
+                return codecvt_base::error;
+            } else if (c1 < 0xE0) {
+                if (frm_end - frm_nxt < 2)
+                    return codecvt_base::partial;
+                uint8_t c2 = frm_nxt[1];
+                if ((c2 & 0xC0) != 0x80)
+                    return codecvt_base::error;
+                uint16_t t = static_cast<uint16_t>(((c1 & 0x1F) << 6) | (c2 & 0x3F));
+                if (t > Maxcode)
+                    return codecvt_base::error;
+                *to_nxt = static_cast<uint32_t>(t);
+                frm_nxt += 2;
+            } else if (c1 < 0xF0) {
+                if (frm_end - frm_nxt < 3)
+                    return codecvt_base::partial;
+                uint8_t c2 = frm_nxt[1];
+                uint8_t c3 = frm_nxt[2];
+                switch (c1) {
+                case 0xE0:
+                    if ((c2 & 0xE0) != 0xA0)
+                        return codecvt_base::error;
+                    break;
+                case 0xED:
+                    if ((c2 & 0xE0) != 0x80)
+                        return codecvt_base::error;
+                    break;
+                default:
+                    if ((c2 & 0xC0) != 0x80)
+                        return codecvt_base::error;
+                    break;
+                }
+                if ((c3 & 0xC0) != 0x80)
+                    return codecvt_base::error;
+                uint16_t t = static_cast<uint16_t>(((c1 & 0x0F) << 12) | ((c2 & 0x3F) << 6) | (c3 & 0x3F));
+                if (t > Maxcode)
+                    return codecvt_base::error;
+                *to_nxt = static_cast<uint32_t>(t);
+                frm_nxt += 3;
+            } else if (c1 < 0xF5) {
+                if (frm_end - frm_nxt < 4)
+                    return codecvt_base::partial;
+                uint8_t c2 = frm_nxt[1];
+                uint8_t c3 = frm_nxt[2];
+                uint8_t c4 = frm_nxt[3];
+                switch (c1) {
+                case 0xF0:
+                    if (!(0x90 <= c2 && c2 <= 0xBF))
+                        return codecvt_base::error;
+                    break;
+                case 0xF4:
+                    if ((c2 & 0xF0) != 0x80)
+                        return codecvt_base::error;
+                    break;
+                default:
+                    if ((c2 & 0xC0) != 0x80)
+                        return codecvt_base::error;
+                    break;
+                }
+                if ((c3 & 0xC0) != 0x80 || (c4 & 0xC0) != 0x80)
+                    return codecvt_base::error;
+                if (to_end - to_nxt < 2)
+                    return codecvt_base::partial;
+                if ((((c1 & 7UL) << 18) + ((c2 & 0x3FUL) << 12) + ((c3 & 0x3FUL) << 6) + (c4 & 0x3F)) > Maxcode)
+                    return codecvt_base::error;
+                *to_nxt = static_cast<uint32_t>(0xD800 | (((((c1 & 0x07) << 2) | ((c2 & 0x30) >> 4)) - 1) << 6)
+                                                | ((c2 & 0x0F) << 2) | ((c3 & 0x30) >> 4));
+                *++to_nxt = static_cast<uint32_t>(0xDC00 | ((c3 & 0x0F) << 6) | (c4 & 0x3F));
+                frm_nxt += 4;
+            } else {
+                return codecvt_base::error;
+            }
+        }
+        return frm_nxt < frm_end ? codecvt_base::partial : codecvt_base::ok;
     }
-    for (size_t nchar32_t = 0; frm_nxt < frm_end && nchar32_t < mx; ++nchar32_t)
+
+    static int utf8_to_utf16_length(const uint8_t* frm, const uint8_t* frm_end, size_t mx,
+                                    unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
     {
-        uint8_t c1 = static_cast<uint8_t>(*frm_nxt);
-        if (c1 < 0x80)
-        {
+        const uint8_t* frm_nxt = frm;
+        if (mode & consume_header) {
+            if (frm_end - frm_nxt >= 3 && frm_nxt[0] == 0xEF && frm_nxt[1] == 0xBB && frm_nxt[2] == 0xBF)
+                frm_nxt += 3;
+        }
+        for (size_t nchar16_t = 0; frm_nxt < frm_end && nchar16_t < mx; ++nchar16_t) {
+            uint8_t c1 = *frm_nxt;
             if (c1 > Maxcode)
                 break;
-            ++frm_nxt;
-        }
-        else if (c1 < 0xC2)
-        {
-            break;
-        }
-        else if (c1 < 0xE0)
-        {
-            if ((frm_end-frm_nxt < 2) || ((frm_nxt[1] & 0xC0) != 0x80))
+            if (c1 < 0x80) {
+                ++frm_nxt;
+            } else if (c1 < 0xC2) {
                 break;
-            if ((((c1 & 0x1Fu) << 6) | (frm_nxt[1] & 0x3Fu)) > Maxcode)
+            } else if (c1 < 0xE0) {
+                if ((frm_end - frm_nxt < 2) || (frm_nxt[1] & 0xC0) != 0x80)
+                    break;
+                uint16_t t = static_cast<uint16_t>(((c1 & 0x1F) << 6) | (frm_nxt[1] & 0x3F));
+                if (t > Maxcode)
+                    break;
+                frm_nxt += 2;
+            } else if (c1 < 0xF0) {
+                if (frm_end - frm_nxt < 3)
+                    break;
+                uint8_t c2 = frm_nxt[1];
+                uint8_t c3 = frm_nxt[2];
+                switch (c1) {
+                case 0xE0:
+                    if ((c2 & 0xE0) != 0xA0)
+                        return static_cast<int>(frm_nxt - frm);
+                    break;
+                case 0xED:
+                    if ((c2 & 0xE0) != 0x80)
+                        return static_cast<int>(frm_nxt - frm);
+                    break;
+                default:
+                    if ((c2 & 0xC0) != 0x80)
+                        return static_cast<int>(frm_nxt - frm);
+                    break;
+                }
+                if ((c3 & 0xC0) != 0x80)
+                    break;
+                if ((((c1 & 0x0Fu) << 12) | ((c2 & 0x3Fu) << 6) | (c3 & 0x3Fu)) > Maxcode)
+                    break;
+                frm_nxt += 3;
+            } else if (c1 < 0xF5) {
+                if (frm_end - frm_nxt < 4 || mx - nchar16_t < 2)
+                    break;
+                uint8_t c2 = frm_nxt[1];
+                uint8_t c3 = frm_nxt[2];
+                uint8_t c4 = frm_nxt[3];
+                switch (c1) {
+                case 0xF0:
+                    if (!(0x90 <= c2 && c2 <= 0xBF))
+                        return static_cast<int>(frm_nxt - frm);
+                    break;
+                case 0xF4:
+                    if ((c2 & 0xF0) != 0x80)
+                        return static_cast<int>(frm_nxt - frm);
+                    break;
+                default:
+                    if ((c2 & 0xC0) != 0x80)
+                        return static_cast<int>(frm_nxt - frm);
+                    break;
+                }
+                if ((c3 & 0xC0) != 0x80 || (c4 & 0xC0) != 0x80)
+                    break;
+                if ((((c1 & 7UL) << 18) + ((c2 & 0x3FUL) << 12) + ((c3 & 0x3FUL) << 6) + (c4 & 0x3F)) > Maxcode)
+                    break;
+                ++nchar16_t;
+                frm_nxt += 4;
+            } else {
                 break;
-            frm_nxt += 2;
-        }
-        else if (c1 < 0xF0)
-        {
-            if (frm_end-frm_nxt < 3)
-                break;
-            uint8_t c2 = frm_nxt[1];
-            uint8_t c3 = frm_nxt[2];
-            switch (c1)
-            {
-            case 0xE0:
-                if ((c2 & 0xE0) != 0xA0)
-                    return static_cast<int>(frm_nxt - frm);
-                break;
-            case 0xED:
-                if ((c2 & 0xE0) != 0x80)
-                    return static_cast<int>(frm_nxt - frm);
-                 break;
-            default:
-                if ((c2 & 0xC0) != 0x80)
-                    return static_cast<int>(frm_nxt - frm);
-                 break;
             }
-            if ((c3 & 0xC0) != 0x80)
-                break;
-            if ((((c1 & 0x0Fu) << 12) | ((c2 & 0x3Fu) << 6) | (c3 & 0x3Fu)) > Maxcode)
-                break;
-            frm_nxt += 3;
         }
-        else if (c1 < 0xF5)
-        {
-            if (frm_end-frm_nxt < 4)
-                break;
-            uint8_t c2 = frm_nxt[1];
-            uint8_t c3 = frm_nxt[2];
-            uint8_t c4 = frm_nxt[3];
-            switch (c1)
-            {
-            case 0xF0:
-                if (!(0x90 <= c2 && c2 <= 0xBF))
-                    return static_cast<int>(frm_nxt - frm);
-                 break;
-            case 0xF4:
-                if ((c2 & 0xF0) != 0x80)
-                    return static_cast<int>(frm_nxt - frm);
-                 break;
-            default:
-                if ((c2 & 0xC0) != 0x80)
-                    return static_cast<int>(frm_nxt - frm);
-                 break;
-            }
-            if ((c3 & 0xC0) != 0x80 || (c4 & 0xC0) != 0x80)
-                break;
-            if ((((c1 & 0x07u) << 18) | ((c2 & 0x3Fu) << 12) |
-                 ((c3 & 0x3Fu) << 6)  |  (c4 & 0x3Fu)) > Maxcode)
-                break;
-            frm_nxt += 4;
-        }
-        else
-        {
-            break;
-        }
+        return static_cast<int>(frm_nxt - frm);
     }
-    return static_cast<int>(frm_nxt - frm);
-}
 
-static
-codecvt_base::result
-ucs2_to_utf8(const uint16_t* frm, const uint16_t* frm_end, const uint16_t*& frm_nxt,
-             uint8_t* to, uint8_t* to_end, uint8_t*& to_nxt,
-             unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
-{
-    frm_nxt = frm;
-    to_nxt = to;
-    if (mode & generate_header)
+    static codecvt_base::result ucs4_to_utf8(const uint32_t* frm, const uint32_t* frm_end, const uint32_t*& frm_nxt,
+                                             uint8_t* to, uint8_t* to_end, uint8_t*& to_nxt,
+                                             unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
     {
-        if (to_end-to_nxt < 3)
-            return codecvt_base::partial;
-        *to_nxt++ = static_cast<uint8_t>(0xEF);
-        *to_nxt++ = static_cast<uint8_t>(0xBB);
-        *to_nxt++ = static_cast<uint8_t>(0xBF);
+        frm_nxt = frm;
+        to_nxt = to;
+        if (mode & generate_header) {
+            if (to_end - to_nxt < 3)
+                return codecvt_base::partial;
+            *to_nxt++ = static_cast<uint8_t>(0xEF);
+            *to_nxt++ = static_cast<uint8_t>(0xBB);
+            *to_nxt++ = static_cast<uint8_t>(0xBF);
+        }
+        for (; frm_nxt < frm_end; ++frm_nxt) {
+            uint32_t wc = *frm_nxt;
+            if ((wc & 0xFFFFF800) == 0x00D800 || wc > Maxcode)
+                return codecvt_base::error;
+            if (wc < 0x000080) {
+                if (to_end - to_nxt < 1)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(wc);
+            } else if (wc < 0x000800) {
+                if (to_end - to_nxt < 2)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(0xC0 | (wc >> 6));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | (wc & 0x03F));
+            } else if (wc < 0x010000) {
+                if (to_end - to_nxt < 3)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(0xE0 | (wc >> 12));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc & 0x0FC0) >> 6));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | (wc & 0x003F));
+            } else // if (wc < 0x110000)
+            {
+                if (to_end - to_nxt < 4)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(0xF0 | (wc >> 18));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc & 0x03F000) >> 12));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc & 0x000FC0) >> 6));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | (wc & 0x00003F));
+            }
+        }
+        return codecvt_base::ok;
     }
-    for (; frm_nxt < frm_end; ++frm_nxt)
+
+    static codecvt_base::result utf8_to_ucs4(const uint8_t* frm, const uint8_t* frm_end, const uint8_t*& frm_nxt,
+                                             uint32_t* to, uint32_t* to_end, uint32_t*& to_nxt,
+                                             unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
     {
-        uint16_t wc = *frm_nxt;
-        if ((wc & 0xF800) == 0xD800 || wc > Maxcode)
-            return codecvt_base::error;
-        if (wc < 0x0080)
-        {
-            if (to_end-to_nxt < 1)
-                return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(wc);
+        frm_nxt = frm;
+        to_nxt = to;
+        if (mode & consume_header) {
+            if (frm_end - frm_nxt >= 3 && frm_nxt[0] == 0xEF && frm_nxt[1] == 0xBB && frm_nxt[2] == 0xBF)
+                frm_nxt += 3;
         }
-        else if (wc < 0x0800)
-        {
-            if (to_end-to_nxt < 2)
-                return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(0xC0 | (wc >> 6));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | (wc & 0x03F));
+        for (; frm_nxt < frm_end && to_nxt < to_end; ++to_nxt) {
+            uint8_t c1 = static_cast<uint8_t>(*frm_nxt);
+            if (c1 < 0x80) {
+                if (c1 > Maxcode)
+                    return codecvt_base::error;
+                *to_nxt = static_cast<uint32_t>(c1);
+                ++frm_nxt;
+            } else if (c1 < 0xC2) {
+                return codecvt_base::error;
+            } else if (c1 < 0xE0) {
+                if (frm_end - frm_nxt < 2)
+                    return codecvt_base::partial;
+                uint8_t c2 = frm_nxt[1];
+                if ((c2 & 0xC0) != 0x80)
+                    return codecvt_base::error;
+                uint32_t t = static_cast<uint32_t>(((c1 & 0x1F) << 6) | (c2 & 0x3F));
+                if (t > Maxcode)
+                    return codecvt_base::error;
+                *to_nxt = t;
+                frm_nxt += 2;
+            } else if (c1 < 0xF0) {
+                if (frm_end - frm_nxt < 3)
+                    return codecvt_base::partial;
+                uint8_t c2 = frm_nxt[1];
+                uint8_t c3 = frm_nxt[2];
+                switch (c1) {
+                case 0xE0:
+                    if ((c2 & 0xE0) != 0xA0)
+                        return codecvt_base::error;
+                    break;
+                case 0xED:
+                    if ((c2 & 0xE0) != 0x80)
+                        return codecvt_base::error;
+                    break;
+                default:
+                    if ((c2 & 0xC0) != 0x80)
+                        return codecvt_base::error;
+                    break;
+                }
+                if ((c3 & 0xC0) != 0x80)
+                    return codecvt_base::error;
+                uint32_t t = static_cast<uint32_t>(((c1 & 0x0F) << 12) | ((c2 & 0x3F) << 6) | (c3 & 0x3F));
+                if (t > Maxcode)
+                    return codecvt_base::error;
+                *to_nxt = t;
+                frm_nxt += 3;
+            } else if (c1 < 0xF5) {
+                if (frm_end - frm_nxt < 4)
+                    return codecvt_base::partial;
+                uint8_t c2 = frm_nxt[1];
+                uint8_t c3 = frm_nxt[2];
+                uint8_t c4 = frm_nxt[3];
+                switch (c1) {
+                case 0xF0:
+                    if (!(0x90 <= c2 && c2 <= 0xBF))
+                        return codecvt_base::error;
+                    break;
+                case 0xF4:
+                    if ((c2 & 0xF0) != 0x80)
+                        return codecvt_base::error;
+                    break;
+                default:
+                    if ((c2 & 0xC0) != 0x80)
+                        return codecvt_base::error;
+                    break;
+                }
+                if ((c3 & 0xC0) != 0x80 || (c4 & 0xC0) != 0x80)
+                    return codecvt_base::error;
+                uint32_t t =
+                    static_cast<uint32_t>(((c1 & 0x07) << 18) | ((c2 & 0x3F) << 12) | ((c3 & 0x3F) << 6) | (c4 & 0x3F));
+                if (t > Maxcode)
+                    return codecvt_base::error;
+                *to_nxt = t;
+                frm_nxt += 4;
+            } else {
+                return codecvt_base::error;
+            }
         }
-        else // if (wc <= 0xFFFF)
-        {
-            if (to_end-to_nxt < 3)
-                return codecvt_base::partial;
-            *to_nxt++ = static_cast<uint8_t>(0xE0 |  (wc >> 12));
-            *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc & 0x0FC0) >> 6));
-            *to_nxt++ = static_cast<uint8_t>(0x80 |  (wc & 0x003F));
-        }
+        return frm_nxt < frm_end ? codecvt_base::partial : codecvt_base::ok;
     }
-    return codecvt_base::ok;
-}
+
+    static int utf8_to_ucs4_length(const uint8_t* frm, const uint8_t* frm_end, size_t mx,
+                                   unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
+    {
+        const uint8_t* frm_nxt = frm;
+        if (mode & consume_header) {
+            if (frm_end - frm_nxt >= 3 && frm_nxt[0] == 0xEF && frm_nxt[1] == 0xBB && frm_nxt[2] == 0xBF)
+                frm_nxt += 3;
+        }
+        for (size_t nchar32_t = 0; frm_nxt < frm_end && nchar32_t < mx; ++nchar32_t) {
+            uint8_t c1 = static_cast<uint8_t>(*frm_nxt);
+            if (c1 < 0x80) {
+                if (c1 > Maxcode)
+                    break;
+                ++frm_nxt;
+            } else if (c1 < 0xC2) {
+                break;
+            } else if (c1 < 0xE0) {
+                if ((frm_end - frm_nxt < 2) || ((frm_nxt[1] & 0xC0) != 0x80))
+                    break;
+                if ((((c1 & 0x1Fu) << 6) | (frm_nxt[1] & 0x3Fu)) > Maxcode)
+                    break;
+                frm_nxt += 2;
+            } else if (c1 < 0xF0) {
+                if (frm_end - frm_nxt < 3)
+                    break;
+                uint8_t c2 = frm_nxt[1];
+                uint8_t c3 = frm_nxt[2];
+                switch (c1) {
+                case 0xE0:
+                    if ((c2 & 0xE0) != 0xA0)
+                        return static_cast<int>(frm_nxt - frm);
+                    break;
+                case 0xED:
+                    if ((c2 & 0xE0) != 0x80)
+                        return static_cast<int>(frm_nxt - frm);
+                    break;
+                default:
+                    if ((c2 & 0xC0) != 0x80)
+                        return static_cast<int>(frm_nxt - frm);
+                    break;
+                }
+                if ((c3 & 0xC0) != 0x80)
+                    break;
+                if ((((c1 & 0x0Fu) << 12) | ((c2 & 0x3Fu) << 6) | (c3 & 0x3Fu)) > Maxcode)
+                    break;
+                frm_nxt += 3;
+            } else if (c1 < 0xF5) {
+                if (frm_end - frm_nxt < 4)
+                    break;
+                uint8_t c2 = frm_nxt[1];
+                uint8_t c3 = frm_nxt[2];
+                uint8_t c4 = frm_nxt[3];
+                switch (c1) {
+                case 0xF0:
+                    if (!(0x90 <= c2 && c2 <= 0xBF))
+                        return static_cast<int>(frm_nxt - frm);
+                    break;
+                case 0xF4:
+                    if ((c2 & 0xF0) != 0x80)
+                        return static_cast<int>(frm_nxt - frm);
+                    break;
+                default:
+                    if ((c2 & 0xC0) != 0x80)
+                        return static_cast<int>(frm_nxt - frm);
+                    break;
+                }
+                if ((c3 & 0xC0) != 0x80 || (c4 & 0xC0) != 0x80)
+                    break;
+                if ((((c1 & 0x07u) << 18) | ((c2 & 0x3Fu) << 12) | ((c3 & 0x3Fu) << 6) | (c4 & 0x3Fu)) > Maxcode)
+                    break;
+                frm_nxt += 4;
+            } else {
+                break;
+            }
+        }
+        return static_cast<int>(frm_nxt - frm);
+    }
+
+    static codecvt_base::result ucs2_to_utf8(const uint16_t* frm, const uint16_t* frm_end, const uint16_t*& frm_nxt,
+                                             uint8_t* to, uint8_t* to_end, uint8_t*& to_nxt,
+                                             unsigned long Maxcode = 0x10FFFF, codecvt_mode mode = codecvt_mode(0))
+    {
+        frm_nxt = frm;
+        to_nxt = to;
+        if (mode & generate_header) {
+            if (to_end - to_nxt < 3)
+                return codecvt_base::partial;
+            *to_nxt++ = static_cast<uint8_t>(0xEF);
+            *to_nxt++ = static_cast<uint8_t>(0xBB);
+            *to_nxt++ = static_cast<uint8_t>(0xBF);
+        }
+        for (; frm_nxt < frm_end; ++frm_nxt) {
+            uint16_t wc = *frm_nxt;
+            if ((wc & 0xF800) == 0xD800 || wc > Maxcode)
+                return codecvt_base::error;
+            if (wc < 0x0080) {
+                if (to_end - to_nxt < 1)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(wc);
+            } else if (wc < 0x0800) {
+                if (to_end - to_nxt < 2)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(0xC0 | (wc >> 6));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | (wc & 0x03F));
+            } else // if (wc <= 0xFFFF)
+            {
+                if (to_end - to_nxt < 3)
+                    return codecvt_base::partial;
+                *to_nxt++ = static_cast<uint8_t>(0xE0 | (wc >> 12));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | ((wc & 0x0FC0) >> 6));
+                *to_nxt++ = static_cast<uint8_t>(0x80 | (wc & 0x003F));
+            }
+        }
+        return codecvt_base::ok;
+    }
 
 #if 0
 static
@@ -3121,157 +2946,141 @@ utf16le_to_ucs2_length(const uint8_t* frm, const uint8_t* frm_end,
 locale::id codecvt<char16_t, char, mbstate_t>::id;
 #endif
 
-codecvt<char16_t, char, mbstate_t>::~codecvt()
-{
-}
+    codecvt<char16_t, char, mbstate_t>::~codecvt()
+    {}
 
-codecvt<char16_t, char, mbstate_t>::result
-codecvt<char16_t, char, mbstate_t>::do_out(state_type&,
-    const intern_type* frm, const intern_type* frm_end, const intern_type*& frm_nxt,
-    extern_type* to, extern_type* to_end, extern_type*& to_nxt) const
-{
-    const uint16_t* _frm = reinterpret_cast<const uint16_t*>(frm);
-    const uint16_t* _frm_end = reinterpret_cast<const uint16_t*>(frm_end);
-    const uint16_t* _frm_nxt = _frm;
-    uint8_t* _to = reinterpret_cast<uint8_t*>(to);
-    uint8_t* _to_end = reinterpret_cast<uint8_t*>(to_end);
-    uint8_t* _to_nxt = _to;
-    result r = utf16_to_utf8(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt);
-    frm_nxt = frm + (_frm_nxt - _frm);
-    to_nxt = to + (_to_nxt - _to);
-    return r;
-}
+    codecvt<char16_t, char, mbstate_t>::result codecvt<char16_t, char, mbstate_t>::do_out(
+        state_type&, const intern_type* frm, const intern_type* frm_end, const intern_type*& frm_nxt, extern_type* to,
+        extern_type* to_end, extern_type*& to_nxt) const
+    {
+        const uint16_t* _frm = reinterpret_cast<const uint16_t*>(frm);
+        const uint16_t* _frm_end = reinterpret_cast<const uint16_t*>(frm_end);
+        const uint16_t* _frm_nxt = _frm;
+        uint8_t* _to = reinterpret_cast<uint8_t*>(to);
+        uint8_t* _to_end = reinterpret_cast<uint8_t*>(to_end);
+        uint8_t* _to_nxt = _to;
+        result r = utf16_to_utf8(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt);
+        frm_nxt = frm + (_frm_nxt - _frm);
+        to_nxt = to + (_to_nxt - _to);
+        return r;
+    }
 
-codecvt<char16_t, char, mbstate_t>::result
-codecvt<char16_t, char, mbstate_t>::do_in(state_type&,
-    const extern_type* frm, const extern_type* frm_end, const extern_type*& frm_nxt,
-    intern_type* to, intern_type* to_end, intern_type*& to_nxt) const
-{
-    const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
-    const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
-    const uint8_t* _frm_nxt = _frm;
-    uint16_t* _to = reinterpret_cast<uint16_t*>(to);
-    uint16_t* _to_end = reinterpret_cast<uint16_t*>(to_end);
-    uint16_t* _to_nxt = _to;
-    result r = utf8_to_utf16(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt);
-    frm_nxt = frm + (_frm_nxt - _frm);
-    to_nxt = to + (_to_nxt - _to);
-    return r;
-}
+    codecvt<char16_t, char, mbstate_t>::result codecvt<char16_t, char, mbstate_t>::do_in(
+        state_type&, const extern_type* frm, const extern_type* frm_end, const extern_type*& frm_nxt, intern_type* to,
+        intern_type* to_end, intern_type*& to_nxt) const
+    {
+        const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
+        const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
+        const uint8_t* _frm_nxt = _frm;
+        uint16_t* _to = reinterpret_cast<uint16_t*>(to);
+        uint16_t* _to_end = reinterpret_cast<uint16_t*>(to_end);
+        uint16_t* _to_nxt = _to;
+        result r = utf8_to_utf16(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt);
+        frm_nxt = frm + (_frm_nxt - _frm);
+        to_nxt = to + (_to_nxt - _to);
+        return r;
+    }
 
-codecvt<char16_t, char, mbstate_t>::result
-codecvt<char16_t, char, mbstate_t>::do_unshift(state_type&,
-    extern_type* to, extern_type*, extern_type*& to_nxt) const
-{
-    to_nxt = to;
-    return noconv;
-}
+    codecvt<char16_t, char, mbstate_t>::result codecvt<char16_t, char, mbstate_t>::do_unshift(
+        state_type&, extern_type * to, extern_type*, extern_type * &to_nxt) const
+    {
+        to_nxt = to;
+        return noconv;
+    }
 
-int
-codecvt<char16_t, char, mbstate_t>::do_encoding() const  _NOEXCEPT
-{
-    return 0;
-}
+    int codecvt<char16_t, char, mbstate_t>::do_encoding() const _NOEXCEPT
+    {
+        return 0;
+    }
 
-bool
-codecvt<char16_t, char, mbstate_t>::do_always_noconv() const  _NOEXCEPT
-{
-    return false;
-}
+    bool codecvt<char16_t, char, mbstate_t>::do_always_noconv() const _NOEXCEPT
+    {
+        return false;
+    }
 
-int
-codecvt<char16_t, char, mbstate_t>::do_length(state_type&,
-    const extern_type* frm, const extern_type* frm_end, size_t mx) const
-{
-    const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
-    const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
-    return utf8_to_utf16_length(_frm, _frm_end, mx);
-}
+    int codecvt<char16_t, char, mbstate_t>::do_length(state_type&, const extern_type* frm, const extern_type* frm_end,
+                                                      size_t mx) const
+    {
+        const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
+        const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
+        return utf8_to_utf16_length(_frm, _frm_end, mx);
+    }
 
-int
-codecvt<char16_t, char, mbstate_t>::do_max_length() const  _NOEXCEPT
-{
-    return 4;
-}
+    int codecvt<char16_t, char, mbstate_t>::do_max_length() const _NOEXCEPT
+    {
+        return 4;
+    }
 
-// template <> class codecvt<char32_t, char, mbstate_t>
+    // template <> class codecvt<char32_t, char, mbstate_t>
 
-locale::id codecvt<char32_t, char, mbstate_t>::id;
+    locale::id codecvt<char32_t, char, mbstate_t>::id;
 
-codecvt<char32_t, char, mbstate_t>::~codecvt()
-{
-}
+    codecvt<char32_t, char, mbstate_t>::~codecvt()
+    {}
 
-codecvt<char32_t, char, mbstate_t>::result
-codecvt<char32_t, char, mbstate_t>::do_out(state_type&,
-    const intern_type* frm, const intern_type* frm_end, const intern_type*& frm_nxt,
-    extern_type* to, extern_type* to_end, extern_type*& to_nxt) const
-{
-    const uint32_t* _frm = reinterpret_cast<const uint32_t*>(frm);
-    const uint32_t* _frm_end = reinterpret_cast<const uint32_t*>(frm_end);
-    const uint32_t* _frm_nxt = _frm;
-    uint8_t* _to = reinterpret_cast<uint8_t*>(to);
-    uint8_t* _to_end = reinterpret_cast<uint8_t*>(to_end);
-    uint8_t* _to_nxt = _to;
-    result r = ucs4_to_utf8(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt);
-    frm_nxt = frm + (_frm_nxt - _frm);
-    to_nxt = to + (_to_nxt - _to);
-    return r;
-}
+    codecvt<char32_t, char, mbstate_t>::result codecvt<char32_t, char, mbstate_t>::do_out(
+        state_type&, const intern_type* frm, const intern_type* frm_end, const intern_type*& frm_nxt, extern_type* to,
+        extern_type* to_end, extern_type*& to_nxt) const
+    {
+        const uint32_t* _frm = reinterpret_cast<const uint32_t*>(frm);
+        const uint32_t* _frm_end = reinterpret_cast<const uint32_t*>(frm_end);
+        const uint32_t* _frm_nxt = _frm;
+        uint8_t* _to = reinterpret_cast<uint8_t*>(to);
+        uint8_t* _to_end = reinterpret_cast<uint8_t*>(to_end);
+        uint8_t* _to_nxt = _to;
+        result r = ucs4_to_utf8(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt);
+        frm_nxt = frm + (_frm_nxt - _frm);
+        to_nxt = to + (_to_nxt - _to);
+        return r;
+    }
 
-codecvt<char32_t, char, mbstate_t>::result
-codecvt<char32_t, char, mbstate_t>::do_in(state_type&,
-    const extern_type* frm, const extern_type* frm_end, const extern_type*& frm_nxt,
-    intern_type* to, intern_type* to_end, intern_type*& to_nxt) const
-{
-    const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
-    const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
-    const uint8_t* _frm_nxt = _frm;
-    uint32_t* _to = reinterpret_cast<uint32_t*>(to);
-    uint32_t* _to_end = reinterpret_cast<uint32_t*>(to_end);
-    uint32_t* _to_nxt = _to;
-    result r = utf8_to_ucs4(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt);
-    frm_nxt = frm + (_frm_nxt - _frm);
-    to_nxt = to + (_to_nxt - _to);
-    return r;
-}
+    codecvt<char32_t, char, mbstate_t>::result codecvt<char32_t, char, mbstate_t>::do_in(
+        state_type&, const extern_type* frm, const extern_type* frm_end, const extern_type*& frm_nxt, intern_type* to,
+        intern_type* to_end, intern_type*& to_nxt) const
+    {
+        const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
+        const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
+        const uint8_t* _frm_nxt = _frm;
+        uint32_t* _to = reinterpret_cast<uint32_t*>(to);
+        uint32_t* _to_end = reinterpret_cast<uint32_t*>(to_end);
+        uint32_t* _to_nxt = _to;
+        result r = utf8_to_ucs4(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt);
+        frm_nxt = frm + (_frm_nxt - _frm);
+        to_nxt = to + (_to_nxt - _to);
+        return r;
+    }
 
-codecvt<char32_t, char, mbstate_t>::result
-codecvt<char32_t, char, mbstate_t>::do_unshift(state_type&,
-    extern_type* to, extern_type*, extern_type*& to_nxt) const
-{
-    to_nxt = to;
-    return noconv;
-}
+    codecvt<char32_t, char, mbstate_t>::result codecvt<char32_t, char, mbstate_t>::do_unshift(
+        state_type&, extern_type * to, extern_type*, extern_type * &to_nxt) const
+    {
+        to_nxt = to;
+        return noconv;
+    }
 
-int
-codecvt<char32_t, char, mbstate_t>::do_encoding() const  _NOEXCEPT
-{
-    return 0;
-}
+    int codecvt<char32_t, char, mbstate_t>::do_encoding() const _NOEXCEPT
+    {
+        return 0;
+    }
 
-bool
-codecvt<char32_t, char, mbstate_t>::do_always_noconv() const  _NOEXCEPT
-{
-    return false;
-}
+    bool codecvt<char32_t, char, mbstate_t>::do_always_noconv() const _NOEXCEPT
+    {
+        return false;
+    }
 
-int
-codecvt<char32_t, char, mbstate_t>::do_length(state_type&,
-    const extern_type* frm, const extern_type* frm_end, size_t mx) const
-{
-    const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
-    const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
-    return utf8_to_ucs4_length(_frm, _frm_end, mx);
-}
+    int codecvt<char32_t, char, mbstate_t>::do_length(state_type&, const extern_type* frm, const extern_type* frm_end,
+                                                      size_t mx) const
+    {
+        const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
+        const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
+        return utf8_to_ucs4_length(_frm, _frm_end, mx);
+    }
 
-int
-codecvt<char32_t, char, mbstate_t>::do_max_length() const  _NOEXCEPT
-{
-    return 4;
-}
+    int codecvt<char32_t, char, mbstate_t>::do_max_length() const _NOEXCEPT
+    {
+        return 4;
+    }
 
-// __codecvt_utf8<wchar_t>
+    // __codecvt_utf8<wchar_t>
 
 #if 0
 __codecvt_utf8<wchar_t>::result
@@ -3279,25 +3088,25 @@ __codecvt_utf8<wchar_t>::do_out(state_type&,
     const intern_type* frm, const intern_type* frm_end, const intern_type*& frm_nxt,
     extern_type* to, extern_type* to_end, extern_type*& to_nxt) const
 {
-#if defined(_LIBCPP_SHORT_WCHAR)
+#    if defined(_LIBCPP_SHORT_WCHAR)
     const uint16_t* _frm = reinterpret_cast<const uint16_t*>(frm);
     const uint16_t* _frm_end = reinterpret_cast<const uint16_t*>(frm_end);
     const uint16_t* _frm_nxt = _frm;
-#else
+#    else
     const uint32_t* _frm = reinterpret_cast<const uint32_t*>(frm);
     const uint32_t* _frm_end = reinterpret_cast<const uint32_t*>(frm_end);
     const uint32_t* _frm_nxt = _frm;
-#endif
+#    endif
     uint8_t* _to = reinterpret_cast<uint8_t*>(to);
     uint8_t* _to_end = reinterpret_cast<uint8_t*>(to_end);
     uint8_t* _to_nxt = _to;
-#if defined(_LIBCPP_SHORT_WCHAR)
+#    if defined(_LIBCPP_SHORT_WCHAR)
     result r = ucs2_to_utf8(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt,
                             _Maxcode_, _Mode_);
-#else
+#    else
     result r = ucs4_to_utf8(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt,
                             _Maxcode_, _Mode_);
-#endif
+#    endif
     frm_nxt = frm + (_frm_nxt - _frm);
     to_nxt = to + (_to_nxt - _to);
     return r;
@@ -3311,19 +3120,19 @@ __codecvt_utf8<wchar_t>::do_in(state_type&,
     const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
     const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
     const uint8_t* _frm_nxt = _frm;
-#if defined(_LIBCPP_SHORT_WCHAR)
+#    if defined(_LIBCPP_SHORT_WCHAR)
     uint16_t* _to = reinterpret_cast<uint16_t*>(to);
     uint16_t* _to_end = reinterpret_cast<uint16_t*>(to_end);
     uint16_t* _to_nxt = _to;
     result r = utf8_to_ucs2(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt,
                             _Maxcode_, _Mode_);
-#else
+#    else
     uint32_t* _to = reinterpret_cast<uint32_t*>(to);
     uint32_t* _to_end = reinterpret_cast<uint32_t*>(to_end);
     uint32_t* _to_nxt = _to;
     result r = utf8_to_ucs4(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt,
                             _Maxcode_, _Mode_);
-#endif
+#    endif
     frm_nxt = frm + (_frm_nxt - _frm);
     to_nxt = to + (_to_nxt - _to);
     return r;
@@ -4042,157 +3851,139 @@ __codecvt_utf8_utf16<wchar_t>::do_max_length() const  _NOEXCEPT
 }
 #endif
 
-// __codecvt_utf8_utf16<char16_t>
+    // __codecvt_utf8_utf16<char16_t>
 
-__codecvt_utf8_utf16<char16_t>::result
-__codecvt_utf8_utf16<char16_t>::do_out(state_type&,
-    const intern_type* frm, const intern_type* frm_end, const intern_type*& frm_nxt,
-    extern_type* to, extern_type* to_end, extern_type*& to_nxt) const
-{
-    const uint16_t* _frm = reinterpret_cast<const uint16_t*>(frm);
-    const uint16_t* _frm_end = reinterpret_cast<const uint16_t*>(frm_end);
-    const uint16_t* _frm_nxt = _frm;
-    uint8_t* _to = reinterpret_cast<uint8_t*>(to);
-    uint8_t* _to_end = reinterpret_cast<uint8_t*>(to_end);
-    uint8_t* _to_nxt = _to;
-    result r = utf16_to_utf8(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt,
-                             _Maxcode_, _Mode_);
-    frm_nxt = frm + (_frm_nxt - _frm);
-    to_nxt = to + (_to_nxt - _to);
-    return r;
-}
+    __codecvt_utf8_utf16<char16_t>::result __codecvt_utf8_utf16<char16_t>::do_out(
+        state_type&, const intern_type* frm, const intern_type* frm_end, const intern_type*& frm_nxt, extern_type* to,
+        extern_type* to_end, extern_type*& to_nxt) const
+    {
+        const uint16_t* _frm = reinterpret_cast<const uint16_t*>(frm);
+        const uint16_t* _frm_end = reinterpret_cast<const uint16_t*>(frm_end);
+        const uint16_t* _frm_nxt = _frm;
+        uint8_t* _to = reinterpret_cast<uint8_t*>(to);
+        uint8_t* _to_end = reinterpret_cast<uint8_t*>(to_end);
+        uint8_t* _to_nxt = _to;
+        result r = utf16_to_utf8(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt, _Maxcode_, _Mode_);
+        frm_nxt = frm + (_frm_nxt - _frm);
+        to_nxt = to + (_to_nxt - _to);
+        return r;
+    }
 
-__codecvt_utf8_utf16<char16_t>::result
-__codecvt_utf8_utf16<char16_t>::do_in(state_type&,
-    const extern_type* frm, const extern_type* frm_end, const extern_type*& frm_nxt,
-    intern_type* to, intern_type* to_end, intern_type*& to_nxt) const
-{
-    const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
-    const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
-    const uint8_t* _frm_nxt = _frm;
-    uint16_t* _to = reinterpret_cast<uint16_t*>(to);
-    uint16_t* _to_end = reinterpret_cast<uint16_t*>(to_end);
-    uint16_t* _to_nxt = _to;
-    result r = utf8_to_utf16(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt,
-                             _Maxcode_, _Mode_);
-    frm_nxt = frm + (_frm_nxt - _frm);
-    to_nxt = to + (_to_nxt - _to);
-    return r;
-}
+    __codecvt_utf8_utf16<char16_t>::result __codecvt_utf8_utf16<char16_t>::do_in(
+        state_type&, const extern_type* frm, const extern_type* frm_end, const extern_type*& frm_nxt, intern_type* to,
+        intern_type* to_end, intern_type*& to_nxt) const
+    {
+        const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
+        const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
+        const uint8_t* _frm_nxt = _frm;
+        uint16_t* _to = reinterpret_cast<uint16_t*>(to);
+        uint16_t* _to_end = reinterpret_cast<uint16_t*>(to_end);
+        uint16_t* _to_nxt = _to;
+        result r = utf8_to_utf16(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt, _Maxcode_, _Mode_);
+        frm_nxt = frm + (_frm_nxt - _frm);
+        to_nxt = to + (_to_nxt - _to);
+        return r;
+    }
 
-__codecvt_utf8_utf16<char16_t>::result
-__codecvt_utf8_utf16<char16_t>::do_unshift(state_type&,
-    extern_type* to, extern_type*, extern_type*& to_nxt) const
-{
-    to_nxt = to;
-    return noconv;
-}
+    __codecvt_utf8_utf16<char16_t>::result __codecvt_utf8_utf16<char16_t>::do_unshift(
+        state_type&, extern_type * to, extern_type*, extern_type * &to_nxt) const
+    {
+        to_nxt = to;
+        return noconv;
+    }
 
-int
-__codecvt_utf8_utf16<char16_t>::do_encoding() const  _NOEXCEPT
-{
-    return 0;
-}
+    int __codecvt_utf8_utf16<char16_t>::do_encoding() const _NOEXCEPT
+    {
+        return 0;
+    }
 
-bool
-__codecvt_utf8_utf16<char16_t>::do_always_noconv() const  _NOEXCEPT
-{
-    return false;
-}
+    bool __codecvt_utf8_utf16<char16_t>::do_always_noconv() const _NOEXCEPT
+    {
+        return false;
+    }
 
-int
-__codecvt_utf8_utf16<char16_t>::do_length(state_type&,
-    const extern_type* frm, const extern_type* frm_end, size_t mx) const
-{
-    const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
-    const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
-    return utf8_to_utf16_length(_frm, _frm_end, mx, _Maxcode_, _Mode_);
-}
+    int __codecvt_utf8_utf16<char16_t>::do_length(state_type&, const extern_type* frm, const extern_type* frm_end,
+                                                  size_t mx) const
+    {
+        const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
+        const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
+        return utf8_to_utf16_length(_frm, _frm_end, mx, _Maxcode_, _Mode_);
+    }
 
-int
-__codecvt_utf8_utf16<char16_t>::do_max_length() const  _NOEXCEPT
-{
-    if (_Mode_ & consume_header)
-        return 7;
-    return 4;
-}
+    int __codecvt_utf8_utf16<char16_t>::do_max_length() const _NOEXCEPT
+    {
+        if (_Mode_ & consume_header)
+            return 7;
+        return 4;
+    }
 
-// __codecvt_utf8_utf16<char32_t>
+    // __codecvt_utf8_utf16<char32_t>
 
-__codecvt_utf8_utf16<char32_t>::result
-__codecvt_utf8_utf16<char32_t>::do_out(state_type&,
-    const intern_type* frm, const intern_type* frm_end, const intern_type*& frm_nxt,
-    extern_type* to, extern_type* to_end, extern_type*& to_nxt) const
-{
-    const uint32_t* _frm = reinterpret_cast<const uint32_t*>(frm);
-    const uint32_t* _frm_end = reinterpret_cast<const uint32_t*>(frm_end);
-    const uint32_t* _frm_nxt = _frm;
-    uint8_t* _to = reinterpret_cast<uint8_t*>(to);
-    uint8_t* _to_end = reinterpret_cast<uint8_t*>(to_end);
-    uint8_t* _to_nxt = _to;
-    result r = utf16_to_utf8(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt,
-                             _Maxcode_, _Mode_);
-    frm_nxt = frm + (_frm_nxt - _frm);
-    to_nxt = to + (_to_nxt - _to);
-    return r;
-}
+    __codecvt_utf8_utf16<char32_t>::result __codecvt_utf8_utf16<char32_t>::do_out(
+        state_type&, const intern_type* frm, const intern_type* frm_end, const intern_type*& frm_nxt, extern_type* to,
+        extern_type* to_end, extern_type*& to_nxt) const
+    {
+        const uint32_t* _frm = reinterpret_cast<const uint32_t*>(frm);
+        const uint32_t* _frm_end = reinterpret_cast<const uint32_t*>(frm_end);
+        const uint32_t* _frm_nxt = _frm;
+        uint8_t* _to = reinterpret_cast<uint8_t*>(to);
+        uint8_t* _to_end = reinterpret_cast<uint8_t*>(to_end);
+        uint8_t* _to_nxt = _to;
+        result r = utf16_to_utf8(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt, _Maxcode_, _Mode_);
+        frm_nxt = frm + (_frm_nxt - _frm);
+        to_nxt = to + (_to_nxt - _to);
+        return r;
+    }
 
-__codecvt_utf8_utf16<char32_t>::result
-__codecvt_utf8_utf16<char32_t>::do_in(state_type&,
-    const extern_type* frm, const extern_type* frm_end, const extern_type*& frm_nxt,
-    intern_type* to, intern_type* to_end, intern_type*& to_nxt) const
-{
-    const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
-    const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
-    const uint8_t* _frm_nxt = _frm;
-    uint32_t* _to = reinterpret_cast<uint32_t*>(to);
-    uint32_t* _to_end = reinterpret_cast<uint32_t*>(to_end);
-    uint32_t* _to_nxt = _to;
-    result r = utf8_to_utf16(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt,
-                             _Maxcode_, _Mode_);
-    frm_nxt = frm + (_frm_nxt - _frm);
-    to_nxt = to + (_to_nxt - _to);
-    return r;
-}
+    __codecvt_utf8_utf16<char32_t>::result __codecvt_utf8_utf16<char32_t>::do_in(
+        state_type&, const extern_type* frm, const extern_type* frm_end, const extern_type*& frm_nxt, intern_type* to,
+        intern_type* to_end, intern_type*& to_nxt) const
+    {
+        const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
+        const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
+        const uint8_t* _frm_nxt = _frm;
+        uint32_t* _to = reinterpret_cast<uint32_t*>(to);
+        uint32_t* _to_end = reinterpret_cast<uint32_t*>(to_end);
+        uint32_t* _to_nxt = _to;
+        result r = utf8_to_utf16(_frm, _frm_end, _frm_nxt, _to, _to_end, _to_nxt, _Maxcode_, _Mode_);
+        frm_nxt = frm + (_frm_nxt - _frm);
+        to_nxt = to + (_to_nxt - _to);
+        return r;
+    }
 
-__codecvt_utf8_utf16<char32_t>::result
-__codecvt_utf8_utf16<char32_t>::do_unshift(state_type&,
-    extern_type* to, extern_type*, extern_type*& to_nxt) const
-{
-    to_nxt = to;
-    return noconv;
-}
+    __codecvt_utf8_utf16<char32_t>::result __codecvt_utf8_utf16<char32_t>::do_unshift(
+        state_type&, extern_type * to, extern_type*, extern_type * &to_nxt) const
+    {
+        to_nxt = to;
+        return noconv;
+    }
 
-int
-__codecvt_utf8_utf16<char32_t>::do_encoding() const  _NOEXCEPT
-{
-    return 0;
-}
+    int __codecvt_utf8_utf16<char32_t>::do_encoding() const _NOEXCEPT
+    {
+        return 0;
+    }
 
-bool
-__codecvt_utf8_utf16<char32_t>::do_always_noconv() const  _NOEXCEPT
-{
-    return false;
-}
+    bool __codecvt_utf8_utf16<char32_t>::do_always_noconv() const _NOEXCEPT
+    {
+        return false;
+    }
 
-int
-__codecvt_utf8_utf16<char32_t>::do_length(state_type&,
-    const extern_type* frm, const extern_type* frm_end, size_t mx) const
-{
-    const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
-    const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
-    return utf8_to_utf16_length(_frm, _frm_end, mx, _Maxcode_, _Mode_);
-}
+    int __codecvt_utf8_utf16<char32_t>::do_length(state_type&, const extern_type* frm, const extern_type* frm_end,
+                                                  size_t mx) const
+    {
+        const uint8_t* _frm = reinterpret_cast<const uint8_t*>(frm);
+        const uint8_t* _frm_end = reinterpret_cast<const uint8_t*>(frm_end);
+        return utf8_to_utf16_length(_frm, _frm_end, mx, _Maxcode_, _Mode_);
+    }
 
-int
-__codecvt_utf8_utf16<char32_t>::do_max_length() const  _NOEXCEPT
-{
-    if (_Mode_ & consume_header)
-        return 7;
-    return 4;
-}
+    int __codecvt_utf8_utf16<char32_t>::do_max_length() const _NOEXCEPT
+    {
+        if (_Mode_ & consume_header)
+            return 7;
+        return 4;
+    }
 
-// __narrow_to_utf8<16>
+    // __narrow_to_utf8<16>
 
 #if 0
 __narrow_to_utf8<16>::~__narrow_to_utf8()
@@ -4793,12 +4584,12 @@ __time_get::~__time_get()
 {
     freelocale(__loc_);
 }
-#if defined(__clang__)
-#pragma clang diagnostic ignored "-Wmissing-field-initializers"
-#endif
-#if defined(__GNUG__)
-#pragma GCC   diagnostic ignored "-Wmissing-field-initializers"
-#endif
+#    if defined(__clang__)
+#        pragma clang diagnostic ignored "-Wmissing-field-initializers"
+#    endif
+#    if defined(__GNUG__)
+#        pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#    endif
 
 template <>
 string
@@ -4944,9 +4735,9 @@ __time_get_storage<char>::__analyze(char fmt, const ctype<char>& ct)
     return result;
 }
 
-#if defined(__clang__)
-#pragma clang diagnostic ignored "-Wmissing-braces"
-#endif
+#    if defined(__clang__)
+#        pragma clang diagnostic ignored "-Wmissing-braces"
+#    endif
 
 template <>
 wstring
@@ -5920,19 +5711,19 @@ moneypunct_byname<char, true>::init(const char* nm)
         __frac_digits_ = lc->int_frac_digits;
     else
         __frac_digits_ = base::do_frac_digits();
-#if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
+#    if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
     if (lc->p_sign_posn == 0)
-#else // _LIBCPP_MSVCRT
+#    else  // _LIBCPP_MSVCRT
     if (lc->int_p_sign_posn == 0)
-#endif // !_LIBCPP_MSVCRT
+#    endif // !_LIBCPP_MSVCRT
         __positive_sign_ = "()";
     else
         __positive_sign_ = lc->positive_sign;
-#if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
+#    if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
     if(lc->n_sign_posn == 0)
-#else // _LIBCPP_MSVCRT
+#    else  // _LIBCPP_MSVCRT
     if (lc->int_n_sign_posn == 0)
-#endif // !_LIBCPP_MSVCRT
+#    endif // !_LIBCPP_MSVCRT
         __negative_sign_ = "()";
     else
         __negative_sign_ = lc->negative_sign;
@@ -5940,19 +5731,19 @@ moneypunct_byname<char, true>::init(const char* nm)
     // the same places in curr_symbol since there's no way to
     // represent anything else.
     string_type __dummy_curr_symbol = __curr_symbol_;
-#if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
+#    if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
     __init_pat(__pos_format_, __dummy_curr_symbol, true,
                lc->p_cs_precedes, lc->p_sep_by_space, lc->p_sign_posn, ' ');
     __init_pat(__neg_format_, __curr_symbol_, true,
                lc->n_cs_precedes, lc->n_sep_by_space, lc->n_sign_posn, ' ');
-#else // _LIBCPP_MSVCRT
+#    else  // _LIBCPP_MSVCRT
     __init_pat(__pos_format_, __dummy_curr_symbol, true,
                lc->int_p_cs_precedes, lc->int_p_sep_by_space,
                lc->int_p_sign_posn, ' ');
     __init_pat(__neg_format_, __curr_symbol_, true,
                lc->int_n_cs_precedes, lc->int_n_sep_by_space,
                lc->int_n_sign_posn, ' ');
-#endif // !_LIBCPP_MSVCRT
+#    endif // !_LIBCPP_MSVCRT
 }
 
 template<>
@@ -6052,11 +5843,11 @@ moneypunct_byname<wchar_t, true>::init(const char* nm)
         __frac_digits_ = lc->int_frac_digits;
     else
         __frac_digits_ = base::do_frac_digits();
-#if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
+#    if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
     if (lc->p_sign_posn == 0)
-#else // _LIBCPP_MSVCRT
+#    else  // _LIBCPP_MSVCRT
     if (lc->int_p_sign_posn == 0)
-#endif // !_LIBCPP_MSVCRT
+#    endif // !_LIBCPP_MSVCRT
         __positive_sign_ = L"()";
     else
     {
@@ -6068,11 +5859,11 @@ moneypunct_byname<wchar_t, true>::init(const char* nm)
         wbe = wbuf + j;
         __positive_sign_.assign(wbuf, wbe);
     }
-#if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
+#    if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
     if (lc->n_sign_posn == 0)
-#else // _LIBCPP_MSVCRT
+#    else  // _LIBCPP_MSVCRT
     if (lc->int_n_sign_posn == 0)
-#endif // !_LIBCPP_MSVCRT
+#    endif // !_LIBCPP_MSVCRT
         __negative_sign_ = L"()";
     else
     {
@@ -6088,31 +5879,31 @@ moneypunct_byname<wchar_t, true>::init(const char* nm)
     // the same places in curr_symbol since there's no way to
     // represent anything else.
     string_type __dummy_curr_symbol = __curr_symbol_;
-#if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
+#    if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
     __init_pat(__pos_format_, __dummy_curr_symbol, true,
                lc->p_cs_precedes, lc->p_sep_by_space, lc->p_sign_posn, L' ');
     __init_pat(__neg_format_, __curr_symbol_, true,
                lc->n_cs_precedes, lc->n_sep_by_space, lc->n_sign_posn, L' ');
-#else // _LIBCPP_MSVCRT
+#    else  // _LIBCPP_MSVCRT
     __init_pat(__pos_format_, __dummy_curr_symbol, true,
                lc->int_p_cs_precedes, lc->int_p_sep_by_space,
                lc->int_p_sign_posn, L' ');
     __init_pat(__neg_format_, __curr_symbol_, true,
                lc->int_n_cs_precedes, lc->int_n_sep_by_space,
                lc->int_n_sign_posn, L' ');
-#endif // !_LIBCPP_MSVCRT
+#    endif // !_LIBCPP_MSVCRT
 }
 
 void __do_nothing(void*) {}
 
 void __throw_runtime_error(const char* msg)
 {
-#ifndef _LIBCPP_NO_EXCEPTIONS
+#    ifndef _LIBCPP_NO_EXCEPTIONS
     throw runtime_error(msg);
-#else
+#    else
     (void)msg;
     _VSTD::abort();
-#endif
+#    endif
 }
 
 template class _LIBCPP_CLASS_TEMPLATE_INSTANTIATION_VIS collate<char>;

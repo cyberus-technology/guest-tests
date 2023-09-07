@@ -5,8 +5,8 @@
 
 #include "toyos/pci/pci.hpp"
 
-#include <toyos/x86/arch.hpp>
 #include "toyos/util/math.hpp"
+#include <toyos/x86/arch.hpp>
 
 #include <cstdint>
 

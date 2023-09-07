@@ -1,10 +1,10 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
+#include <toyos/acpi.hpp>
 #include <toyos/x86/cpuid.hpp>
 #include <toyos/x86/x86asm.hpp>
 #include <toyos/x86/x86defs.hpp>
-#include <toyos/acpi.hpp>
 
 #include <toyos/baretest/baretest.hpp>
 

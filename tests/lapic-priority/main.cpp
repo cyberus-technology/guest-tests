@@ -1,9 +1,8 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <toyos/baretest/baretest.hpp>
-#include <toyos/x86/cpuid.hpp>
 #include <functional>
+#include <toyos/baretest/baretest.hpp>
 #include <toyos/testhelper/hpet.hpp>
 #include <toyos/testhelper/idt.hpp>
 #include <toyos/testhelper/int_guard.hpp>
@@ -13,6 +12,7 @@
 #include <toyos/testhelper/lapic_test_tools.hpp>
 #include <toyos/testhelper/pic.hpp>
 #include <toyos/util/trace.hpp>
+#include <toyos/x86/cpuid.hpp>
 #include <toyos/x86/x86asm.hpp>
 
 using namespace lapic_test_tools;

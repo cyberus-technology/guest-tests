@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <optional>
 #include "page_table_base.hpp"
+#include <optional>
 
 /* A base class for the pdpt and pd, as they have much in common.
  */

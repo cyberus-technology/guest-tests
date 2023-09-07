@@ -8,10 +8,10 @@
 
 #include <stdint.h>
 
+#include "console.hpp"
 #include "toyos/util/algorithm.hpp"
 #include "toyos/util/interval.hpp"
 #include "toyos/x86/arch.hpp"
-#include "console.hpp"
 #include <config.hpp>
 
 class console_serial_base : public console

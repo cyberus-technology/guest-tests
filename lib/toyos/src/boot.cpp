@@ -1,32 +1,30 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <toyos/printf/backend.hpp>
-#include "toyos/x86/segmentation.hpp"
 #include "toyos/console/console_serial.hpp"
+#include "toyos/x86/segmentation.hpp"
 #include "toyos/xhci/debug_device.hpp"
+#include <toyos/printf/backend.hpp>
 
 #include "toyos/first-fit-heap/heap.hpp"
 
-#include "toyos/util/algorithm.hpp"
-#include "toyos/x86/arch.hpp"
 #include "toyos/memory/buddy.hpp"
+#include "toyos/memory/simple_buddy.hpp"
+#include "toyos/optionparser.hpp"
+#include "toyos/pci/bus.hpp"
 #include "toyos/util/interval.hpp"
-#include "toyos/util/order_range.hpp"
+#include "toyos/x86/arch.hpp"
+#include "toyos/xen-pvh.hpp"
 #include <compiler.hpp>
 #include <config.hpp>
 #include <toyos/multiboot/multiboot.hpp>
 #include <toyos/multiboot2/multiboot2.hpp>
-#include "toyos/optionparser.hpp"
-#include "toyos/pci/bus.hpp"
-#include "toyos/memory/simple_buddy.hpp"
-#include "toyos/xen-pvh.hpp"
 
 #include "toyos/acpi.hpp"
 #include "toyos/boot_cmdline.hpp"
+#include "toyos/console/xhci_console.hpp"
 #include "toyos/testhelper/lapic_test_tools.hpp"
 #include "toyos/testhelper/pic.hpp"
-#include "toyos/console/xhci_console.hpp"
 
 #include "codecvt"
 #include "locale"

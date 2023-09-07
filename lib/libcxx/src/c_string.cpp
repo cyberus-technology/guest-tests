@@ -31,8 +31,8 @@ void* memcpy_reverse(void* dst, const void* src, size_t n)
     const char* src_end = (const char*) src + n - 1;
 
     asm("std; rep movsb; cld"
-            : "+S"(src_end), "+D"(dst_end), "+c"(n), "=m"(*(char(*)[n]) dst)
-            : "m"(*(const char(*)[n]) src));
+        : "+S"(src_end), "+D"(dst_end), "+c"(n), "=m"(*(char(*)[n]) dst)
+        : "m"(*(const char(*)[n]) src));
 
     return dst;
 }
@@ -133,21 +133,21 @@ size_t strlen(const char* str)
 bool isspace(char c)
 {
     switch (c) {
-        case ' ':
-        case '\t':
-        case '\r':
-        case '\n': return true;
-        default: return false;
+    case ' ':
+    case '\t':
+    case '\r':
+    case '\n': return true;
+    default: return false;
     }
 }
 
 int ctoi_(char c)
 {
     switch (c) {
-        case '0' ... '9': return c - '0';
-        case 'a' ... 'z': return c - 'a' + 10;
-        case 'A' ... 'Z': return c - 'A' + 10;
-        default: return -1;
+    case '0' ... '9': return c - '0';
+    case 'a' ... 'z': return c - 'a' + 10;
+    case 'A' ... 'Z': return c - 'A' + 10;
+    default: return -1;
     }
 }
 

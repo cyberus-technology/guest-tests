@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "x86/arch.hpp"
 #include "paging_directory_entry_base.hpp"
+#include "x86/arch.hpp"
 
 class PDE : public paging_directory_entry_base
 {

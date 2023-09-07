@@ -23,6 +23,8 @@
  */
 #pragma once
 
+// clang-format off
+
 #include "stl_symbols.hpp"
 #include "charlist.hpp"
 

@@ -3,12 +3,12 @@
 
 #pragma once
 
+#include "page_pool.hpp"
+#include "toyos/util/math.hpp"
 #include <array>
 #include <atomic>
 #include <toyos/util/cast_helpers.hpp>
 #include <toyos/util/in_place_atomic.hpp>
-#include "page_pool.hpp"
-#include "toyos/util/math.hpp"
 
 enum class tlb_invalidation : bool
 {

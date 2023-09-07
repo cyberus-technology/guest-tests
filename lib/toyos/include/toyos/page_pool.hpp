@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "x86/arch.hpp"
 #include "memory/buddy.hpp"
-#include "toyos/util/math.hpp"
 #include "optional"
+#include "toyos/util/math.hpp"
+#include "x86/arch.hpp"
 
 /* This pool always allocates 4k Bytes of memory.
  */
