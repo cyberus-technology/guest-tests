@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "toyos/util/math.hpp"
+#include <toyos/util/math.hpp>
 #include <toyos/util/interval.hpp>
 #include <toyos/util/order_range.hpp>
 

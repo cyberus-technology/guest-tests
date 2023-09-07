@@ -14,8 +14,14 @@ function(guesttest_linkage target-name)
 
   install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/${target-name}-elf32
-    DESTINATION share/supernova/test/guest
-    COMPONENT supernova-core_Tests
+    DESTINATION tests
+    COMPONENT "guest-integration-tests"
+    )
+
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/${target-name}
+    DESTINATION tests
+    COMPONENT "guest-integration-tests"
     )
 endfunction()
 
