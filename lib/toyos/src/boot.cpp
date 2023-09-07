@@ -8,11 +8,9 @@
 
 #include "toyos/first-fit-heap/heap.hpp"
 
-#include "toyos/util/algorithm.hpp"
 #include "toyos/x86/arch.hpp"
 #include "toyos/memory/buddy.hpp"
 #include "toyos/util/interval.hpp"
-#include "toyos/util/order_range.hpp"
 #include <compiler.hpp>
 #include <config.hpp>
 #include <toyos/multiboot/multiboot.hpp>

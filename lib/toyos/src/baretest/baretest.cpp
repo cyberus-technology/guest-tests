@@ -21,7 +21,6 @@
  */
 
 #include <toyos/baretest/baretest.hpp>
-#include <vector>
 
 void __attribute__((weak)) prologue() {}
 void __attribute__((weak)) epilogue() {}

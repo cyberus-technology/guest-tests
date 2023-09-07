@@ -21,7 +21,6 @@
  */
 
 #include <toyos/baretest/print.hpp>
-#include <cstdint>
 #include <cstdio>
 
 void print(uint16_t v) { printf("%#x", v); }

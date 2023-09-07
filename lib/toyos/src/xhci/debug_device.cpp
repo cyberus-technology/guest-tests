@@ -1,8 +1,6 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <toyos/util/cast_helpers.hpp>
-
 #include <toyos/xhci/debug_device.hpp>
 
 bool xhci_debug_device::initialize(bool reinit)
