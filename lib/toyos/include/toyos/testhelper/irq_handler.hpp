@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <functional>
 #include "idt.hpp"
+#include <functional>
 
 extern idt global_idt;
 

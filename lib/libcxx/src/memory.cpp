@@ -9,16 +9,16 @@
 
 #include "memory"
 #if 0
-#ifndef _LIBCPP_HAS_NO_THREADS
-#include "mutex"
-#include "thread"
-#endif
+#    ifndef _LIBCPP_HAS_NO_THREADS
+#        include "mutex"
+#        include "thread"
+#    endif
 #endif
 #include "include/atomic_support.h"
 
 _LIBCPP_BEGIN_NAMESPACE_STD
 
-//const allocator_arg_t allocator_arg = allocator_arg_t();
+    // const allocator_arg_t allocator_arg = allocator_arg_t();
 
 #if 0
 bad_weak_ptr::~bad_weak_ptr() _NOEXCEPT {}
@@ -30,16 +30,14 @@ bad_weak_ptr::what() const _NOEXCEPT
 }
 #endif
 
-__shared_count::~__shared_count()
-{
-}
+    __shared_count::~__shared_count()
+    {}
 
-__shared_weak_count::~__shared_weak_count()
-{
-}
+    __shared_weak_count::~__shared_weak_count()
+    {}
 
 #if 0
-#if defined(_LIBCPP_DEPRECATED_ABI_LEGACY_LIBRARY_DEFINITIONS_FOR_INLINE_FUNCTIONS)
+#    if defined(_LIBCPP_DEPRECATED_ABI_LEGACY_LIBRARY_DEFINITIONS_FOR_INLINE_FUNCTIONS)
 void
 __shared_count::__add_shared() _NOEXCEPT
 {
@@ -76,70 +74,62 @@ __shared_weak_count::__release_shared() _NOEXCEPT
         __release_weak();
 }
 
-#endif // _LIBCPP_DEPRECATED_ABI_LEGACY_LIBRARY_DEFINITIONS_FOR_INLINE_FUNCTIONS
+#    endif // _LIBCPP_DEPRECATED_ABI_LEGACY_LIBRARY_DEFINITIONS_FOR_INLINE_FUNCTIONS
 #endif
 
-void
-__shared_weak_count::__release_weak() _NOEXCEPT
-{
-    // NOTE: The acquire load here is an optimization of the very
-    // common case where a shared pointer is being destructed while
-    // having no other contended references.
-    //
-    // BENEFIT: We avoid expensive atomic stores like XADD and STREX
-    // in a common case.  Those instructions are slow and do nasty
-    // things to caches.
-    //
-    // IS THIS SAFE?  Yes.  During weak destruction, if we see that we
-    // are the last reference, we know that no-one else is accessing
-    // us. If someone were accessing us, then they would be doing so
-    // while the last shared / weak_ptr was being destructed, and
-    // that's undefined anyway.
-    //
-    // If we see anything other than a 0, then we have possible
-    // contention, and need to use an atomicrmw primitive.
-    // The same arguments don't apply for increment, where it is legal
-    // (though inadvisable) to share shared_ptr references between
-    // threads, and have them all get copied at once.  The argument
-    // also doesn't apply for __release_shared, because an outstanding
-    // weak_ptr::lock() could read / modify the shared count.
-    if (__libcpp_atomic_load(&__shared_weak_owners_, _AO_Acquire) == 0)
+    void __shared_weak_count::__release_weak() _NOEXCEPT
     {
-        // no need to do this store, because we are about
-        // to destroy everything.
-        //__libcpp_atomic_store(&__shared_weak_owners_, -1, _AO_Release);
-        __on_zero_shared_weak();
+        // NOTE: The acquire load here is an optimization of the very
+        // common case where a shared pointer is being destructed while
+        // having no other contended references.
+        //
+        // BENEFIT: We avoid expensive atomic stores like XADD and STREX
+        // in a common case.  Those instructions are slow and do nasty
+        // things to caches.
+        //
+        // IS THIS SAFE?  Yes.  During weak destruction, if we see that we
+        // are the last reference, we know that no-one else is accessing
+        // us. If someone were accessing us, then they would be doing so
+        // while the last shared / weak_ptr was being destructed, and
+        // that's undefined anyway.
+        //
+        // If we see anything other than a 0, then we have possible
+        // contention, and need to use an atomicrmw primitive.
+        // The same arguments don't apply for increment, where it is legal
+        // (though inadvisable) to share shared_ptr references between
+        // threads, and have them all get copied at once.  The argument
+        // also doesn't apply for __release_shared, because an outstanding
+        // weak_ptr::lock() could read / modify the shared count.
+        if (__libcpp_atomic_load(&__shared_weak_owners_, _AO_Acquire) == 0) {
+            // no need to do this store, because we are about
+            // to destroy everything.
+            //__libcpp_atomic_store(&__shared_weak_owners_, -1, _AO_Release);
+            __on_zero_shared_weak();
+        } else if (__libcpp_atomic_refcount_decrement(__shared_weak_owners_) == -1)
+            __on_zero_shared_weak();
     }
-    else if (__libcpp_atomic_refcount_decrement(__shared_weak_owners_) == -1)
-        __on_zero_shared_weak();
-}
 
-__shared_weak_count*
-__shared_weak_count::lock() _NOEXCEPT
-{
-    long object_owners = __libcpp_atomic_load(&__shared_owners_);
-    while (object_owners != -1)
+    __shared_weak_count* __shared_weak_count::lock() _NOEXCEPT
     {
-        if (__libcpp_atomic_compare_exchange(&__shared_owners_,
-                                             &object_owners,
-                                             object_owners+1))
-            return this;
+        long object_owners = __libcpp_atomic_load(&__shared_owners_);
+        while (object_owners != -1) {
+            if (__libcpp_atomic_compare_exchange(&__shared_owners_, &object_owners, object_owners + 1))
+                return this;
+        }
+        return nullptr;
     }
-    return nullptr;
-}
 
 #if !defined(_LIBCPP_NO_RTTI) || !defined(_LIBCPP_BUILD_STATIC)
 
-const void*
-__shared_weak_count::__get_deleter(const type_info&) const _NOEXCEPT
-{
-    return nullptr;
-}
+    const void* __shared_weak_count::__get_deleter(const type_info&) const _NOEXCEPT
+    {
+        return nullptr;
+    }
 
-#endif  // _LIBCPP_NO_RTTI
+#endif // _LIBCPP_NO_RTTI
 
 #if 0
-#if !defined(_LIBCPP_HAS_NO_ATOMIC_HEADER)
+#    if !defined(_LIBCPP_HAS_NO_ATOMIC_HEADER)
 
 _LIBCPP_SAFE_STATIC static const std::size_t __sp_mut_count = 16;
 _LIBCPP_SAFE_STATIC static __libcpp_mutex_t mut_back[__sp_mut_count] =
@@ -190,56 +180,46 @@ __get_sp_mut(const void* p)
     return muts[hash<const void*>()(p) & (__sp_mut_count-1)];
 }
 
-#endif // !defined(_LIBCPP_HAS_NO_ATOMIC_HEADER)
+#    endif // !defined(_LIBCPP_HAS_NO_ATOMIC_HEADER)
 #endif
 
-void
-declare_reachable(void*)
-{
-}
+    void declare_reachable(void*)
+    {}
 
-void
-declare_no_pointers(char*, size_t)
-{
-}
+    void declare_no_pointers(char*, size_t)
+    {}
 
-void
-undeclare_no_pointers(char*, size_t)
-{
-}
+    void undeclare_no_pointers(char*, size_t)
+    {}
 
 #if 0
-#if !defined(_LIBCPP_ABI_POINTER_SAFETY_ENUM_TYPE)
+#    if !defined(_LIBCPP_ABI_POINTER_SAFETY_ENUM_TYPE)
 pointer_safety get_pointer_safety() _NOEXCEPT
 {
     return pointer_safety::relaxed;
 }
-#endif
+#    endif
 #endif
 
-void*
-__undeclare_reachable(void* p)
-{
-    return p;
-}
-
-void*
-align(size_t alignment, size_t size, void*& ptr, size_t& space)
-{
-    void* r = nullptr;
-    if (size <= space)
+    void* __undeclare_reachable(void* p)
     {
-        char* p1 = static_cast<char*>(ptr);
-        char* p2 = reinterpret_cast<char*>(reinterpret_cast<size_t>(p1 + (alignment - 1)) & -alignment);
-        size_t d = static_cast<size_t>(p2 - p1);
-        if (d <= space - size)
-        {
-            r = p2;
-            ptr = r;
-            space -= d;
-        }
+        return p;
     }
-    return r;
-}
+
+    void* align(size_t alignment, size_t size, void*& ptr, size_t& space)
+    {
+        void* r = nullptr;
+        if (size <= space) {
+            char* p1 = static_cast<char*>(ptr);
+            char* p2 = reinterpret_cast<char*>(reinterpret_cast<size_t>(p1 + (alignment - 1)) & -alignment);
+            size_t d = static_cast<size_t>(p2 - p1);
+            if (d <= space - size) {
+                r = p2;
+                ptr = r;
+                space -= d;
+            }
+        }
+        return r;
+    }
 
 _LIBCPP_END_NAMESPACE_STD

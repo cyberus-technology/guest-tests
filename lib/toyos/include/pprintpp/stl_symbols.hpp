@@ -23,6 +23,8 @@
  */
 #pragma once
 
+// clang-format off
+
 #include "cstddef"
 
 #ifndef PPRINTPP_AVOID_STL

@@ -2,9 +2,9 @@
  *        All rights reserved        */
 
 #include <toyos/baretest/baretest.hpp>
-#include <toyos/x86/cpuid.hpp>
 #include <toyos/testhelper/lapic_enabler.hpp>
 #include <toyos/testhelper/lapic_test_tools.hpp>
+#include <toyos/x86/cpuid.hpp>
 
 using namespace lapic_test_tools;
 

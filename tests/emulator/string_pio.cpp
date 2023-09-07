@@ -1,11 +1,10 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <toyos/baretest/baretest.hpp>
 #include <cassert>
-#include <toyos/testhelper/debugport_interface.h>
 #include <string>
-
+#include <toyos/baretest/baretest.hpp>
+#include <toyos/testhelper/debugport_interface.h>
 
 TEST_CASE(string_pio_respects_address_override)
 {

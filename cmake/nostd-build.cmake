@@ -1,4 +1,3 @@
-
 add_compile_options(
   # TODO activate again
   #-Wall
@@ -42,5 +41,3 @@ add_compile_options(
 add_link_options(
   -nostdlib -Wl,-z,max-page-size=4096 -Wl,--gc-sections -Wl,--no-relax -static
   )
-
-

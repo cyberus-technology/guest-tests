@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <toyos/x86/arch.hpp>
-#include <optional>
 #include "page_table_base.hpp"
+#include <optional>
+#include <toyos/x86/arch.hpp>
 
 class PTE : public paging_entry_base
 {

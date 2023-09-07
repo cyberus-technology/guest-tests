@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <config.h>
 #include "toyos/util/math.hpp"
+#include <config.h>
 #include <stdio.h>
 #include <type_traits>
 

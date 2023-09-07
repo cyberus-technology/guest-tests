@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <toyos/util/interval.hpp>
 #include "../x86/x86asm.hpp"
+#include <toyos/util/interval.hpp>
 
 class pic
 {

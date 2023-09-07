@@ -6,9 +6,8 @@
 
 #include "helpers.hpp"
 
-#include <toyos/baretest/baretest.hpp>
 #include <compiler.hpp>
-
+#include <toyos/baretest/baretest.hpp>
 
 TEST_CASE(mov_from_segment)
 {

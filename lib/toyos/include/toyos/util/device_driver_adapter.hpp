@@ -6,9 +6,9 @@
 #include <chrono>
 #include <memory>
 
+#include <config.hpp>
 #include <toyos/util/cast_helpers.hpp>
 #include <toyos/util/interval.hpp>
-#include <config.hpp>
 
 /**
  * Generic device driver adapter.

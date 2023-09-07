@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "page_table_base.hpp"
 #include "x86/arch.hpp"
 #include <optional>
-#include "page_table_base.hpp"
 
 class PML4E : public paging_entry_base
 {

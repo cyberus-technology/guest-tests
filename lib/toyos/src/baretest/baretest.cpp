@@ -22,8 +22,10 @@
 
 #include <toyos/baretest/baretest.hpp>
 
-void __attribute__((weak)) prologue() {}
-void __attribute__((weak)) epilogue() {}
+void __attribute__((weak)) prologue()
+{}
+void __attribute__((weak)) epilogue()
+{}
 
 namespace baretest
 {
@@ -44,21 +46,14 @@ bool test_case::run() const
 {
     result_t res = fn_();
     switch (res) {
-    case result_t::SUCCESS:
-        success(name);
-        return true;
-    case result_t::FAILURE:
-        failure(name);
-        return false;
+    case result_t::SUCCESS: success(name); return true;
+    case result_t::FAILURE: failure(name); return false;
     case result_t::SKIPPED:
-    default:
-        skip();
-        return false;
+    default: skip(); return false;
     }
 }
 
-test_case::test_case(test_suite& suite, const char *name_, test_case_fn tc)
-    : name(name_), fn_(tc)
+test_case::test_case(test_suite& suite, const char* name_, test_case_fn tc) : name(name_), fn_(tc)
 {
     suite.add(*this);
 }

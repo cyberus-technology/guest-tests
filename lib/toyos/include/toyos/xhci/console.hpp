@@ -5,11 +5,10 @@
 
 #include "debug_device.hpp"
 
-
-#include "../x86/arch.hpp"
-#include "toyos/util/interval.hpp"
 #include "../console/console.hpp"
 #include "../mutex.hpp"
+#include "../x86/arch.hpp"
+#include "toyos/util/interval.hpp"
 
 #include "chrono"
 #include "memory"

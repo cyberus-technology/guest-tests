@@ -5,9 +5,9 @@
 #include <array>
 #include <map>
 
-#include <toyos/util/interval.hpp>
-#include "int_guard.hpp"
 #include "../x86/x86asm.hpp"
+#include "int_guard.hpp"
+#include <toyos/util/interval.hpp>
 
 struct intr_regs;
 

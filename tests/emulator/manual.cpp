@@ -4,8 +4,6 @@
 #include <algorithm>
 #include <array>
 
-
-
 #include <toyos/baretest/baretest.hpp>
 #include <toyos/testhelper/debugport_interface.h>
 

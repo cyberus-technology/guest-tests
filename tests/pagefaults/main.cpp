@@ -9,14 +9,14 @@
 #include <toyos/util/trace.hpp>
 #include <toyos/x86/x86asm.hpp>
 
-#include <toyos/util/cast_helpers.hpp>
-#include <toyos/testhelper/cr0_guard.hpp>
 #include <toyos/mm.hpp>
-#include <toyos/testhelper/page_guard.hpp>
 #include <toyos/page_pool.hpp>
 #include <toyos/pd.hpp>
 #include <toyos/pdpt.hpp>
 #include <toyos/pml4.hpp>
+#include <toyos/testhelper/cr0_guard.hpp>
+#include <toyos/testhelper/page_guard.hpp>
+#include <toyos/util/cast_helpers.hpp>
 
 using namespace x86;
 

@@ -6,7 +6,6 @@
 #include <compiler.hpp>
 #include <toyos/testhelper/debugport_interface.h>
 
-
 static constexpr const uint16_t SEL_DATA {0x10};
 
 #define MOV_FROM_SEG(seg)                                                                                              \

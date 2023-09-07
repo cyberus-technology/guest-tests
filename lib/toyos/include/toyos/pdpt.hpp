@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <toyos/x86/arch.hpp>
 #include "paging_directory_entry_base.hpp"
+#include <toyos/x86/arch.hpp>
 
 class PDPTE : public paging_directory_entry_base
 {

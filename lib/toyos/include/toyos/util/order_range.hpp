@@ -8,9 +8,9 @@
 #include <numeric>
 #include <type_traits>
 
+#include "math.hpp"
 #include <toyos/util/interval.hpp>
 #include <toyos/util/traits.hpp>
-#include "math.hpp"
 
 namespace cbl
 {

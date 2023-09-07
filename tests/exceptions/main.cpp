@@ -9,9 +9,9 @@
 #include <toyos/testhelper/lapic_enabler.hpp>
 #include <toyos/testhelper/lapic_test_tools.hpp>
 #include <toyos/testhelper/pic.hpp>
+#include <toyos/testhelper/usermode.hpp>
 #include <toyos/util/sotest.hpp>
 #include <toyos/util/trace.hpp>
-#include <toyos/testhelper/usermode.hpp>
 #include <toyos/x86/x86asm.hpp>
 
 using x86::exception;

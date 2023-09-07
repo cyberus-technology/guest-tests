@@ -9,8 +9,8 @@
 #include "array"
 #include "string"
 
-#include <compiler.hpp>
 #include "toyos/util/math.hpp"
+#include <compiler.hpp>
 
 static constexpr uint8_t USB_STRING_MAX_LENGTH {62};
 static constexpr uint8_t USB_STRING_TYPE {3};

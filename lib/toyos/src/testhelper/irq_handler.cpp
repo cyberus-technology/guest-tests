@@ -1,8 +1,8 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <toyos/testhelper/irq_handler.hpp>
 #include <toyos/testhelper/idt.hpp>
+#include <toyos/testhelper/irq_handler.hpp>
 #include <toyos/x86/x86asm.hpp>
 
 idt global_idt;

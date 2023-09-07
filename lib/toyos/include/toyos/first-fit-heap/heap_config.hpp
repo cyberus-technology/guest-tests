@@ -31,29 +31,29 @@
 //     * heap_assert(cond, str) if ENABLE_HEAP_ASSERT is set
 
 #if !(HEAP_LINUX || HEAP_FREESTANDING)
-    #error "invalid heap config, you need to define either HEAP_LINUX or HEAP_FREESTANDING"
+#    error "invalid heap config, you need to define either HEAP_LINUX or HEAP_FREESTANDING"
 #endif
 
 #ifdef HEAP_LINUX
-    #include <assert.h>
-    #include <sys/types.h>
-    #include <stdint.h>
-    #include <new>
-    #include <algorithm>
-    #define HEAP_MAX(x, y) std::max(x, y);
+#    include <algorithm>
+#    include <assert.h>
+#    include <new>
+#    include <stdint.h>
+#    include <sys/types.h>
+#    define HEAP_MAX(x, y) std::max(x, y);
 #else
-    #include "heap_freestanding.hpp"
-    #define HEAP_MAX(x, y) heap_max(x, y);
+#    include "heap_freestanding.hpp"
+#    define HEAP_MAX(x, y) heap_max(x, y);
 #endif
 
 #ifdef HEAP_ENABLE_ASSERT
-    #ifdef HEAP_LINUX
-        #define ASSERT_HEAP(cond) assert(cond)
-    #else
-        #define ASSERT_HEAP(cond) heap_assert(cond, #cond)
-    #endif
+#    ifdef HEAP_LINUX
+#        define ASSERT_HEAP(cond) assert(cond)
+#    else
+#        define ASSERT_HEAP(cond) heap_assert(cond, #        cond)
+#    endif
 #else
-    #define ASSERT_HEAP(cond) ;
+#    define ASSERT_HEAP(cond) ;
 #endif
 
 #define HEAP_PACKED __attribute__((packed))

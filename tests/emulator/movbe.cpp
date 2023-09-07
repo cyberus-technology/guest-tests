@@ -6,8 +6,8 @@
 
 #include <toyos/testhelper/debugport_interface.h>
 
-#include <toyos/baretest/baretest.hpp>
 #include <compiler.hpp>
+#include <toyos/baretest/baretest.hpp>
 #include <toyos/x86/cpuid.hpp>
 
 #include <toyos/x86/x86asm.hpp>

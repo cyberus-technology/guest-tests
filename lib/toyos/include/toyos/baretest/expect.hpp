@@ -45,10 +45,7 @@ class expectation
     }
 
 public:
-    expectation(const T& expect)
-        : expected_value(expect)
-    {
-    }
+    expectation(const T& expect) : expected_value(expect) {}
 
     bool operator==(const T& other)
     {
@@ -95,9 +92,9 @@ public:
 
 } // namespace baretest
 
-#define BARETEST_VERIFY(stmt)                                                                      \
-    do {                                                                                           \
-        if (not(stmt)) {                                                                           \
-            baretest::fail("Expect: %s failed @ %s:%d\n", #stmt, __FILE__, __LINE__);              \
-        }                                                                                          \
+#define BARETEST_VERIFY(stmt)                                                                                          \
+    do {                                                                                                               \
+        if (not(stmt)) {                                                                                               \
+            baretest::fail("Expect: %s failed @ %s:%d\n", #stmt, __FILE__, __LINE__);                                  \
+        }                                                                                                              \
     } while (false);

@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <compiler.h>
 #include "stdint.h"
+#include <compiler.h>
 
 struct uncopyable
 {

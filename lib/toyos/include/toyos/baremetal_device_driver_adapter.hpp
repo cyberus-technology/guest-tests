@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include <toyos/x86/arch.hpp>
-#include <toyos/util/cast_helpers.hpp>
-#include <toyos/util/interval.hpp>
-#include <toyos/util/device_driver_adapter.hpp>
-#include "testhelper/hpet.hpp"
 #include "memory/splitting_buddy.hpp"
+#include "testhelper/hpet.hpp"
 #include "x86/x86asm.hpp"
+#include <toyos/util/cast_helpers.hpp>
+#include <toyos/util/device_driver_adapter.hpp>
+#include <toyos/util/interval.hpp>
+#include <toyos/x86/arch.hpp>
 
 /**
  * Baremetal platform device driver adapter.

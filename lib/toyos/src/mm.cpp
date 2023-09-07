@@ -1,9 +1,9 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <toyos/util/cast_helpers.hpp>
 #include <toyos/irq_guard.hpp>
 #include <toyos/mm.hpp>
+#include <toyos/util/cast_helpers.hpp>
 
 using x86::cr4;
 

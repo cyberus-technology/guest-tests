@@ -5,13 +5,13 @@
 
 #include <toyos/util/trace.hpp>
 
-#include <toyos/util/cast_helpers.hpp>
-#include <toyos/x86/cpuid.hpp>
 #include <toyos/testhelper/int_guard.hpp>
 #include <toyos/testhelper/irq_handler.hpp>
 #include <toyos/testhelper/irqinfo.hpp>
 #include <toyos/testhelper/lapic_test_tools.hpp>
 #include <toyos/testhelper/pic.hpp>
+#include <toyos/util/cast_helpers.hpp>
+#include <toyos/x86/cpuid.hpp>
 #include <toyos/x86/x86asm.hpp>
 #include <toyos/x86/x86defs.hpp>
 

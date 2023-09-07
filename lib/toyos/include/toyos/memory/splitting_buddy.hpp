@@ -3,11 +3,11 @@
 
 #pragma once
 
+#include "buddy.hpp"
+#include "toyos/util/math.hpp"
 #include <arch.h>
 #include <toyos/util/interval.hpp>
 #include <toyos/util/order_range.hpp>
-#include "toyos/util/math.hpp"
-#include "buddy.hpp"
 
 #include <optional>
 

@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include <arch.h>
 #include "buddy.hpp"
-#include <toyos/util/cast_helpers.hpp>
 #include "toyos/util/math.hpp"
+#include <arch.h>
+#include <toyos/util/cast_helpers.hpp>
 
 #include <algorithm>
 #include <functional>
