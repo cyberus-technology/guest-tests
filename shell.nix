@@ -5,6 +5,11 @@ pkgs.mkShell rec {
     cmake
     ninja
     graphviz
+    fd
+    argc
+
+    clang-tools
+    cmake-format
   ];
 
   # Header Files, Runtime Dependencies
