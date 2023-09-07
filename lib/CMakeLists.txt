@@ -39,7 +39,6 @@ set(CMAKE_CXX_STANDARD 17)
 # set(as_subproject LibA LibB LibC)
 
 set(as_subproject
-    first-fit-heap
     libcxx
     libc-tiny
     toyos
@@ -79,7 +78,6 @@ macro(find_package)
   endif()
 endmacro()
 
-add_subdirectory(first-fit-heap)
 add_subdirectory(libcxx)
 add_subdirectory(libc-tiny)
 add_subdirectory(toyos)

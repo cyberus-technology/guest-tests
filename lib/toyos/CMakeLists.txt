@@ -34,8 +34,6 @@ add_library(toyos STATIC
         src/x86/virtual_msr_bus.cpp
 )
 
-find_package(first-fit-heap REQUIRED)
-
 target_include_directories(
   toyos PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                              $<INSTALL_INTERFACE:include>
@@ -47,7 +45,12 @@ target_compile_options(toyos PUBLIC -Wall -Wextra
         -Wno-ignored-qualifiers # silence pprintpp code
 )
 
-target_link_libraries(toyos PUBLIC first-fit-heap udis86-contrib)
+# for first-fit-heap
+target_compile_definitions(
+    toyos PUBLIC HEAP_FREESTANDING HEAP_ASSERT
+)
+
+target_link_libraries(toyos PUBLIC udis86-contrib)
 
 install(
   TARGETS toyos

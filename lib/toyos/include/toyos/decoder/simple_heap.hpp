@@ -8,7 +8,7 @@
 #include "atomic"
 
 #include "toyos/util/cast_helpers.hpp"
-#include "heap.hpp"
+#include "toyos/first-fit-heap/heap.hpp"
 #include "toyos/util/math.hpp"
 
 /**

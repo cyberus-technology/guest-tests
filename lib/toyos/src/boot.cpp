@@ -6,7 +6,7 @@
 #include "toyos/console/console_serial.hpp"
 #include "toyos/xhci/debug_device.hpp"
 
-#include "heap.hpp"
+#include "toyos/first-fit-heap/heap.hpp"
 
 #include "toyos/util/algorithm.hpp"
 #include "toyos/x86/arch.hpp"

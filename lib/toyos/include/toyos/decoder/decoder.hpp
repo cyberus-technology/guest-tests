@@ -9,7 +9,7 @@
 #include "optional"
 
 #include "../x86/arch.hpp"
-#include "heap.hpp"
+#include "toyos/first-fit-heap/heap.hpp"
 
 #include "decoder_vcpu.hpp"
 #include "simple_heap.hpp"
