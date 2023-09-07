@@ -6,7 +6,6 @@
 
 #include <toyos/baretest/baretest.hpp>
 #include <compiler.hpp>
-#include <toyos/decoder/gdt.hpp>
 #include <toyos/testhelper/usermode.hpp>
 
 #include "helpers.hpp"

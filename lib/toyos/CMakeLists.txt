@@ -15,9 +15,6 @@ add_library(toyos STATIC
         src/baretest/baretest.cpp
         src/baretest/baretest_config.cpp
         src/baretest/print.cpp
-        src/decoder/gdt.cpp
-        src/decoder/operand.cpp
-        src/decoder/udis_decoder.cpp
         src/printf/backend.cpp
         src/printf/xprintf.c
         src/testhelper/entry.S
