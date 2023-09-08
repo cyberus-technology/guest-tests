@@ -47,6 +47,5 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 include(cmake/nostd-build.cmake)
 include(cmake/prep_and_use_linker_script.cmake)
 
-add_subdirectory(contrib)
 add_subdirectory(lib)
 add_subdirectory(tests)
