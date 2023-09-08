@@ -1,16 +1,6 @@
-{ stdenv
-, runCommand
-, lib
-, cmake
-, gitignoreNixSrc
-}:
+pkgs:
 
 let
-  src = gitignoreSource ../src;
-  # The gitignoreSource function which takes a path and filters it by applying
-  # gitignore rules. The result is a filtered file tree in the nix store.
-  gitignoreSource = (import gitignoreNixSrc { inherit lib; }).gitignoreSource;
-
   testNames = [
     "cpuid"
     "cxx"
@@ -30,19 +20,7 @@ let
     "vmx"
   ];
 
-  cmakeProj = stdenv.mkDerivation {
-    inherit src;
-    name = "Cyberus Virtualization Integration Tests";
-
-    nativeBuildInputs = [
-      cmake
-    ];
-
-    # The ELFs are standalone kernels and don't need to go through these. This
-    # reduces the number of warnings that scroll by during build.
-    dontPatchELF = true;
-    dontFixup = true;
-  };
+  cmakeProj = pkgs.callPackage ./build { };
 
   extractTest = name: runCommand "guesttest-${name}" { } ''
     mkdir -p $out
