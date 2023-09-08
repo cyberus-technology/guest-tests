@@ -44,8 +44,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DRELEASE -O2")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include(nostd-build)
-include(prep_and_use_linker_script)
+include(cmake/nostd-build.cmake)
+include(cmake/prep_and_use_linker_script.cmake)
 
 add_subdirectory(contrib)
 add_subdirectory(lib)

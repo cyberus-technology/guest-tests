@@ -13,7 +13,7 @@ let
 in
 stdenv.mkDerivation {
   name = "Cyberus Virtualization Integration Tests";
-  src = gitignoreSource ../.;
+  src = gitignoreSource ../src;
 
   nativeBuildInputs = [
     cmake

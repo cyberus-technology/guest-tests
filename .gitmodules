@@ -1,6 +1,3 @@
-[submodule "contrib/first-fit-heap"]
-	path = contrib/first-fit-heap/first-fit-heap
-	url = git@gitlab.vpn.cyberus-technology.de:open-source/first-fit-heap.git
 [submodule "contrib/udis86"]
-	path = contrib/udis86/udis86
+	path = src/contrib/udis86/udis86
 	url = git@gitlab.vpn.cyberus-technology.de:supernova-core/udis86.git
