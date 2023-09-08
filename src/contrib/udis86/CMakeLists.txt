@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 3.10)
-
-project(udis86-contrib)
-
 set(udis86-itab-path ${CMAKE_CURRENT_BINARY_DIR}/libudis86)
 set(udis86-directory ${CMAKE_CURRENT_SOURCE_DIR}/udis86)
 
@@ -48,28 +44,3 @@ add_custom_target(
   )
 
 add_dependencies(udis86-contrib udis86-itab-header-generated)
-
-install(
-  TARGETS udis86-contrib
-  EXPORT udis86-contribConfig
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION lib
-  INCLUDES
-  DESTINATION include
-  )
-
-install(
-  EXPORT udis86-contribConfig
-  FILE udis86-contribConfig.cmake
-  DESTINATION lib/cmake/udis86
-  )
-
-install(FILES udis86/udis86.h DESTINATION include/)
-install(
-  FILES udis86/libudis86/decode.h udis86/libudis86/extern.h
-        udis86/libudis86/syn.h udis86/libudis86/types.h udis86/libudis86/udint.h
-        ${udis86-itab-path}/itab.h DESTINATION include/libudis86
-  )
-
-export(TARGETS udis86-contrib FILE udis86-contribConfig.cmake)

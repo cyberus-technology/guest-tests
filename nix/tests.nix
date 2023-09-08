@@ -39,21 +39,17 @@ let
       cmake
       python3Toolchain # for contrib/udis86
     ];
+
+    # The ELFs are standalone kernels and don't need to go through these. This
+    # reduces the number of warnings that scroll by during build.
+    dontPatchELF = true;
+    dontFixup = true;
   };
 
-  extractTest = name: stdenv.mkDerivation {
-    inherit src;
-    name = "Cyberus Virtualization Integration Tests - ${name}";
-
-    doCheck = false;
-    doBuild = false;
-    doInstall = true;
-
-    installPhase = ''
-      mkdir -p $out
-      cp ${cmakeProj}/tests/${name} $out/${name}
-    '';
-  };
+  extractTest = name: pkgs.runCommand "guesttest-${name}" {} ''
+    mkdir -p $out
+    cp ${cmakeProj}/tests/${name} $out/${name}
+  '';
 
   individualTests = builtins.foldl'
     (acc: name: acc // { "${name}" = extractTest name; })
