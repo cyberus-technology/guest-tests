@@ -12,6 +12,7 @@ pkgs.mkShell rec {
     ninja
     fd
     argc
+    niv
 
     python3Toolchain
 
