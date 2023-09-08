@@ -3,7 +3,7 @@
 
 #pragma once
 
-#if defined(__cplusplus) && !defined(NDEBUG)
+#if defined(__cplusplus)
 #include <toyos/util/trace.hpp>
 #define assert(x) ASSERT(x, "Assertion failed")
 #else

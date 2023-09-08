@@ -15,8 +15,7 @@ add_compile_options(
   -fno-common
   -fno-plt
   -fpie
-  "$<$<C_COMPILER_ID:GNU>:-fstack-protector-strong>"
-  "$<$<C_COMPILER_ID:GNU>:-mstack-protector-guard=global>"
+  "$<$<C_COMPILER_ID:GNU>:-fno-stack-protector>"
   -fvisibility=hidden
   -m64
   -march=westmere

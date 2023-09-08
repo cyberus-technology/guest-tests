@@ -12,7 +12,6 @@ add_library(
   src/pdpt.cpp
   src/pml4.cpp
   src/pt.cpp
-  src/stackprotector.c
   src/baretest/baretest.cpp
   src/baretest/baretest_config.cpp
   src/baretest/print.cpp
