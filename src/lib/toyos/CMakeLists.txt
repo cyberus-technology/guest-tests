@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 3.10)
-
-project(toyos CXX C ASM)
-
 add_library(
   toyos STATIC
   src/boot.cpp
@@ -28,7 +24,7 @@ add_library(
   )
 
 target_include_directories(
-  toyos PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  toyos PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                $<INSTALL_INTERFACE:include>
   )
 
@@ -42,27 +38,3 @@ target_compile_options(
 target_compile_definitions(toyos PUBLIC HEAP_FREESTANDING HEAP_ASSERT)
 
 target_link_libraries(toyos PUBLIC udis86-contrib)
-
-install(
-  TARGETS toyos
-  EXPORT toyosTargets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION lib
-  INCLUDES
-  DESTINATION include
-  )
-
-install(DIRECTORY include/ DESTINATION include/)
-
-install(
-  EXPORT toyosTargets
-  FILE toyosTargets.cmake
-  DESTINATION lib/cmake/toyos
-  )
-
-# In order to make interface libraries discoverable via find_package
-# we have to separate a *Config.cmake file and export the lib.
-install(FILES toyosConfig.cmake DESTINATION lib/cmake/toyos)
-
-export(TARGETS toyos FILE toyosTargets.cmake)
