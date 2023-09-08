@@ -1,1 +1,1 @@
-import ./nix/release.nix { }
+(import ./nix/cbspkgs.nix).cyberus.guest-tests
