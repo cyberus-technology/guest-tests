@@ -2,7 +2,6 @@
 , runCommand
 , lib
 , cmake
-, python3
 , gitignoreNixSrc
 }:
 
@@ -11,7 +10,6 @@ let
   # The gitignoreSource function which takes a path and filters it by applying
   # gitignore rules. The result is a filtered file tree in the nix store.
   gitignoreSource = (import gitignoreNixSrc { inherit lib; }).gitignoreSource;
-  python3Toolchain = python3.withPackages (_: [ ]);
 
   testNames = [
     "cpuid"
@@ -38,7 +36,6 @@ let
 
     nativeBuildInputs = [
       cmake
-      python3Toolchain # for contrib/udis86
     ];
 
     # The ELFs are standalone kernels and don't need to go through these. This

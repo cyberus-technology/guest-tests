@@ -1,3 +1,0 @@
-[submodule "contrib/udis86"]
-	path = src/contrib/udis86/udis86
-	url = git@gitlab.vpn.cyberus-technology.de:supernova-core/udis86.git
