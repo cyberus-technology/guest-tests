@@ -40,6 +40,11 @@ let
       cmake
       python3Toolchain # for contrib/udis86
     ];
+
+    # The ELFs are standalone kernels and don't need to go through these. This
+    # reduces the number of warnings that scroll by during build.
+    dontPatchELF = true;
+    dontFixup = true;
   };
 
   extractTest = name: pkgs.runCommand "guesttest-${name}" {} ''
