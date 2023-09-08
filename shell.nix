@@ -1,9 +1,9 @@
 { sources ? import ./nix/sources.nix
-, pkgs ? import sources.nixpkgs {}
+, pkgs ? import sources.nixpkgs { }
 }:
 
 let
-  python3Toolchain = pkgs.python3.withPackages (_: []);
+  python3Toolchain = pkgs.python3.withPackages (_: [ ]);
 in
 pkgs.mkShell rec {
   # CLI Utilities
