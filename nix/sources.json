@@ -2,7 +2,7 @@
     "cbspkgs": {
         "branch": "master",
         "repo": "git@gitlab.vpn.cyberus-technology.de:infrastructure/cbspkgs.git",
-        "rev": "666ef0d70e657da5a6585b70142cfa74cdcfcc82",
+        "rev": "b2d679af1774037c040db787a17e2ab0486670b2",
         "type": "git"
     },
     "nixpkgs": {
