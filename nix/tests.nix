@@ -3,7 +3,6 @@
 , lib
 , cmake
 , python3
-, pkgs
 }:
 
 let
