@@ -31,7 +31,7 @@ function fn_format_sources() {
     done
 
     for FOLDER in "${FOLDERS[@]}"; do
-        echo "Processing folder: $FOLDER"
+        echo "  Processing folder: $FOLDER"
         if [ "$JUST_CHECK" = "1" ]; then
             fd --type file "${EXTENSIONS_ARG_STR[@]}" . "$FOLDER" | xargs -I {} clang-format --Werror --dry-run {}
         else

@@ -1,12 +1,19 @@
-{ pkgs ? import <nixpkgs> { } }:
+{ sources ? import ./nix/sources.nix
+, pkgs ? import sources.nixpkgs { }
+}:
+
+let
+  python3Toolchain = pkgs.python3.withPackages (_: [ ]);
+in
 pkgs.mkShell rec {
   # CLI Utilities
   nativeBuildInputs = with pkgs; [
     cmake
     ninja
-    graphviz
     fd
     argc
+
+    python3Toolchain
 
     clang-tools
     cmake-format
