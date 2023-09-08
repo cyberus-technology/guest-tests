@@ -1,8 +1,9 @@
-{ gitignoreNixSrc
-, stdenv
+{ stdenv
+, runCommand
 , lib
 , cmake
 , python3
+, gitignoreNixSrc
 }:
 
 let
@@ -12,7 +13,7 @@ let
   gitignoreSource = (import gitignoreNixSrc { inherit lib; }).gitignoreSource;
   python3Toolchain = python3.withPackages (_: [ ]);
 
-  testNames = builtins.map (s: "${s}_guesttest-elf32") [
+  testNames = [
     "cpuid"
     "cxx"
     "debugport"
@@ -46,9 +47,10 @@ let
     dontFixup = true;
   };
 
-  extractTest = name: pkgs.runCommand "guesttest-${name}" {} ''
+  extractTest = name: runCommand "guesttest-${name}" { } ''
     mkdir -p $out
-    cp ${cmakeProj}/tests/${name} $out/${name}
+    cp ${cmakeProj}/tests/${name}_guesttest $out
+    cp ${cmakeProj}/tests/${name}_guesttest-elf32 $out
   '';
 
   individualTests = builtins.foldl'
