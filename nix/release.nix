@@ -1,7 +1,8 @@
-{ sources ? import ./sources.nix
-, pkgs ? import sources.nixpkgs { }
-}:
-
+let
+  pkgs = import ./cbspkgs.nix;
+in
 {
-  tests = pkgs.callPackage ./tests.nix { gitignoreNixSrc = sources."gitignore.nix"; };
+  inherit (pkgs.cyberus.guest-tests) tests;
+
+  # Add additional CI relevant attributes here.
 }

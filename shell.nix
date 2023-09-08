@@ -1,29 +1,20 @@
-{ sources ? import ./nix/sources.nix
-, pkgs ? import sources.nixpkgs { }
-}:
-
 let
-  python3Toolchain = pkgs.python3.withPackages (_: [ ]);
+  pkgs = import ./nix/cbspkgs.nix;
 in
 pkgs.mkShell rec {
-  # CLI Utilities
-  nativeBuildInputs = with pkgs; [
-    cmake
-    ninja
+  packages = with pkgs; [
     fd
     argc
+    niv
 
-    python3Toolchain
+    # Not strictly needed, but some developers prefer it to make.
+    ninja
 
     clang-tools
     cmake-format
   ];
 
-  # Header Files, Runtime Dependencies
-  buildInputs = with pkgs; [
-    gtest
+  inputsFrom = [
+    pkgs.cyberus.guest-tests.tests.all
   ];
-
-  # Enable to find shared objects, such as libX11.so.
-  # LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath buildInputs;
 }
