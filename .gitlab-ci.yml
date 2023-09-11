@@ -1,0 +1,42 @@
+.build_regular_template: &build_regular_template
+  image: gcc:12
+  before_script:
+    - apt-get update && apt-get install -y cmake ninja-build xorriso
+  script:
+    - mkdir build
+    - cd build
+    - cmake .. -G Ninja -DCMAKE_INSTALL_PREFIX=./install -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE && ninja
+
+# Gitlab CI environment template that enables Nix on the command line,
+# including nix-build and nix-shell.
+.nix_build_template: &nix_build_template
+  interruptible: true
+  tags:
+    - native-nix-v2
+  before_script:
+    - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "git@${CI_SERVER_HOST}:"
+    - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "ssh://git@${CI_SERVER_HOST}/"
+
+
+build:regular_debug:
+  <<: *build_regular_template
+  variables:
+    CMAKE_BUILD_TYPE: "Debug"
+
+build:regular_release:
+  <<: *build_regular_template
+  variables:
+    CMAKE_BUILD_TYPE: "Release"
+
+build:nix:
+  <<: *nix_build_template
+  script:
+    - nix-build -A tests.all
+    - test -f result/tests/lapic-timer_guesttest
+    - nix-build -A tests.lapic-timer # some random individual test
+    - test -f result/lapic-timer_guesttest
+
+test:nix-shell:
+  <<: *nix_build_template
+  script:
+    - nix-shell --pure --run "echo Works"
