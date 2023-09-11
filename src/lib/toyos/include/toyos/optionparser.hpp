@@ -33,8 +33,8 @@ public:
    {
       // Copy the tokenized arguments into the member variable,
       // because the raw string pointers will be used by the parser
-      for(const auto& s : arguments) {
-         if(s.find("--") != std::string::npos) {
+      for (const auto& s : arguments) {
+         if (s.find("--") != std::string::npos) {
             argv.push_back(s.c_str());
          }
       }
@@ -58,7 +58,7 @@ public:
    std::optional<std::string> option_value(size_t idx) const
    {
       const auto& o = options.at(idx);
-      if(o) {
+      if (o) {
          return { o.arg ?: "" };
       }
       return {};

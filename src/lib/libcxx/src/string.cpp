@@ -68,9 +68,9 @@ namespace
     if (errno_save == ERANGE)
         throw_from_string_out_of_range(func);
 #endif
-      if(ptr == p)
+      if (ptr == p)
          throw_from_string_invalid_arg(func);
-      if(idx)
+      if (idx)
          *idx = static_cast<size_t>(ptr - p);
       return r;
    }
@@ -84,7 +84,7 @@ namespace
    {
       // Use long as no Standard string to integer exists.
       long r = as_integer_helper<long>(func, s, idx, base, strtol);
-      if(r < numeric_limits<int>::min() || numeric_limits<int>::max() < r)
+      if (r < numeric_limits<int>::min() || numeric_limits<int>::max() < r)
          throw_from_string_out_of_range(func);
       return static_cast<int>(r);
    }
@@ -351,11 +351,11 @@ namespace
    {
       typedef typename S::size_type size_type;
       size_type available = s.size();
-      while(true) {
+      while (true) {
          int status = sprintf_like(&s[0], available + 1, fmt, a);
-         if(status >= 0) {
+         if (status >= 0) {
             size_type used = static_cast<size_type>(status);
-            if(used <= available) {
+            if (used <= available) {
                s.resize(used);
                break;
             }

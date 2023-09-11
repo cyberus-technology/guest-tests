@@ -91,8 +91,8 @@ TEST_CASE_CONDITIONAL(xstate_features, xsave_supported())
    print_cpuid(CPUID_LEAF_EXTENDED_STATE, CPUID_EXTENDED_STATE_SUB);
 
    info("xstate {x}", supported_xstate);
-   for(unsigned bit = 2; bit <= 62; bit++) {
-      if(supported_xstate & (static_cast<uint64_t>(1) << bit)) {
+   for (unsigned bit = 2; bit <= 62; bit++) {
+      if (supported_xstate & (static_cast<uint64_t>(1) << bit)) {
          print_cpuid(CPUID_LEAF_EXTENDED_STATE, bit);
       }
    }
@@ -107,14 +107,14 @@ void prologue()
    // Everything from MMX onwards is only supported if FPU emulation is disabled.
    set_cr0(get_cr0() & ~math::mask_from(cr0::EM));
 
-   if(xsave_supported()) {
+   if (xsave_supported()) {
       xsave_mask = get_supported_xstate() & XCR0_MASK;
 
       set_cr4(get_cr4() | math::mask_from(cr4::OSXSAVE, cr4::OSFXSR));
       set_xcr(xsave_mask);
 
       auto xsave_size{ cpuid(CPUID_LEAF_EXTENDED_STATE, CPUID_EXTENDED_STATE_MAIN).ecx };
-      if(xsave_size > sizeof(xsave_area)) {
+      if (xsave_size > sizeof(xsave_area)) {
          baretest::hello(1);
          baretest::fail("Size of XSAVE area greater than allocated space!");
          baretest::goodbye();
@@ -156,8 +156,8 @@ TEST_CASE_CONDITIONAL(xstate_size_checks, xsave_supported())
    auto xsave_size{ cpuid(CPUID_LEAF_EXTENDED_STATE).ebx };
    auto calculated_size{ x86::FXSAVE_AREA_SIZE + x86::XSAVE_HEADER_SIZE };
 
-   for(unsigned feat{ 2 }; feat <= 62; feat++) {
-      if(not(xsave_mask & (static_cast<uint64_t>(1) << feat))) {
+   for (unsigned feat{ 2 }; feat <= 62; feat++) {
+      if (not(xsave_mask & (static_cast<uint64_t>(1) << feat))) {
          continue;
       }
 
@@ -178,7 +178,7 @@ static bool check_xcr_exception(uint64_t val, uint32_t xcrN = 0)
    irq_handler::guard _(irq_handler_fn);
    irq_info.reset();
 
-   if(setjmp(jump_buffer) == 0) {
+   if (setjmp(jump_buffer) == 0) {
       set_xcr(val, xcrN);
    }
 
@@ -210,13 +210,13 @@ TEST_CASE_CONDITIONAL(setting_invalid_xcr0_causes_gp, xsave_supported())
    values.push_back(0);
 
    // If AVX is supported, clearing SSE while enabling AVX is invalid
-   if(xsave_mask & XCR0_AVX) {
+   if (xsave_mask & XCR0_AVX) {
       values.push_back(XCR0_FPU | XCR0_AVX);
    }
 
    // If AVX-512 is supported, setting any of those bits while not setting AVX is invalid,
    // as is not setting all of the AVX-512 bits together
-   if(xsave_mask & XCR0_OPMASK) {
+   if (xsave_mask & XCR0_OPMASK) {
       values.push_back(XCR0_FPU | XCR0_AVX);
       values.push_back(XCR0_FPU | XCR0_OPMASK | XCR0_ZMM_Hi256 | XCR0_Hi16_ZMM);
       values.push_back(XCR0_FPU | XCR0_OPMASK | XCR0_Hi16_ZMM);
@@ -227,7 +227,7 @@ TEST_CASE_CONDITIONAL(setting_invalid_xcr0_causes_gp, xsave_supported())
       values.push_back(XCR0_FPU | XCR0_AVX | XCR0_OPMASK | XCR0_ZMM_Hi256);
    }
 
-   for(const auto v : values) {
+   for (const auto v : values) {
       info("Setting XCR0 to {x}", v);
       BARETEST_ASSERT(check_xcr_exception(v));
    }
@@ -240,14 +240,14 @@ TEST_CASE_CONDITIONAL(setting_valid_xcr0_works, xsave_supported())
    values.push_back(XCR0_FPU);
    values.push_back(XCR0_FPU | XCR0_SSE);
 
-   if(avx_supported()) {
+   if (avx_supported()) {
       values.push_back(XCR0_FPU | XCR0_SSE | XCR0_AVX);
    }
-   if(avx512_supported()) {
+   if (avx512_supported()) {
       values.push_back(XCR0_FPU | XCR0_SSE | XCR0_AVX | XCR0_AVX512);
    }
 
-   for(const auto v : values) {
+   for (const auto v : values) {
       set_xcr(v);
       BARETEST_ASSERT(get_xcr() == v);
    }
@@ -352,7 +352,7 @@ TEST_CASE_CONDITIONAL(xsave_raises_ud, not xsaves_supported())
    irq_handler::guard irq_guard{ irq_handler_fn };
    irq_info.reset();
 
-   if(setjmp(jump_buffer) == 0) {
+   if (setjmp(jump_buffer) == 0) {
       xsaves(xsave_area, XCR0_FPU);
    }
 
@@ -386,10 +386,10 @@ TEST_CASE_CONDITIONAL(fpu_context_switch_works, debugport_present() and xsave_su
 {
    set_mm0(TEST_VAL);
    set_xmm0(TEST_VAL_128);
-   if(avx_supported()) {
+   if (avx_supported()) {
       set_ymm0(TEST_VAL_256);
    }
-   if(avx512_supported()) {
+   if (avx512_supported()) {
       set_zmm0(TEST_VAL_512);
    }
 

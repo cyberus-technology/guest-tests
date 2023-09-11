@@ -45,7 +45,7 @@ namespace baretest
    bool test_case::run() const
    {
       result_t res = fn_();
-      switch(res) {
+      switch (res) {
          case result_t::SUCCESS:
             success(name);
             return true;
@@ -68,7 +68,7 @@ namespace baretest
    void test_suite::run()
    {
       hello(test_cases.size());
-      for(const auto& tc : test_cases) {
+      for (const auto& tc : test_cases) {
          tc.run();
       }
       goodbye();

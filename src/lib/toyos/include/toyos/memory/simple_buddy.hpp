@@ -52,7 +52,7 @@ public:
    std::optional<uintptr_t> alloc(math::order_t order)
    {
       auto opt_addr{ buddy_t::alloc(order) };
-      if(not opt_addr) {
+      if (not opt_addr) {
          // get fresh memory from heap
          math::order_t claim_order{ std::clamp(static_cast<math::order_t>(order + 1u),
                                                static_cast<math::order_t>(min_claim_order + 1u),
@@ -60,7 +60,7 @@ public:
 
          auto new_space{ alloc_func(static_cast<size_t>(1) << claim_order) };
 
-         if(new_space == nullptr) {
+         if (new_space == nullptr) {
             return {};  // Could not claim memory from default heap
          }
 
@@ -69,12 +69,12 @@ public:
          opt_addr = buddy_t::alloc(order);
       }
 
-      if(not opt_addr) {
+      if (not opt_addr) {
          return {};  // simple_buddy out of memory
       }
 
       auto ins = alloc_map.insert({ *opt_addr, order });
-      if(not ins.second) {
+      if (not ins.second) {
          INTERNAL_TRAP();  // simple_buddy; address already in map, which indicates corrupted buddy
       }
       return opt_addr;

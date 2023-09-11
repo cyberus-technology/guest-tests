@@ -100,21 +100,21 @@ void __shared_weak_count::__release_weak() _NOEXCEPT
    // threads, and have them all get copied at once.  The argument
    // also doesn't apply for __release_shared, because an outstanding
    // weak_ptr::lock() could read / modify the shared count.
-   if(__libcpp_atomic_load(&__shared_weak_owners_, _AO_Acquire) == 0) {
+   if (__libcpp_atomic_load(&__shared_weak_owners_, _AO_Acquire) == 0) {
       // no need to do this store, because we are about
       // to destroy everything.
       //__libcpp_atomic_store(&__shared_weak_owners_, -1, _AO_Release);
       __on_zero_shared_weak();
    }
-   else if(__libcpp_atomic_refcount_decrement(__shared_weak_owners_) == -1)
+   else if (__libcpp_atomic_refcount_decrement(__shared_weak_owners_) == -1)
       __on_zero_shared_weak();
 }
 
 __shared_weak_count* __shared_weak_count::lock() _NOEXCEPT
 {
    long object_owners = __libcpp_atomic_load(&__shared_owners_);
-   while(object_owners != -1) {
-      if(__libcpp_atomic_compare_exchange(&__shared_owners_, &object_owners, object_owners + 1))
+   while (object_owners != -1) {
+      if (__libcpp_atomic_compare_exchange(&__shared_owners_, &object_owners, object_owners + 1))
          return this;
    }
    return nullptr;
@@ -210,11 +210,11 @@ void* __undeclare_reachable(void* p)
 void* align(size_t alignment, size_t size, void*& ptr, size_t& space)
 {
    void* r = nullptr;
-   if(size <= space) {
+   if (size <= space) {
       char* p1 = static_cast<char*>(ptr);
       char* p2 = reinterpret_cast<char*>(reinterpret_cast<size_t>(p1 + (alignment - 1)) & -alignment);
       size_t d = static_cast<size_t>(p2 - p1);
-      if(d <= space - size) {
+      if (d <= space - size) {
          r = p2;
          ptr = r;
          space -= d;

@@ -109,9 +109,9 @@ protected:
       do {
          expected = raw();
          desired = (expected & ~clr_mask) | set_mask;
-      } while(cbl::in_place_atomic<uint64_t>(raw_).compare_exchange_strong(
-                 expected, desired, std::memory_order_seq_cst, std::memory_order_seq_cst)
-              == false);
+      } while (cbl::in_place_atomic<uint64_t>(raw_).compare_exchange_strong(
+                  expected, desired, std::memory_order_seq_cst, std::memory_order_seq_cst)
+               == false);
    }
 
    static void exchange_raw_atomic(const paging_entry_base& src, paging_entry_base& dest)
@@ -121,8 +121,8 @@ protected:
       do {
          expected = dest.raw();
          desired = src.raw();
-      } while(cbl::in_place_atomic<uint64_t>(dest.raw_).compare_exchange_strong(expected, desired, std::memory_order_seq_cst, std::memory_order_seq_cst)
-              == false);
+      } while (cbl::in_place_atomic<uint64_t>(dest.raw_).compare_exchange_strong(expected, desired, std::memory_order_seq_cst, std::memory_order_seq_cst)
+               == false);
    }
 
    uint64_t raw() const
@@ -144,7 +144,7 @@ struct paging_structure_container
 
    static paging_structure_container& alloc(page_pool& pool)
    {
-      return *(new(num_to_ptr<void>(pool.alloc())) paging_structure_container);
+      return *(new (num_to_ptr<void>(pool.alloc())) paging_structure_container);
    }
 
    using entry_container_t = std::array<ENTRY, 512>;

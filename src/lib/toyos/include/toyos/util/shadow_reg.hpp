@@ -43,7 +43,7 @@ namespace cbl
       void acquire_resource()
       {
          host_resource_ = acquire_func_(shadow_);
-         if(host_resource_) {
+         if (host_resource_) {
             auto v = host_value_(host_resource_);
             *host_addr_ = v;
          }
@@ -58,13 +58,13 @@ namespace cbl
       {
          ASSERT(sizeof(reg_t) <= buf.bytes() + offset, "Invalid read on shadow_reg");
 
-         if(sizeof(reg_t) == buf.bytes() + offset) {
+         if (sizeof(reg_t) == buf.bytes() + offset) {
             buf.write<reg_t>(shadow_);
          }
 
          const cbl::buffer_view shadow_buf(const_cast<reg_t*>(&shadow_), sizeof(shadow_));
 
-         switch(buf.bytes()) {
+         switch (buf.bytes()) {
             DEFAULT_TO_PANIC("Unsupported size: {}", buf.bytes());
             case 1:
                buf.write<uint8_t>(shadow_buf.read<const uint8_t>(offset));
@@ -89,14 +89,14 @@ namespace cbl
                 buf.bytes(),
                 offset);
 
-         if(sizeof(reg_t) == buf.bytes()) {
+         if (sizeof(reg_t) == buf.bytes()) {
             shadow_ = buf.read<reg_t>();
             return;
          }
 
          cbl::buffer_view shadow_buf(&shadow_, sizeof(shadow_));
 
-         switch(buf.bytes()) {
+         switch (buf.bytes()) {
             DEFAULT_TO_PANIC("Unsupported size: {#x}", buf.bytes());
             case 1:
                shadow_buf.write<uint8_t>(buf.read<const uint8_t>(), offset);
@@ -116,7 +116,7 @@ namespace cbl
       void write(cbl::buffer_view& buf, off_t offset, bool reacquire = true)
       {
          set_shadow(buf, offset);
-         if(reacquire) {
+         if (reacquire) {
             acquire_resource();
          }
       }

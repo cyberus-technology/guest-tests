@@ -44,8 +44,8 @@ inline constexpr const char* strip_file_path(const char* file_name)
 
    // Walk to the last forward slash. We could achieve this more elegantly with the STL, but as this file is included
    // everywhere and we can't hide the implementation of this function, let's not pull in `<algorithm>` for everyone.
-   for(; file_name[0]; file_name++) {
-      if(file_name[0] == '/') {
+   for (; file_name[0]; file_name++) {
+      if (file_name[0] == '/') {
          shortened_name = file_name + 1;
       }
    }
@@ -57,17 +57,17 @@ inline constexpr const char* strip_file_path(const char* file_name)
    do {                                                                                     \
       constexpr const char* __short_path__{ strip_file_path(__FILE__) };                    \
       pprintf("[" #level " {s}:{}] " fmtstr "\n", __short_path__, __LINE__, ##__VA_ARGS__); \
-   } while(0);
+   } while (0);
 
 #define info(fmtstr, ...) print_macro(INF, fmtstr, ##__VA_ARGS__)
 #define warning(fmtstr, ...) print_macro(WRN, fmtstr, ##__VA_ARGS__)
 
-#define trace(context, fmtstr, ...)               \
-   do {                                           \
-      if((TRACE_MASK & (context)) == (context)) { \
-         info(fmtstr, ##__VA_ARGS__);             \
-      }                                           \
-   } while(0);
+#define trace(context, fmtstr, ...)                \
+   do {                                            \
+      if ((TRACE_MASK & (context)) == (context)) { \
+         info(fmtstr, ##__VA_ARGS__);              \
+      }                                            \
+   } while (0);
 
 #ifdef __cpp_exceptions
 #include <exception>
@@ -78,12 +78,12 @@ inline constexpr const char* strip_file_path(const char* file_name)
 
 #define ASSERT(cond, fmtstr, ...)                                  \
    do {                                                            \
-      if(UNLIKELY(!(cond))) {                                      \
+      if (UNLIKELY(!(cond))) {                                     \
          pprintf("[%s:%d]  ", __FILE__, __LINE__);                 \
          pprintf("Assertion failed: " fmtstr "\n", ##__VA_ARGS__); \
          INTERNAL_TRAP();                                          \
       }                                                            \
-   } while(0);
+   } while (0);
 
 #define PANIC_ON(cond, ...) ASSERT(!(cond), ##__VA_ARGS__)
 #define PANIC_UNLESS(cond, ...) ASSERT(cond, ##__VA_ARGS__)
@@ -92,7 +92,7 @@ inline constexpr const char* strip_file_path(const char* file_name)
    do {                              \
       PANIC_ON(true, ##__VA_ARGS__); \
       INTERNAL_TRAP();               \
-   } while(0)
+   } while (0)
 
 #define DEFAULT_TO_PANIC(...)               \
    default:                                 \
@@ -103,8 +103,8 @@ inline constexpr const char* strip_file_path(const char* file_name)
 #define WARN_ONCE(...)              \
    do {                             \
       static bool do_print{ true }; \
-      if(do_print) {                \
+      if (do_print) {               \
          do_print = false;          \
          warning(__VA_ARGS__);      \
       }                             \
-   } while(0);
+   } while (0);

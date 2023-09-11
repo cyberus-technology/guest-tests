@@ -55,7 +55,7 @@ void PML4E::set_exec_disable(bool exec, tlb_invalidation invl)
 
 std::optional<phy_addr_t> PML4E::get_pdpt() const
 {
-   if(is_present()) {
+   if (is_present()) {
       return { phy_addr_t(raw() & ADDR_MASK) };
    }
    return {};
@@ -69,7 +69,7 @@ void PML4E::set_pdpt(phy_addr_t addr, tlb_invalidation invl)
 
 void PML4E::invalidate_entry(tlb_invalidation invl) const
 {
-   if(invl == tlb_invalidation::no) {
+   if (invl == tlb_invalidation::no) {
       return;
    }
    memory_manager::invalidate_tlb_non_global();

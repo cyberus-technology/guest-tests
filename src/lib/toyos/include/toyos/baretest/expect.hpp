@@ -35,7 +35,7 @@ namespace baretest
 
       void print_result(bool result, const T& other) const
       {
-         if(not result) {
+         if (not result) {
             printf("Expect: Mismatch: expected: ");
             print(expected_value);
             printf("Actual: ");
@@ -95,7 +95,7 @@ namespace baretest
 
 #define BARETEST_VERIFY(stmt)                                                      \
    do {                                                                            \
-      if(not(stmt)) {                                                              \
+      if (not(stmt)) {                                                             \
          baretest::fail("Expect: %s failed @ %s:%d\n", #stmt, __FILE__, __LINE__); \
       }                                                                            \
-   } while(false);
+   } while (false);

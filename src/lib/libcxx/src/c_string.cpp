@@ -43,7 +43,7 @@ void* memcpy_reverse(void* dst, const void* src, size_t n)
 
 __USED__ void* memmove(void* dst, const void* src, size_t n)
 {
-   if(dst < src) {
+   if (dst < src) {
       return memcpy(dst, src, n);
    }
    else {
@@ -56,11 +56,11 @@ __USED__ int memcmp(const void* s1, const void* s2, size_t n)
    const unsigned char* s1_ = (const unsigned char*)(s1);
    const unsigned char* s2_ = (const unsigned char*)(s2);
 
-   for(size_t cnt = 0; cnt < n; cnt++, s1_++, s2_++) {
+   for (size_t cnt = 0; cnt < n; cnt++, s1_++, s2_++) {
       unsigned char c1 = *s1_;
       unsigned char c2 = *s2_;
 
-      if(c1 != c2) {
+      if (c1 != c2) {
          return (c1 - c2);
       }
    }
@@ -79,17 +79,17 @@ char* strcpy(char* __restrict dst, const char* __restrict src)
 
    do {
       *dst++ = *src;
-   } while(*src++ != '\0');
+   } while (*src++ != '\0');
 
    return ret;
 }
 
 int strcmp(const char* str1, const char* str2)
 {
-   for(size_t idx = 0; !(str1[idx] == 0 && str2[idx] == 0); idx++) {
+   for (size_t idx = 0; !(str1[idx] == 0 && str2[idx] == 0); idx++) {
       int diff = str1[idx] - str2[idx];
 
-      if(diff != 0) {
+      if (diff != 0) {
          return diff;
       }
    }
@@ -99,10 +99,10 @@ int strcmp(const char* str1, const char* str2)
 
 int strncmp(const char* str1, const char* str2, size_t num)
 {
-   for(size_t idx = 0; idx < num && !(str1[idx] == 0 && str2[idx] == 0); idx++) {
+   for (size_t idx = 0; idx < num && !(str1[idx] == 0 && str2[idx] == 0); idx++) {
       int diff = str1[idx] - str2[idx];
 
-      if(diff != 0) {
+      if (diff != 0) {
          return diff;
       }
    }
@@ -115,8 +115,8 @@ void* memchr(const void* str, int c, size_t n)
    const unsigned char needle = (unsigned char)(c & 0xff);
    const unsigned char* cur = (const unsigned char*)str;
 
-   for(size_t idx = 0; idx < n; idx++, cur++) {
-      if(*cur == needle) {
+   for (size_t idx = 0; idx < n; idx++, cur++) {
+      if (*cur == needle) {
          return (void*)cur;
       }
    }
@@ -128,7 +128,7 @@ size_t strlen(const char* str)
 {
    size_t len = 0;
 
-   while(*(str++) != '\0') {
+   while (*(str++) != '\0') {
       len++;
    }
 
@@ -137,7 +137,7 @@ size_t strlen(const char* str)
 
 bool isspace(char c)
 {
-   switch(c) {
+   switch (c) {
       case ' ':
       case '\t':
       case '\r':
@@ -150,7 +150,7 @@ bool isspace(char c)
 
 int ctoi_(char c)
 {
-   switch(c) {
+   switch (c) {
       case '0' ... '9':
          return c - '0';
       case 'a' ... 'z':
@@ -171,40 +171,40 @@ int ctoi(char c, int base)
 unsigned long long strtoull(const char* str, char** str_end, int base)
 {
    auto setend([str_end](const char* x) {
-      if(str_end) {
+      if (str_end) {
          *str_end = const_cast<char*>(x);
       }
    });
 
-   if(!str) {
+   if (!str) {
       setend(nullptr);
       return 0;
    }
 
-   if(*str == '\0') {
+   if (*str == '\0') {
       setend(str);
       return 0;
    }
 
    const char* p{ str };
 
-   while(isspace(*p)) {
+   while (isspace(*p)) {
       ++p;
    }
 
-   if(*p == '+') {
+   if (*p == '+') {
       ++p;
    }
 
-   if(*p == '0' && *(p + 1) == 'x' && base == 16) {
+   if (*p == '0' && *(p + 1) == 'x' && base == 16) {
       p += 2;
    }
 
    unsigned long long accum{ 0 };
 
-   while(*p) {
+   while (*p) {
       int i{ ctoi(*p, base) };
-      if(i < 0) {
+      if (i < 0) {
          setend(p);
          return accum;
       }
@@ -220,40 +220,40 @@ unsigned long long strtoull(const char* str, char** str_end, int base)
 unsigned long strtoul(const char* str, char** str_end, int base)
 {
    auto setend([str_end](const char* x) {
-      if(str_end) {
+      if (str_end) {
          *str_end = const_cast<char*>(x);
       }
    });
 
-   if(!str) {
+   if (!str) {
       setend(nullptr);
       return 0;
    }
 
-   if(*str == '\0') {
+   if (*str == '\0') {
       setend(str);
       return 0;
    }
 
    const char* p{ str };
 
-   while(isspace(*p)) {
+   while (isspace(*p)) {
       ++p;
    }
 
-   if(*p == '+') {
+   if (*p == '+') {
       ++p;
    }
 
-   if(*p == '0' && *(p + 1) == 'x' && base == 16) {
+   if (*p == '0' && *(p + 1) == 'x' && base == 16) {
       p += 2;
    }
 
    unsigned long long accum{ 0 };
 
-   while(*p) {
+   while (*p) {
       int i{ ctoi(*p, base) };
-      if(i < 0) {
+      if (i < 0) {
          setend(p);
          return accum;
       }
@@ -268,20 +268,20 @@ unsigned long strtoul(const char* str, char** str_end, int base)
 
 long long strtoll(const char* str, char** str_end, int base)
 {
-   if(!str) {
-      if(str_end) {
+   if (!str) {
+      if (str_end) {
          *str_end = nullptr;
       }
       return 0;
    }
 
-   while(isspace(*str)) {
+   while (isspace(*str)) {
       ++str;
    }
 
    int pos{ 1 };
 
-   if(*str == '-') {
+   if (*str == '-') {
       ++str;
       pos = -1;
    }

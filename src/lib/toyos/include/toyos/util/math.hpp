@@ -42,8 +42,8 @@ namespace math
  */
    static constexpr size_t order_min(size_t num)
    {
-      for(size_t i{ 0 }; i < 8 * sizeof(num); ++i) {
-         if(num & (1ull << i)) {
+      for (size_t i{ 0 }; i < 8 * sizeof(num); ++i) {
+         if (num & (1ull << i)) {
             return i;
          }
       }
@@ -58,8 +58,8 @@ namespace math
  */
    static constexpr size_t order_max(size_t num)
    {
-      for(size_t i{ 8 * sizeof(num) - 1 }; i > 0; --i) {
-         if(num & (1ull << i)) {
+      for (size_t i{ 8 * sizeof(num) - 1 }; i > 0; --i) {
+         if (num & (1ull << i)) {
             return i;
          }
       }

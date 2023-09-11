@@ -229,7 +229,7 @@ namespace x86
       {
          uint32_t lim = ((raw >> LIMIT_LO_SHIFT) & math::mask(LIMIT_LO_WIDTH))
                         | ((raw >> LIMIT_HI_SHIFT) & math::mask(LIMIT_HI_WIDTH)) << LIMIT_LO_WIDTH;
-         if(g() and not system()) {
+         if (g() and not system()) {
             lim = (lim << PAGE_BITS) + PAGE_SIZE - 1;
          }
          return lim;
@@ -241,7 +241,7 @@ namespace x86
                           | ((raw >> BASE_MID_SHIFT) & math::mask(BASE_MID_WIDTH)) << BASE_LO_WIDTH
                           | ((raw >> BASE_HI_SHIFT) & math::mask(BASE_HI_WIDTH)) << (BASE_MID_WIDTH + BASE_LO_WIDTH) };
 
-         if(g() and system()) {
+         if (g() and system()) {
             result |= (raw_high & math::mask(BASE_64_WIDTH)) << (BASE_HI_WIDTH + BASE_MID_WIDTH + BASE_LO_WIDTH);
          }
 
@@ -310,7 +310,7 @@ namespace x86
                  | (((addr >> BASE_LO_WIDTH) & math::mask(BASE_MID_WIDTH)) << BASE_MID_SHIFT)
                  | (((addr >> (BASE_LO_WIDTH + BASE_MID_WIDTH)) & math::mask(BASE_HI_WIDTH)) << BASE_HI_SHIFT));
 
-         if(g() and system()) {
+         if (g() and system()) {
             raw_high &= ~math::mask(BASE_64_WIDTH, BASE_64_SHIFT);
             raw_high |= ((addr >> BASE_64_WIDTH) & math::mask(BASE_64_WIDTH)) << BASE_64_SHIFT;
          }

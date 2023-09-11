@@ -50,7 +50,7 @@ namespace cbl
 
          phys_t update_step()
          {
-            if(!rest_size) {
+            if (!rest_size) {
                return 0;
             }
             const phys_t mix_base{ std::accumulate(std::begin(base), std::end(base), size_t(0), std::bit_or<size_t>()) };
@@ -87,7 +87,7 @@ namespace cbl
 
          iterator& operator++()
          {
-            for(auto& b : base) {
+            for (auto& b : base) {
                b += current_step;
             }
             rest_size -= current_step;
@@ -114,7 +114,7 @@ namespace cbl
       iterator end() const
       {
          auto bs(base);
-         for(auto& b : bs) {
+         for (auto& b : bs) {
             b += size;
          }
          return { bs, 0, max_order };

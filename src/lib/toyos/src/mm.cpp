@@ -91,11 +91,11 @@ PTE& memory_manager::pt_entry(lin_addr_t lin_addr)
 phy_addr_t memory_manager::lin_to_phys(lin_addr_t lin_addr)
 {
    auto pdpte = pdpt_entry(lin_addr);
-   if(pdpte.is_large()) {
+   if (pdpte.is_large()) {
       return phy_addr_t(uintptr_t(*pdpte.get_page()) | phys_offset(lin_addr, paging_level::PDPTE));
    }
    auto pde = pd_entry(lin_addr);
-   if(pde.is_large()) {
+   if (pde.is_large()) {
       return phy_addr_t(uintptr_t(*pde.get_page()) | phys_offset(lin_addr, paging_level::PDE));
    }
    auto pte = pt_entry(lin_addr);
@@ -136,7 +136,7 @@ uint64_t memory_manager::phys_offset(lin_addr_t lin_addr, paging_level level)
    uint64_t addr = uintptr_t(lin_addr);
    uint64_t bits = 0;
 
-   switch(level) {
+   switch (level) {
       case paging_level::PDPTE:
          bits += PD_OFF_BITS;
          FALL_THROUGH;

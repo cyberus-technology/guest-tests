@@ -51,10 +51,10 @@ namespace __refstring_imp
       inline const char* compute_gcc_empty_string_storage() _NOEXCEPT
       {
          void* handle = dlopen("/usr/lib/libstdc++.6.dylib", RTLD_NOLOAD);
-         if(handle == nullptr)
+         if (handle == nullptr)
             return nullptr;
          void* sym = dlsym(handle, "_ZNSs4_Rep20_S_empty_rep_storageE");
-         if(sym == nullptr)
+         if (sym == nullptr)
             return nullptr;
          return data_from_rep(reinterpret_cast<_Rep_base*>(sym));
       }
@@ -85,7 +85,7 @@ inline __libcpp_refstring::__libcpp_refstring(const char* msg)
 
 inline __libcpp_refstring::__libcpp_refstring(const __libcpp_refstring& s) _NOEXCEPT : __imp_(s.__imp_)
 {
-   if(__uses_refcount())
+   if (__uses_refcount())
       __libcpp_atomic_add(&rep_from_data(__imp_)->count, 1);
 }
 
@@ -94,10 +94,10 @@ inline __libcpp_refstring& __libcpp_refstring::operator=(__libcpp_refstring cons
    bool adjust_old_count = __uses_refcount();
    struct _Rep_base* old_rep = rep_from_data(__imp_);
    __imp_ = s.__imp_;
-   if(__uses_refcount())
+   if (__uses_refcount())
       __libcpp_atomic_add(&rep_from_data(__imp_)->count, 1);
-   if(adjust_old_count) {
-      if(__libcpp_atomic_add(&old_rep->count, count_t(-1)) < 0) {
+   if (adjust_old_count) {
+      if (__libcpp_atomic_add(&old_rep->count, count_t(-1)) < 0) {
          ::operator delete(old_rep);
       }
    }
@@ -106,9 +106,9 @@ inline __libcpp_refstring& __libcpp_refstring::operator=(__libcpp_refstring cons
 
 inline __libcpp_refstring::~__libcpp_refstring()
 {
-   if(__uses_refcount()) {
+   if (__uses_refcount()) {
       _Rep_base* rep = rep_from_data(__imp_);
-      if(__libcpp_atomic_add(&rep->count, count_t(-1)) < 0) {
+      if (__libcpp_atomic_add(&rep->count, count_t(-1)) < 0) {
          ::operator delete(rep);
       }
    }

@@ -87,11 +87,11 @@ namespace statistics
       data<uint64_t> benchmark_data;
       benchmark_data.reserve(times);
 
-      for(size_t run{ 0 }; run < warmup_runs; ++run) {
+      for (size_t run{ 0 }; run < warmup_runs; ++run) {
          f();
       }
 
-      for(size_t run{ 0 }; run < times; ++run) {
+      for (size_t run{ 0 }; run < times; ++run) {
          auto start{ rdtscp() };
          f();
          auto end{ rdtscp() };

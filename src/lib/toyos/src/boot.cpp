@@ -124,12 +124,12 @@ static void initialize_cmdline(const std::string& cmdline, acpi_mcfg* mcfg)
    auto serial_option = p.option_value(option_index::SERIAL);
    auto xhci_option = p.option_value(option_index::XHCI);
 
-   if(serial_option) {
+   if (serial_option) {
       uint16_t port = *serial_option != "" ? std::stoull(*serial_option, nullptr, 16) : find_serial_port_in_bda();
       serial_init(port);
       add_printf_backend(console_serial::putchar);
    }
-   else if(xhci_option) {
+   else if (xhci_option) {
       // If we don't have an MCFG pointer here, there's not much we can do
       // to communicate. Let's just stop in a deterministic way.
       PANIC_UNLESS(mcfg, "No valid MCFG pointer given!");
@@ -139,7 +139,7 @@ static void initialize_cmdline(const std::string& cmdline, acpi_mcfg* mcfg)
       auto is_xhci_fn = [](const pci_device& dev) { return dev.is_xhci(); };
       auto xhci_pci_dev = std::find_if(pcibus.begin(), pcibus.end(), is_xhci_fn);
 
-      if(xhci_pci_dev != pcibus.end()) {
+      if (xhci_pci_dev != pcibus.end()) {
          const auto& pci_dev(*xhci_pci_dev);
 
          auto address = pci_dev.bar(0)->address();
@@ -150,7 +150,7 @@ static void initialize_cmdline(const std::string& cmdline, acpi_mcfg* mcfg)
 
          dummy_driver_adapter adapter;
          xhci_device xhci_dev(adapter, phy_addr_t(address));
-         if(not xhci_dev.find_cap<xhci_debug_device::dbc_capability>()) {
+         if (not xhci_dev.find_cap<xhci_debug_device::dbc_capability>()) {
             PANIC("No debug capability present!");
          }
 
@@ -186,9 +186,9 @@ EXTERN_C void init_interrupt_controllers()
    ioapic ioapic{};
 
    // Mask all IRTs.
-   for(uint8_t idx{ 0u }; idx < ioapic.max_irt(); idx++) {
+   for (uint8_t idx{ 0u }; idx < ioapic.max_irt(); idx++) {
       auto irt{ ioapic.get_irt(idx) };
-      if(not irt.masked()) {
+      if (not irt.masked()) {
          irt.mask();
          ioapic.set_irt(irt);
       }
@@ -204,25 +204,25 @@ EXTERN_C void entry64(uint32_t magic, uintptr_t boot_info)
    std::string cmdline;
    acpi_mcfg* mcfg{ nullptr };
 
-   if(magic == xen_pvh::MAGIC) {
+   if (magic == xen_pvh::MAGIC) {
       const auto* info = reinterpret_cast<xen_pvh::hvm_start_info*>(boot_info);
       cmdline = reinterpret_cast<const char*>(info->cmdline_paddr);
 
       const auto rsdp{ reinterpret_cast<const acpi_rsdp*>(info->rsdp_paddr) };
       mcfg = find_mcfg(rsdp);
    }
-   else if(magic == multiboot::multiboot_module::MAGIC_LDR) {
+   else if (magic == multiboot::multiboot_module::MAGIC_LDR) {
       cmdline = reinterpret_cast<multiboot::multiboot_info*>(boot_info)->get_cmdline().value_or("");
 
       // On legacy systems (where we use Multiboot1), the ACPI tables can be
       // found with the legacy way (see find_mcfg()).
       mcfg = find_mcfg();
    }
-   else if(magic == multiboot2::MB2_MAGIC) {
+   else if (magic == multiboot2::MB2_MAGIC) {
       auto reader{ multiboot2::mbi2_reader(reinterpret_cast<const uint8_t*>(boot_info)) };
       const auto cmdline_tag{ reader.find_tag(multiboot2::mbi2_cmdline::TYPE) };
 
-      if(cmdline_tag) {
+      if (cmdline_tag) {
          const auto cmdline_full_tag{ cmdline_tag->get_full_tag<multiboot2::mbi2_cmdline>() };
 
          const auto* cmdline_begin{ cmdline_tag->addr + sizeof(cmdline_full_tag) };
@@ -238,7 +238,7 @@ EXTERN_C void entry64(uint32_t magic, uintptr_t boot_info)
       // function.
       const auto acpi_tag{ reader.find_tag(multiboot2::mbi2_rsdp2::TYPE) };
 
-      if(acpi_tag) {
+      if (acpi_tag) {
          const auto acpi_full_tag{ acpi_tag->get_full_tag<multiboot2::mbi2_rsdp2>() };
          const auto rsdp{ reinterpret_cast<const acpi_rsdp*>(acpi_tag->addr + sizeof(acpi_full_tag)) };
          mcfg = find_mcfg(rsdp);
@@ -265,13 +265,13 @@ void* operator new(size_t size, std::align_val_t alignment)  // C++17, nodiscard
 {
    // use default heap if possible
    ASSERT(current_heap, "heap not initialized");
-   if(alignment <= static_cast<std::align_val_t>(current_heap->alignment())) {
+   if (alignment <= static_cast<std::align_val_t>(current_heap->alignment())) {
       return current_heap->alloc(size);
    }
 
    ASSERT(aligned_heap, "aligned heap not initialized");
 
-   if(math::order_max(static_cast<size_t>(alignment)) > aligned_heap->max_order) {
+   if (math::order_max(static_cast<size_t>(alignment)) > aligned_heap->max_order) {
       PANIC("Requested alignment bigger than available alignment {} > {}", static_cast<size_t>(alignment), aligned_heap->max_order);
       alignment = static_cast<std::align_val_t>(aligned_heap->max_order);
    }
@@ -322,7 +322,7 @@ void operator delete(void* p, std::align_val_t alignment) noexcept  // C++17
 {
    // use default heap if possible
    ASSERT(current_heap, "heap not initialized");
-   if(alignment <= static_cast<std::align_val_t>(current_heap->alignment())) {
+   if (alignment <= static_cast<std::align_val_t>(current_heap->alignment())) {
       return current_heap->free(p);
    }
 

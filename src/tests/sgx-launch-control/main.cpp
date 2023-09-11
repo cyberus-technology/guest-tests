@@ -27,7 +27,7 @@ TEST_CASE(sgx_feature_control_cpuid_reports_availability)
 
 TEST_CASE(sgx_launch_control_hash_msrs_are_writable)
 {
-   for(auto index : { msr::IA32_SGXLEPUBKEYHASH0, msr::IA32_SGXLEPUBKEYHASH1, msr::IA32_SGXLEPUBKEYHASH2, msr::IA32_SGXLEPUBKEYHASH3 }) {
+   for (auto index : { msr::IA32_SGXLEPUBKEYHASH0, msr::IA32_SGXLEPUBKEYHASH1, msr::IA32_SGXLEPUBKEYHASH2, msr::IA32_SGXLEPUBKEYHASH3 }) {
       auto hash_read{ rdmsr(index) };
       const auto hash_written{ ~hash_read };
       wrmsr(index, hash_written);

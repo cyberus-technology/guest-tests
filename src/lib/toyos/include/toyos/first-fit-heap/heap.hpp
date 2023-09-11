@@ -174,7 +174,7 @@ private:
       header_used* following_block(const memory& mem)
       {
          auto* following = reinterpret_cast<header_used*>(reinterpret_cast<char*>(this) + sizeof(header_used) + size());
-         if(reinterpret_cast<size_t>(following) >= mem.end()) {
+         if (reinterpret_cast<size_t>(following) >= mem.end()) {
             return nullptr;
          }
 
@@ -183,7 +183,7 @@ private:
 
       header_used* preceding_block(const memory& mem)
       {
-         if(not prev_free()) {
+         if (not prev_free()) {
             return nullptr;
          }
 
@@ -292,8 +292,8 @@ private:
    private:
       iterator position_for(header_free* val)
       {
-         for(auto elem : *this) {
-            if(not elem->next() or (elem->next() > val)) {
+         for (auto elem : *this) {
+            if (not elem->next() or (elem->next() > val)) {
                return elem < val ? iterator(elem) : iterator();
             }
          }
@@ -303,13 +303,13 @@ private:
 
       iterator insert_after(header_free* val, iterator other)
       {
-         if(not val) {
+         if (not val) {
             return {};
          }
 
          ASSERT_HEAP(val > *other);
 
-         if(other == end()) {
+         if (other == end()) {
             // insert at list head
             val->next(list);
             val->is_free(true);
@@ -331,11 +331,11 @@ private:
          auto* following = val->following_block(mem);
          const auto* preceding = val->preceding_block(mem);
 
-         if(following) {
+         if (following) {
             following->prev_free(true);
          }
 
-         if(preceding and preceding->is_free()) {
+         if (preceding and preceding->is_free()) {
             val->prev_free(true);
          }
 
@@ -346,7 +346,7 @@ private:
       {
          auto* following = (*it)->following_block(mem);
 
-         if(following and following->is_free()) {
+         if (following and following->is_free()) {
             auto* following_free = static_cast<header_free*>(following);
             (*it)->next(following_free->next());
             (*it)->size((*it)->size() + following_free->size() + sizeof(header_used));
@@ -358,12 +358,12 @@ private:
 
       iterator try_merge_front(iterator it)
       {
-         if(not(*it)->prev_free()) {
+         if (not(*it)->prev_free()) {
             return it;
          }
 
          auto* preceding = static_cast<header_free*>((*it)->preceding_block(mem));
-         if(not preceding) {
+         if (not preceding) {
             return it;
          }
 
@@ -392,8 +392,8 @@ private:
       {
          iterator before_ = end();
 
-         for(auto elem : *this) {
-            if(fits(*elem, size)) {
+         for (auto elem : *this) {
+            if (fits(*elem, size)) {
                before = before_;
                return { elem };
             }
@@ -419,14 +419,14 @@ private:
          iterator prev;
          auto it = first_free(size, prev);
 
-         if(it == end()) {
+         if (it == end()) {
             return nullptr;
          }
 
          auto& block = **it;
          size_t size_remaining = block.size() - size;
 
-         if(size_remaining < (sizeof(header_free) + sizeof(footer))) {
+         if (size_remaining < (sizeof(header_free) + sizeof(footer))) {
             // remaining size cannot hold another block, use entire space
             size += size_remaining;
          }
@@ -434,13 +434,13 @@ private:
             // split block into two
             block.size(size);
             block.update_footer();
-            auto* new_block = new(block.following_block(mem)) header_free(size_remaining - sizeof(header_used));
+            auto* new_block = new (block.following_block(mem)) header_free(size_remaining - sizeof(header_used));
             new_block->next(block.next());
             new_block->prev_free(true);
             block.next(new_block);
          }
 
-         if(*prev) {
+         if (*prev) {
             (*prev)->next(block.next());
          }
          else {
@@ -448,7 +448,7 @@ private:
          }
 
          auto* following = block.following_block(mem);
-         if(following) {
+         if (following) {
             following->prev_free(false);
          }
 
@@ -471,7 +471,7 @@ private:
 
 public:
    first_fit_heap(memory& mem_)
-      : free_list(mem_, new(reinterpret_cast<void*>(mem_.base())) header_free(mem_.size() - sizeof(header_used)))
+      : free_list(mem_, new (reinterpret_cast<void*>(mem_.base())) header_free(mem_.size() - sizeof(header_used)))
    {}
 
    void* alloc(size_t size)
@@ -484,7 +484,7 @@ public:
    {
       header_free* header{ reinterpret_cast<header_free*>(reinterpret_cast<char*>(p) - sizeof(header_used)) };
 
-      if(not p or not free_list.ptr_in_range(header)) {
+      if (not p or not free_list.ptr_in_range(header)) {
          return;
       }
 
@@ -498,7 +498,7 @@ public:
    {
       size_t cnt{ 0 };
 
-      for(auto HEAP_UNUSED elem : free_list) {
+      for (auto HEAP_UNUSED elem : free_list) {
          cnt++;
       }
 
@@ -509,7 +509,7 @@ public:
    {
       size_t size{ 0 };
 
-      for(auto elem : free_list) {
+      for (auto elem : free_list) {
          size += elem->size();
       }
 

@@ -20,7 +20,7 @@ public:
 
    ~irq_guard()
    {
-      if(irq_enabled) {
+      if (irq_enabled) {
          asm volatile("sti");
       }
    }

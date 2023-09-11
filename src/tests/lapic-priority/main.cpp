@@ -49,7 +49,7 @@ void prologue()
    enable_interrupts_for_single_instruction();
    std::iota(std::begin(expected_vectors), std::end(expected_vectors), MIN_VECTOR);
 
-   if(hpet_available()) {
+   if (hpet_available()) {
       hpet_device->enabled(false);
       hpet_timer->periodic(false);
 
@@ -61,7 +61,7 @@ void prologue()
 void wait_a_sec()
 {
    uint32_t divisor = read_from_register(LAPIC_DIVIDE_CONF);
-   for(volatile uint32_t i = 0; i < ticks_per_second(divisor); ++i) {
+   for (volatile uint32_t i = 0; i < ticks_per_second(divisor); ++i) {
    }
 }
 
@@ -72,7 +72,7 @@ static void lapic_irq_handler(intr_regs* regs)
 
 void wait_until_irq_count_equals(uint32_t num)
 {
-   while(irq_count < num) {
+   while (irq_count < num) {
    }
 }
 
@@ -84,17 +84,17 @@ bool check_if_any_set(uintptr_t reg)
 void poll_pic_irr()
 {
    const uint16_t mask = 0b1;
-   while((global_pic.get_irr() & mask) == 0) {
+   while ((global_pic.get_irr() & mask) == 0) {
    }
 }
 
 bool is_isr_and_irr_empty()
 {
    bool empty = true;
-   for(uintptr_t isr = ISR_32_63; isr <= ISR_224_255; isr += LAPIC_REG_STRIDE) {
+   for (uintptr_t isr = ISR_32_63; isr <= ISR_224_255; isr += LAPIC_REG_STRIDE) {
       empty &= check_if_any_set(isr);
    }
-   for(uintptr_t irr = IRR_32_63; irr <= IRR_224_255; irr += LAPIC_REG_STRIDE) {
+   for (uintptr_t irr = IRR_32_63; irr <= IRR_224_255; irr += LAPIC_REG_STRIDE) {
       empty &= check_if_any_set(irr);
    }
    return empty;
@@ -104,7 +104,7 @@ void drain_interrupts()
 {
    irq_handler::guard _(lapic_irq_handler);
    lapic_set_task_priority(0x0);
-   while(not is_isr_and_irr_empty()) {
+   while (not is_isr_and_irr_empty()) {
       enable_interrupts_for_single_instruction();
       send_eoi();
    }
@@ -112,11 +112,11 @@ void drain_interrupts()
 
 void wait_for_interrupts(uint32_t expected_irq_count)
 {
-   while(confirmed_vectors.size() != expected_irq_count) {
+   while (confirmed_vectors.size() != expected_irq_count) {
       enable_interrupts_and_halt();
       disable_interrupts();
-      if(irq_info.valid) {
-         if(fixed_valid_vectors.contains(static_cast<uint32_t>(irq_info.vec))) {
+      if (irq_info.valid) {
+         if (fixed_valid_vectors.contains(static_cast<uint32_t>(irq_info.vec))) {
             confirmed_vectors.push_back(static_cast<uint32_t>(irq_info.vec));
             irq_info.reset();
             send_eoi();
@@ -141,7 +141,7 @@ void test_lapic_priority(dest_sh sh)
    irq_info.reset();
    irq_handler::guard _(lapic_irq_handler);
 
-   for(uint32_t vector : expected_vectors) {
+   for (uint32_t vector : expected_vectors) {
       send_self_ipi(vector, sh);
    }
 
@@ -173,18 +173,18 @@ void test_interrupt_injection_should_honor_tpr_value(dest_sh sh)
    irq_info.reset();
    irq_handler::guard _(lapic_irq_handler);
 
-   for(uint32_t priority = 0xe; priority >= 0x2; --priority) {
+   for (uint32_t priority = 0xe; priority >= 0x2; --priority) {
       confirmed_vectors.clear();
       // for each priority, we allow only 16 (VECTORS_PER_CLASS) interrupts.
       const uint32_t num_allowed_vectors = (MAX_VECTOR + 1) - ((priority + 1) * VECTORS_PER_CLASS);
-      for(uint32_t vector : expected_vectors) {
+      for (uint32_t vector : expected_vectors) {
          send_self_ipi(vector, sh);
       }
 
       lapic_set_task_priority(priority);
       wait_for_interrupts(num_allowed_vectors);
 
-      for(uint32_t& vec : confirmed_vectors) {
+      for (uint32_t& vec : confirmed_vectors) {
          BARETEST_ASSERT((vec > MAX_VECTOR - num_allowed_vectors));
       }
 
@@ -209,7 +209,7 @@ static void lapic_irq_handler_tpr(intr_regs* regs)
 {
    // i need this condition, otherwise a spurious interrupt would be able to make the condition in the next test-case
    // become true, and the assertion fails
-   if(fixed_valid_vectors.contains(regs->vector)) {
+   if (fixed_valid_vectors.contains(regs->vector)) {
       irq_info.record(regs->vector, regs->error_code);
    }
 }
@@ -250,7 +250,7 @@ void drain_inhibited_interrupts()
    irq_handler::guard _(lapic_irq_handler);
    lapic_set_task_priority(0x0);
    enable_interrupts_for_single_instruction();
-   while(irq_info.valid) {
+   while (irq_info.valid) {
       send_eoi();
       irq_info.reset();
       enable_interrupts_for_single_instruction();
@@ -273,10 +273,10 @@ void check_ppr_register(uint32_t isrv)
    uint32_t tpr_3_0 = tpr_data & 0xf;
    uint32_t ppr_3_0 = ppr_data & 0xf;
 
-   if(tpr_7_4 > isr_7_4) {
+   if (tpr_7_4 > isr_7_4) {
       BARETEST_ASSERT((ppr_3_0 == tpr_3_0));
    }
-   else if(tpr_7_4 < isr_7_4) {
+   else if (tpr_7_4 < isr_7_4) {
       BARETEST_ASSERT((ppr_3_0 == 0));
    }
    else {
@@ -296,9 +296,9 @@ void test_ppr_value_for_all_combinations_of_tpr_and_isrv(dest_sh sh)
    drain_interrupts();
 
    irq_handler::guard _(lapic_irq_handler_ppr);
-   for(uint32_t priority = 0xe; priority >= 0x2; --priority) {
+   for (uint32_t priority = 0xe; priority >= 0x2; --priority) {
       const uint32_t num_allowed_vectors = (MAX_VECTOR + 1) - ((priority + 1) * VECTORS_PER_CLASS);
-      for(uint32_t vector : expected_vectors) {
+      for (uint32_t vector : expected_vectors) {
          send_self_ipi(vector, sh);
       }
 
@@ -409,14 +409,14 @@ TEST_CASE(ppr_changing_tpr_value_inside_the_irq_handler_should_work_ipi_no_short
 static void lapic_irq_handler_nmi(intr_regs* regs)
 {
    ++irq_count;
-   if(irq_count == 1) {
+   if (irq_count == 1) {
       send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, dlv_mode::NMI);
       enable_interrupts_for_single_instruction();
    }
-   else if(irq_count == 2) {
+   else if (irq_count == 2) {
       BARETEST_ASSERT((regs->vector != NMI_VECTOR));
    }
-   else if(irq_count == 3) {
+   else if (irq_count == 3) {
       BARETEST_ASSERT((regs->vector == NMI_VECTOR));
    }
 }
@@ -437,7 +437,7 @@ TEST_CASE(self_nmi_should_call_handler_while_interrupts_are_closed_and_second_nm
 
 static void lapic_irq_handler_two_nmis(intr_regs*)
 {
-   if(irq_count == 0) {
+   if (irq_count == 0) {
       send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, dlv_mode::NMI);
    }
    ++irq_count;
@@ -497,7 +497,7 @@ struct hpet_test_ctx
       hpet_timer->ioapic_gsi(cfg.ioapic_gsi);
       hpet_timer->trigger_mode(cfg.trigger);
 
-      if(cfg.legacy_active) {
+      if (cfg.legacy_active) {
          global_pic.unmask(HPET_IRQ_VEC);
       }
    }
@@ -508,7 +508,7 @@ struct hpet_test_ctx
       hpet_timer->periodic(false);
       hpet_device->enabled(false);
 
-      if(cfg.legacy_active) {
+      if (cfg.legacy_active) {
          global_pic.mask(HPET_IRQ_VEC);
          global_pic.eoi(HPET_IRQ_VEC);
       }
@@ -631,13 +631,13 @@ static bool got_nmi{ false };
 static void handle_multiple(intr_regs* regs)
 {
    irq_info.record(regs->vector, regs->error_code);
-   if(regs->vector == MAX_VECTOR) {
+   if (regs->vector == MAX_VECTOR) {
       got_ipi = true;
    }
-   else if(regs->vector == HPET_IRQ_VEC) {
+   else if (regs->vector == HPET_IRQ_VEC) {
       got_extint = true;
    }
-   else if(regs->vector == NMI_VECTOR) {
+   else if (regs->vector == NMI_VECTOR) {
       got_nmi = true;
    }
 }
@@ -702,7 +702,7 @@ static void fast_nmi_test_handler(intr_regs* regs)
    BARETEST_ASSERT(regs->vector == 2);
    ++irq_count;
 
-   if(irq_count < NUM_FAST_NMI) {
+   if (irq_count < NUM_FAST_NMI) {
       // We're in NMI_BLOCKING state, send another NMI so a VMM has to request an NMI window at this point.
       send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, dlv_mode::NMI);
    }
@@ -736,7 +736,7 @@ TEST_CASE_CONDITIONAL(fast_triggering_NMIs_should_not_kill_vmm, hpet_available()
    irt.delivery_mode(ioapic::redirection_entry::dlv_mode::NMI);
    io_apic.set_irt(irt);
 
-   while(irq_count < NUM_FAST_NMI) {
+   while (irq_count < NUM_FAST_NMI) {
    };
 
    irt.mask();

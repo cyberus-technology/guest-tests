@@ -132,7 +132,7 @@ namespace
    template<class _ValueType>
    inline _LIBCPP_INLINE_VISIBILITY bool __libcpp_atomic_compare_exchange(_ValueType* __val, _ValueType* __expected, _ValueType __after, int = 0, int = 0)
    {
-      if(*__val == *__expected) {
+      if (*__val == *__expected) {
          *__val = __after;
          return true;
       }

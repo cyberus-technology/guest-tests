@@ -15,8 +15,8 @@ static std::array<printf_backend_fn, MAX_BACKENDS> backends;
 
 void print_to_all_backends(unsigned char c)
 {
-   for(const auto& print_fn : backends) {
-      if(print_fn != nullptr) {
+   for (const auto& print_fn : backends) {
+      if (print_fn != nullptr) {
          print_fn(c);
       }
    }
@@ -25,7 +25,7 @@ void print_to_all_backends(unsigned char c)
 void add_printf_backend(printf_backend_fn backend)
 {
    auto free_slot{ std::find(backends.begin(), backends.end(), nullptr) };
-   if(free_slot == backends.end()) {
+   if (free_slot == backends.end()) {
       // no more space - alert on already registered backends
       puts("maximum number of printf backends already registered");
       __builtin_trap();
@@ -40,7 +40,7 @@ void add_printf_backend(printf_backend_fn backend)
 void remove_printf_backend(printf_backend_fn backend)
 {
    auto existing = std::find(backends.begin(), backends.end(), backend);
-   if(existing != backends.end()) {
+   if (existing != backends.end()) {
       *existing = nullptr;
    }
 }

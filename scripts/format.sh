@@ -22,7 +22,7 @@ cd "$DIR/.." || exit
 function fn_format_sources() {
     echo "Formatting Sources (C, CPP)"
 
-    FOLDERS=(lib tests) # don't reformat contrib folder
+    FOLDERS=(src/lib src/tests) # don't reformat contrib folder
 
     EXTENSIONS=(c h cpp hpp) # lds/S explicitly not listed; formatting errors
     EXTENSIONS_ARG_STR=()

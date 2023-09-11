@@ -37,7 +37,7 @@ TEST_CASE(benchmark_interrupt_delivery_latency)
 
    irq_handler::guard _(lapic_irq_handler_benchmark);
 
-   for(unsigned run{ 0 }; run < REPETITIONS; ++run) {
+   for (unsigned run{ 0 }; run < REPETITIONS; ++run) {
       send_self_ipi(BENCH_VEC);
 
       bench_ipi.start();

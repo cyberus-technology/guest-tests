@@ -309,7 +309,7 @@ namespace vmcs
          // A segment is unusable if it has been loaded with a null selector.
          // A segment might also be unusable if its selector is not null after a task switch failed
          // (Intel SDM, Vol. 3, 24.4.1, Footnote 2). Task switches are not anticipated here.
-         if(selector_ == 0) {
+         if (selector_ == 0) {
             ar.set_unusable(true);
          }
       }

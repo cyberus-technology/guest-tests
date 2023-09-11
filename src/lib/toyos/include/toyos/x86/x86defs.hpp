@@ -961,11 +961,11 @@ namespace x86
       using ar_mask = gdt_segment::ar_flag_mask;
 
       // Are we in IA32 mode?
-      if(efer & EFER_LMA) {
-         if(cs.ar_set(ar_mask::IA32_CODE_LONG)) {
+      if (efer & EFER_LMA) {
+         if (cs.ar_set(ar_mask::IA32_CODE_LONG)) {
             return cpu_mode::PM64;
          }
-         else if(cs.ar_set(ar_mask::CODE_DEFAULT)) {
+         else if (cs.ar_set(ar_mask::CODE_DEFAULT)) {
             return cpu_mode::CM32;
          }
          else {
@@ -974,7 +974,7 @@ namespace x86
       }
 
       // Are we in protected mode?
-      if(cr0 & math::mask_from(cr0::PE)) {
+      if (cr0 & math::mask_from(cr0::PE)) {
          assert(not(rflags & FLAGS_VM));  // VM8086 mode not supported
          return cs.ar_set(ar_mask::CODE_DEFAULT) ? cpu_mode::PM32 : cpu_mode::PM16;
       }

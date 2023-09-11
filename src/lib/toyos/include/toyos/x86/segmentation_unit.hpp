@@ -32,7 +32,7 @@ public:
    std::optional<uintptr_t> translate_logical_address(uintptr_t offset, x86::memory_access_type_t, size_t)
    {
       // TODO: Add limit checks and handle special segments
-      switch(mode_) {
+      switch (mode_) {
          case x86::cpu_mode::PM64:
             return (segment_.seg == x86::segment_register::FS or segment_.seg == x86::segment_register::GS) ? segment_.base + offset : offset;
          default:

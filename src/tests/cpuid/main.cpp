@@ -30,13 +30,13 @@ void test_cpuid_string(std::array<std::string, N>& valid_cpu_models)
    memcpy(model + 12, &res.edx, 4);
 
    info("Valid CPU models:");
-   for(auto& m : valid_cpu_models) {
+   for (auto& m : valid_cpu_models) {
       info(" * {s}", m.c_str());
    }
    info("Detected CPUID string {s}", model);
 
    bool found_valid_model = false;
-   for(auto& m : valid_cpu_models) {
+   for (auto& m : valid_cpu_models) {
       found_valid_model = found_valid_model || (static_cast<char*>(model) == m);
    }
 

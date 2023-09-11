@@ -154,7 +154,7 @@ public:
    {
       cur_remap = cur_remap + reinterpret_cast<acpi_remap*>(cur_remap)->length;
 
-      if(cur_remap > end_addr) {
+      if (cur_remap > end_addr) {
          cur_remap = end_addr;
       }
 

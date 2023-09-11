@@ -39,7 +39,7 @@ bool lapic_test_tools::lapic_send_pending()
 
 void lapic_test_tools::wait_until_ready_for_ipi()
 {
-   while(lapic_send_pending()) {
+   while (lapic_send_pending()) {
    }
 }
 
@@ -57,7 +57,7 @@ void lapic_test_tools::write_spurious_vector(uint8_t value)
 
 void lapic_test_tools::lapic_set_task_priority(uint8_t priority, bool use_mmio)
 {
-   if(use_mmio) {
+   if (use_mmio) {
       set_cr8(priority);
    }
    else {
@@ -106,7 +106,7 @@ void lapic_test_tools::write_lvt_entry(lvt_entry entry, lvt_entry_t data)
 void lapic_test_tools::write_divide_conf(uint32_t conf)
 {
    uint32_t config;
-   switch(conf) {
+   switch (conf) {
       case 2:
          config = 0b0000;
          break;
@@ -157,16 +157,16 @@ static bool rtc_update_in_progress()
 
 static void wait_till_next_second()
 {
-   while(not rtc_update_in_progress()) {
+   while (not rtc_update_in_progress()) {
    }
-   while(rtc_update_in_progress()) {
+   while (rtc_update_in_progress()) {
    }
 }
 
 uint32_t lapic_test_tools::ticks_per_second(uint32_t divisor)
 {
    static uint32_t ticks_per_second = 0;
-   if(not ticks_per_second) {
+   if (not ticks_per_second) {
       int_guard _;
 
       uint32_t previous_divisor{ read_from_register(LAPIC_DIVIDE_CONF) };
@@ -243,7 +243,7 @@ void lapic_test_tools::send_self_ipi(uint8_t vector, dest_sh sh, dest_mode dest,
 {
    // Avoid invalid combinations of delivery modes and vectors according to Intel SDM, Vol. 3, 10.6.1.
    // Vector is ignored for NMI and points to start routine for STARTUP.
-   if(dlv == FIXED or dlv == LOWEST) {
+   if (dlv == FIXED or dlv == LOWEST) {
       // don't use reserved vectors
       assert(vector == 2 or vector >= 32);
       assert(vector != NMI);
@@ -254,7 +254,7 @@ void lapic_test_tools::send_self_ipi(uint8_t vector, dest_sh sh, dest_mode dest,
       };
       assert(vector != spurious_vector);
    }
-   else if(dlv == SMI or dlv == INIT) {
+   else if (dlv == SMI or dlv == INIT) {
       // vector field must be programmed to 0 for future compatibility
       assert(vector == 0);
    }
@@ -268,7 +268,7 @@ void lapic_test_tools::send_self_ipi(uint8_t vector, dest_sh sh, dest_mode dest,
    icr_entry |= level::ASSERT << ICR_LEVEL_SHIFT;
    icr_entry |= sh << ICR_DEST_SH_SHIFT;
 
-   if(sh == dest_sh::NO_SH) {
+   if (sh == dest_sh::NO_SH) {
       uint32_t apic_id = (read_from_register(LAPIC_ID) >> LAPIC_ID_SHIFT) & LAPIC_ID_MASK;
       icr_entry |= apic_id << ICR_DEST_SHIFT;
    }

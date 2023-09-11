@@ -38,7 +38,7 @@ namespace cbl
       /// \param msg message to add
       void add(const T& msg)
       {
-         if(num_elems == max_entries) {
+         if (num_elems == max_entries) {
             queue.at(start) = msg;
             start = (start + 1) % max_entries;
          }

@@ -45,7 +45,7 @@ namespace multiboot
       /// Returns an optional of a string. Valid iff cmdline field is valid.
       const std::optional<std::string> get_cmdline() const
       {
-         if(not has_cmdline()) {
+         if (not has_cmdline()) {
             return {};
          }
          return { reinterpret_cast<const char*>(cmdline) };

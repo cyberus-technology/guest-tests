@@ -94,7 +94,7 @@ TEST_CASE(patchguard_KiErrata704Present)
    // We take the return instruction pointer already placed in RCX to skip it
    // altogether.
    irq_info.fixup_fn = [](intr_regs* regs) {
-      if(regs->vector == static_cast<unsigned>(x86::exception::DB)) {
+      if (regs->vector == static_cast<unsigned>(x86::exception::DB)) {
          regs->flags &= ~x86::FLAGS_TF;
          regs->rip = regs->rcx;
       }

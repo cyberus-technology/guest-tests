@@ -37,7 +37,7 @@ public:
       const size_t alloc_order{ math::order_envelope(size) };
 
       const auto alloc_start{ internal_allocator.alloc(alloc_order) };
-      if(not alloc_start) {
+      if (not alloc_start) {
          return {};
       }
 
@@ -59,7 +59,7 @@ public:
      */
    void free(cbl::interval ival)
    {
-      for(const auto& range : cbl::order_range(ival.a, ival.size(), internal_allocator.max_order)) {
+      for (const auto& range : cbl::order_range(ival.a, ival.size(), internal_allocator.max_order)) {
          internal_allocator.free(range.a, math::order_envelope(range.size()));
       }
    }

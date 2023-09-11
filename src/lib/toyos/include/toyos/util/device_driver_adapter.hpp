@@ -70,7 +70,7 @@ public:
          */
       void* lin_address(uintptr_t addr) const
       {
-         if(not dma_range().contains(addr)) {
+         if (not dma_range().contains(addr)) {
             return nullptr;
          }
 
@@ -85,7 +85,7 @@ public:
          */
       uintptr_t dma_address(void* addr) const
       {
-         if(not lin_range().contains(uintptr_t(addr))) {
+         if (not lin_range().contains(uintptr_t(addr))) {
             return 0;
          }
 

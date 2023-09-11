@@ -27,7 +27,7 @@ The following command line configurations are accepted by the test binaries:
 #### All Tests
 ```shell
 mkdir build && cd build
-cmake .. -G Ninja -DCMAKE_INSTALL_PREFIX=./install && ninja -j 1
+cmake .. -G Ninja -DCMAKE_INSTALL_PREFIX=./install && ninja
 ```
 
 ### Nix

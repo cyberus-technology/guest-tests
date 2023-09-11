@@ -69,7 +69,7 @@ TEST_CASE_CONDITIONAL(read_feature_control, not has_uninitialized_feature_ctrl()
 {
    irq_handler::guard _(irq_handle);
    irq_info.reset();
-   if(setjmp(jump_buffer) == 0) {
+   if (setjmp(jump_buffer) == 0) {
       wrmsr(msr::IA32_FEATURE_CONTROL, 0x5);
    }
    BARETEST_ASSERT((irq_info.vec == static_cast<uint32_t>(exception::GP)));
@@ -136,7 +136,7 @@ TEST_CASE(fixed_mtrrs_valid)
       msr::MTRR_FIX_4K_F8000,
    };
 
-   for(const auto& msr : msrs_mtrr) {
+   for (const auto& msr : msrs_mtrr) {
       uint64_t val{ rdmsr(msr) };
       info("MTRR: {#x} Value: {#x}", to_underlying(msr), val);
       std::array<uint8_t, sizeof(uint64_t)> msrs;
@@ -154,12 +154,12 @@ TEST_CASE(variable_range_mtrrs_valid)
                                                 * 2 };
    const uint32_t variable_mtrr_max_offset{ msr::MTRR_PHYS_BASE_0 + variable_mtrr_register_count };
 
-   for(uint32_t idx{ msr::MTRR_PHYS_BASE_0 }; idx < variable_mtrr_max_offset; ++idx) {
+   for (uint32_t idx{ msr::MTRR_PHYS_BASE_0 }; idx < variable_mtrr_max_offset; ++idx) {
       uint64_t val{ rdmsr(idx) };
 
       // Variable Range MTRRs consist of base and mask register so that we have to check odd or even offsets
       // accordingly
-      if(idx % 2 == 0) {
+      if (idx % 2 == 0) {
          info("MTRRPhysBase: {#x} Value: {#x}", idx, val);
          BARETEST_ASSERT(is_valid_mtrr_type(val & MTRR_TYPE_MASK));
       }
@@ -193,7 +193,7 @@ static void wait_for_interrupt_for_seconds(unsigned seconds)
 
    enable_interrupts();
 
-   while(not irq_info.valid and (hpet_device->main_counter() < end_time)) {
+   while (not irq_info.valid and (hpet_device->main_counter() < end_time)) {
       cpu_pause();
    }
 
@@ -274,7 +274,7 @@ TEST_CASE_CONDITIONAL(hfi_interrupt, has_hardware_feedback_interface())
    wrmsr(msr::IA32_HW_FEEDBACK_PTR, 0);
 
    // Wait until the hardware stops posting updates.
-   while((rdmsr(msr::IA32_PACKAGE_THERM_STATUS) & IA32_PACKAGE_THERM_STATUS_HFI_CHANGE) == 0) {
+   while ((rdmsr(msr::IA32_PACKAGE_THERM_STATUS) & IA32_PACKAGE_THERM_STATUS_HFI_CHANGE) == 0) {
       cpu_pause();
    }
 }

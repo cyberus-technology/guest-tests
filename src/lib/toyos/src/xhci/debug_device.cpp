@@ -7,7 +7,7 @@ bool xhci_debug_device::initialize(bool reinit)
 {
    auto _{ init_mtx_->guard() };
 
-   if(not do_handover()) {
+   if (not do_handover()) {
       return false;
    }
 
@@ -21,11 +21,11 @@ bool xhci_debug_device::initialize(bool reinit)
 
    setup_event_ring();
 
-   if(not reinit) {
+   if (not reinit) {
       setup_endpoint_contexts();
       dbc_cap_->enable();
 
-      if(power_method_ == power_cycle_method::POWERCYCLE) {
+      if (power_method_ == power_cycle_method::POWERCYCLE) {
          // Some debug hosts seem to need a little more time
          // before we powercycle the ports to trigger automatic
          // detection.
@@ -38,7 +38,7 @@ bool xhci_debug_device::initialize(bool reinit)
       dbc_cap_->enable();
    }
 
-   while(not dbc_cap_->is_running()) {
+   while (not dbc_cap_->is_running()) {
       adapter_.delay(DELAY_RELAX);
    }
 
@@ -113,8 +113,8 @@ bool xhci_debug_device::handle_events(bool reinit)
 {
    auto _{ poll_mtx_->guard() };
 
-   if(not dbc_cap_->is_running()) {
-      if(reinit) {
+   if (not dbc_cap_->is_running()) {
+      if (reinit) {
          initialize(true);
       }
       else {
@@ -124,15 +124,15 @@ bool xhci_debug_device::handle_events(bool reinit)
 
    event_ring_.update_enqueue_ptr();
 
-   while(not event_ring_.empty()) {
+   while (not event_ring_.empty()) {
       auto& trb = event_ring_.dequeue();
-      switch(trb.type()) {
+      switch (trb.type()) {
          case trb_port_status_change_event::TYPE:
             dbc_cap_->clear_port_status_events();
             break;
 
          case trb_transfer_event::TYPE:
-            if(trb.endpoint_id() == trb_transfer_event::ENDPOINT_ID_IN) {
+            if (trb.endpoint_id() == trb_transfer_event::ENDPOINT_ID_IN) {
                // We ignore the data that came with input events.
                in_ring_.update_dequeue_ptr(trb.buffer);
             }

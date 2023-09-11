@@ -72,7 +72,7 @@ public:
       dequeue_ptr = enqueue_ptr.load();
 
       // Prepare Link TRB
-      if(HAS_LINK) {
+      if (HAS_LINK) {
          auto& link = ring_.back();
          link.toggle(true);
          link.type(trb_link::TYPE);
@@ -121,7 +121,7 @@ public:
       auto enqueue_ptr_old = increment(std::ref(enqueue_ptr), cycle);
       auto& ret = ring_[index(enqueue_ptr_old)];
       ret.cycle(not cycle);
-      if(cycle_old != cycle and HAS_LINK) {
+      if (cycle_old != cycle and HAS_LINK) {
          auto& link = ring_.back();
          link.commit();
       }
@@ -160,7 +160,7 @@ public:
    void update_enqueue_ptr()
    {
       bool cycle_ = cycle;
-      while(ring_[index(enqueue_ptr)].cycle() == cycle_) {
+      while (ring_[index(enqueue_ptr)].cycle() == cycle_) {
          increment(std::ref(enqueue_ptr), cycle_);
       }
    }
@@ -194,7 +194,7 @@ public:
    {
       info("---- {s} RING DUMP ---- ({}), cycle {}", not HAS_LINK ? "EVENT" : "XFER ", ring_.data(), cycle);
 
-      for(const auto& trb : ring_) {
+      for (const auto& trb : ring_) {
          auto ptr = ptr_to_num(&trb);
          info("[{02}] {#02x} BUF {#x} CYC {} {s} {s}{s}", index(ptr), trb.type(), trb.buffer, trb.cycle(), trb.type() == trb_link::TYPE ? "LINK" : "", ptr == enqueue_ptr ? " <-- ENQ" : "", ptr == dequeue_ptr ? " <-- DEQ" : "");
       }
@@ -208,12 +208,12 @@ private:
    uintptr_t check_enqueue_increment(uintptr_t ptr) const
    {
       const auto& cur = ring_[index(ptr)];
-      if(cur.type() == trb_link::TYPE) {
+      if (cur.type() == trb_link::TYPE) {
          return ptr_to_num(ring_.data());
       }
 
       auto ret = ptr + sizeof(trb);
-      if(index(ret) == SIZE) {
+      if (index(ret) == SIZE) {
          ret = ptr_to_num(ring_.data());
       }
       return ret;
@@ -228,8 +228,8 @@ private:
 
       // If there is a link TRB, this wraps first
       const auto& cur = ring_[index(ptr)];
-      if(cur.type() == trb_link::TYPE) {
-         if(cur.toggle()) {
+      if (cur.type() == trb_link::TYPE) {
+         if (cur.toggle()) {
             cycle_ = not cycle_;
          }
          ptr = ptr_to_num(ring_.data());
@@ -239,7 +239,7 @@ private:
       ptr += sizeof(trb);
 
       // Event rings just wrap and toggle automatically.
-      if(index(ptr) == SIZE) {
+      if (index(ptr) == SIZE) {
          ptr = ptr_to_num(ring_.data());
          cycle_ = not cycle_;
          return old;

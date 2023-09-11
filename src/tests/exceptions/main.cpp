@@ -43,14 +43,14 @@ static void test_ud(bool with_exit)
    irqinfo::func_t fixup = [](intr_regs* regs) { regs->rip = regs->rcx; };
    irq_info.fixup_fn = fixup;
 
-   if(with_exit) {
+   if (with_exit) {
       enable_exc_exit(exception::UD);
    }
 
    asm volatile("lea 1f, %%rcx; ud2a; 1:" ::
                    : "rcx");
 
-   if(with_exit) {
+   if (with_exit) {
       disable_exc_exit(exception::UD);
    }
 
@@ -72,7 +72,7 @@ static void test_int3(bool with_exit)
 {
    irq_info.reset();
 
-   if(with_exit) {
+   if (with_exit) {
       enable_exc_exit(exception::BP);
    }
 
@@ -84,7 +84,7 @@ static void test_int3(bool with_exit)
    asm volatile("int3; mov $1, %[result];"
                 : [result] "=r"(result)::"memory");
 
-   if(with_exit) {
+   if (with_exit) {
       disable_exc_exit(exception::BP);
    }
 
@@ -108,7 +108,7 @@ static void send_self_ipi_and_poll(uint8_t ipi_vec)
 {
    lapic_test_tools::send_self_ipi(ipi_vec);
 
-   while(not lapic_test_tools::check_irr(ipi_vec)) {
+   while (not lapic_test_tools::check_irr(ipi_vec)) {
       cpu_pause();
    }
 }

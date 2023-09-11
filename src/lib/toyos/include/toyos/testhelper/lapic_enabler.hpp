@@ -19,7 +19,7 @@ public:
 
    ~lapic_enabler()
    {
-      if(not lapic_was_enabled) {
+      if (not lapic_was_enabled) {
          lapic_test_tools::software_apic_disable();
       }
    }
