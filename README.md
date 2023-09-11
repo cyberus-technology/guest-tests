@@ -34,6 +34,6 @@ cmake .. -G Ninja -DCMAKE_INSTALL_PREFIX=./install && ninja
 - all tests with all binary variants: \
   `nix-build -A tests`
 - specific test with all binary variants: \
-  `nix-build -A tests.lapic-timer`
+  `nix-build -A tests.<name>` (such as `lapic-timer`)
 - specific test with specific binary variants: \
-  `nix-build -A tests.lapic-timer.{elf32|elf64}`
+  `nix-build -A tests.<name>.{elf32|elf64|iso}`

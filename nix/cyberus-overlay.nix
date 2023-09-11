@@ -24,11 +24,28 @@ let
   allTests = final.cyberus.guest-tests.tests;
   createIsoMultiboot = final.cyberus.cbspkgs.lib.images.createIsoMultiboot;
 
+  # Generates a bootable ISO for the provided test and makes sure the
+  # derivation has the same output structure as the other binary variants.
+  isoToCmakeStyleOutputFile = name:
+    let
+      isoSymlink = final.cyberus.cbspkgs.lib.images.createIsoMultiboot {
+        name = "${name}.iso-link";
+        kernel = "${toString allTests}/${name}_guesttest";
+        kernelCmdline = "--serial 3f8";
+      };
+    in
+    final.runCommand "${name}.iso" { } ''
+      mkdir -p $out
+      cp ${toString isoSymlink} $out/${name}_guesttest.iso
+    '';
+
   # Attribute set that maps the name of each test to a derivation that contains
   # all binary variants of that test. Each inner attribute provides the
   # individual binary variants as passthru attributes.
   testsByName = builtins.foldl'
-    (acc: name: acc // { "${name}" = extractTestAllVariants name; })
+    (acc: name: acc // {
+      "${name}" = extractTestAllVariants name;
+    })
     { }
     testNames;
 
@@ -46,7 +63,7 @@ let
       mkdir -p $out
       cp ${toString allTests}/${name}_guesttest $out
       cp ${toString allTests}/${name}_guesttest-elf32 $out
-      cp ${toString testByVariant'.iso} $out/${name}_guesttest.iso
+      cp ${toString testByVariant'.iso}/${name}_guesttest.iso $out
     '';
 
   # Creates an attribute set that maps the binary variants of a test to a
@@ -54,11 +71,7 @@ let
   testByVariant = name: {
     elf32 = extractTestVariant "-elf32" name;
     elf64 = extractTestVariant "" name;
-    iso = createIsoMultiboot {
-      name = "${name}.iso";
-      kernel = "${toString allTests}/${name}_guesttest";
-      kernelCmdline = "--serial 3f8";
-    };
+    iso = isoToCmakeStyleOutputFile name;
   };
 
   # Extracts a single binary variant of a test from the CMake build of all tests.
