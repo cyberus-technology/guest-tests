@@ -24,14 +24,16 @@ The following command line configurations are accepted by the test binaries:
 
 ## Build
 ### Regular
-#### All Tests
+- build all tests:
 ```shell
 mkdir build && cd build
 cmake .. -G Ninja -DCMAKE_INSTALL_PREFIX=./install && ninja
 ```
 
 ### Nix
-#### All Tests
-- `nix-build -A tests.all`
-#### Individual Tests:
-- `nix-build -A tests.<name>` (such as `cpuid`)
+- all tests with all binary variants: \
+  `nix-build -A tests`
+- specific test with all binary variants: \
+  `nix-build -A tests.lapic-timer`
+- specific test with specific binary variants: \
+  `nix-build -A tests.lapic-timer.{elf32|elf64}`

@@ -15,6 +15,6 @@ pkgs.mkShell rec {
   ];
 
   inputsFrom = [
-    pkgs.cyberus.guest-tests.tests.all
+    pkgs.cyberus.guest-tests.tests
   ];
 }
