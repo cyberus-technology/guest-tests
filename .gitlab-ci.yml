@@ -31,10 +31,9 @@ build:regular_release:
 build:nix:
   <<: *nix_build_template
   script:
-    - nix-build -A tests.all
-    - test -f result/tests/lapic-timer_guesttest
-    - nix-build -A tests.lapic-timer # some random individual test
-    - test -f result/lapic-timer_guesttest
+    - nix-build -A tests && test -f result/lapic-timer_guesttest
+    - nix-build -A tests.lapic-timer && test -f result/lapic-timer_guesttest
+    - nix-build -A tests.lapic-timer.iso && test -f result/lapic-timer_guesttest.iso
 
 test:nix-shell:
   <<: *nix_build_template
