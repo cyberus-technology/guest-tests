@@ -93,7 +93,7 @@ TEST_CASE(call_far_pointer)
 #ifdef __clang__
                 "lcallq *%[target_64bit];"
 #else
-                 "rex64 lcall *%[target_64bit];"
+                "rex64 lcall *%[target_64bit];"
 #endif
                 "jmp 4f;"
                 "3: movb $1, %[success_64bit];"
@@ -127,7 +127,7 @@ TEST_CASE(call_far_conforming)
 #ifdef __clang__
                 "lcallq *%[target];"
 #else
-                 "rex64 lcall *%[target];"
+                "rex64 lcall *%[target];"
 #endif
                 "jmp 2f;"
                 "1: mov %%cs, %[resulting_cs];"
