@@ -98,7 +98,7 @@ namespace x2apic_test_tools
      */
       std::optional<uint32_t> mmio_addr() const
       {
-         if(addr == x86::msr::X2APIC_X2_SELF_IPI) {
+         if (addr == x86::msr::X2APIC_X2_SELF_IPI) {
             return {};
          }
          static constexpr uint32_t MSR_BASE{ 0x800 };
@@ -186,8 +186,8 @@ namespace x2apic_test_tools
 
       void copy_from_mmio()
       {
-         for(const auto& msr : msr_table) {
-            if(msr.is_readable() and msr.mmio_addr()) {
+         for (const auto& msr : msr_table) {
+            if (msr.is_readable() and msr.mmio_addr()) {
                mmio_value_t mmio_val{ lapic_test_tools::read_from_register(msr.mmio_addr().value()) };
                buffer[msr.addr] = mmio_val;
             }
@@ -226,7 +226,7 @@ namespace x2apic_test_tools
       {
          // no interrupt during copying and in between copy and mode switch
          int_guard _;
-         if(buffer != nullptr) {
+         if (buffer != nullptr) {
             buffer->copy_from_mmio();
          }
          x2apic_mode_enable();

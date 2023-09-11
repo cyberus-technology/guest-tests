@@ -35,7 +35,7 @@ struct irqinfo
 
    void fixup(intr_regs* regs) const volatile
    {
-      if(fixup_fn) {
+      if (fixup_fn) {
          fixup_fn(regs);
       }
    }

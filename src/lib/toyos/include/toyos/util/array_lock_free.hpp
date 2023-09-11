@@ -63,7 +63,7 @@ public:
    std::optional<size_type> find_if(FUNC cond) noexcept
    {
       auto it{ std::find_if(array.begin(), array.end(), [cond](const std::atomic<T>& array_value) { return cond(array_value.load()); }) };
-      if(it != array.end()) {
+      if (it != array.end()) {
          return std::distance(array.begin(), it);
       }
       return {};
@@ -87,7 +87,7 @@ public:
 
       auto it{ std::find_if(array.begin(), array.end(), exchange_fn) };
 
-      if(it != array.end()) {
+      if (it != array.end()) {
          return std::distance(array.begin(), it);
       }
 
@@ -138,7 +138,7 @@ public:
      */
    bool remove(const T& value)
    {
-      if(value == INVALID_ELEMENT) {
+      if (value == INVALID_ELEMENT) {
          return false;
       }
 

@@ -130,7 +130,7 @@ namespace cbl
      */
       bool push(const T& elem)
       {
-         if(full()) {
+         if (full()) {
             return false;
          }
 
@@ -157,7 +157,7 @@ namespace cbl
      */
       bool pop()
       {
-         if(empty()) {
+         if (empty()) {
             return false;
          }
 
@@ -216,7 +216,7 @@ namespace cbl
      */
       static std::unique_ptr<lock_free_queue_producer> create(queue_storage& storage, uint64_t num_elems = MAX_SIZE)
       {
-         if(num_elems > MAX_SIZE) {
+         if (num_elems > MAX_SIZE) {
             return nullptr;
          }
 
@@ -234,7 +234,7 @@ namespace cbl
      */
       static std::unique_ptr<lock_free_queue_producer> create_from_existing_storage(queue_storage& storage)
       {
-         if(not storage.verify()) {
+         if (not storage.verify()) {
             return nullptr;
          }
 
@@ -284,7 +284,7 @@ namespace cbl
      */
       static std::unique_ptr<lock_free_queue_consumer> create(queue_storage& storage)
       {
-         if(storage.verify()) {
+         if (storage.verify()) {
             return std::unique_ptr<lock_free_queue_consumer>(new lock_free_queue_consumer(storage));
          }
 
@@ -319,7 +319,7 @@ namespace cbl
    template<class T, size_t MAX_SIZE>
    std::optional<T> get_and_pop(cbl::static_lock_free_queue<T, MAX_SIZE>& queue)
    {
-      if(queue.empty()) {
+      if (queue.empty()) {
          return {};
       }
       T val{ queue.front() };
@@ -338,7 +338,7 @@ namespace cbl
    template<class T, size_t MAX_SIZE>
    std::optional<T> get_and_pop(cbl::lock_free_queue_consumer<T, MAX_SIZE>& queue)
    {
-      if(queue.empty()) {
+      if (queue.empty()) {
          return {};
       }
       T val{ queue.front() };

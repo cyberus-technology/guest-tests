@@ -30,7 +30,7 @@ public:
       {
          const auto args{ tokenize(arg, ',') };
 
-         switch(args.size()) {
+         switch (args.size()) {
             case 2:
                irq = std::stoul(args[1]);
                FALL_THROUGH;

@@ -36,17 +36,17 @@ __attribute__((no_sanitize("undefined")))
 static int
 putc_internal(char c, char** outptr, char* outptr_limit)
 {
-   if(_CR_CRLF && c == '\n')
+   if (_CR_CRLF && c == '\n')
       putc_internal('\r', outptr, outptr_limit); /* CR -> CRLF */
 
-   if(outptr) {
-      if(*outptr && *outptr < outptr_limit)
+   if (outptr) {
+      if (*outptr && *outptr < outptr_limit)
          **outptr = (unsigned char)c;
       (*outptr)++;
       return 0;
    }
 
-   if(xfunc_out)
+   if (xfunc_out)
       xfunc_out((unsigned char)c);
 
    return 0;
@@ -68,7 +68,7 @@ int putchar(int c)
 
 int puts_internal(const char* str, char** outptr, char* outptr_limit)
 {
-   while(*str) {
+   while (*str) {
       putc_internal(*str++, outptr, outptr_limit);
    }
    return 0;
@@ -117,14 +117,14 @@ static void xvprintf_internal(const char* fmt, va_list arp, char** outptr, char*
    unsigned long long v;
    char s[32], c, d, *p;
 
-   for(;;) {
+   for (;;) {
       c = *fmt++;
-      if(!c) {
+      if (!c) {
          // End of format
          break;
       }
 
-      if(c != '%') {
+      if (c != '%') {
          /* Pass through it if not a % sequence */
          putc_internal(c, outptr, outptr_limit);
          continue;
@@ -133,56 +133,56 @@ static void xvprintf_internal(const char* fmt, va_list arp, char** outptr, char*
       f = 0;
       c = *fmt++;
 
-      if(c == '#') {
+      if (c == '#') {
          puts_internal("0x", outptr, outptr_limit);
          c = *fmt++;
       }
 
-      if(c == '0') {
+      if (c == '0') {
          f = FLAG_ZERO_PADDING;
          c = *fmt++;
       }
-      else if(c == '-') {
+      else if (c == '-') {
          f = FLAG_LEFT_JUSTIFIED;
          c = *fmt++;
       }
 
-      for(w = 0; c >= '0' && c <= '9'; c = *fmt++) {
+      for (w = 0; c >= '0' && c <= '9'; c = *fmt++) {
          /* Minimum width */
          w = w * 10 + c - '0';
       }
 
       // First long: Set long flag
-      if(c == 'l' || c == 'L') {
+      if (c == 'l' || c == 'L') {
          f |= FLAG_SIZE_LONG;
          c = *fmt++;
       }
 
       // Second long: Set long long flag, keep long
-      if(c == 'l' || c == 'L') {
+      if (c == 'l' || c == 'L') {
          f |= FLAG_SIZE_LONG_LONG;
          c = *fmt++;
       }
 
-      if(!c) {
+      if (!c) {
          break;
       }
 
       d = c;
-      if(d >= 'a') {
+      if (d >= 'a') {
          d -= 0x20;
       }
 
-      switch(d) {  /* Type is... */
+      switch (d) { /* Type is... */
          case 'S': /* String */
             p = va_arg(arp, char*);
-            for(j = 0; p[j]; j++)
+            for (j = 0; p[j]; j++)
                ;
-            while(!(f & FLAG_LEFT_JUSTIFIED) && j++ < w) {
+            while (!(f & FLAG_LEFT_JUSTIFIED) && j++ < w) {
                putc_internal(' ', outptr, outptr_limit);
             }
             puts_internal(p, outptr, outptr_limit);
-            while(j++ < w) {
+            while (j++ < w) {
                putc_internal(' ', outptr, outptr_limit);
             }
             continue;
@@ -212,20 +212,20 @@ static void xvprintf_internal(const char* fmt, va_list arp, char** outptr, char*
       }
 
       /* Get an argument and put it in numeral */
-      if(f & FLAG_SIZE_POINTER) {
+      if (f & FLAG_SIZE_POINTER) {
          v = va_arg(arp, uintptr_t);
       }
-      else if(f & FLAG_SIZE_LONG_LONG) {
+      else if (f & FLAG_SIZE_LONG_LONG) {
          v = va_arg(arp, long long);
       }
-      else if(f & FLAG_SIZE_LONG) {
+      else if (f & FLAG_SIZE_LONG) {
          v = va_arg(arp, long);
       }
       else {
          v = (d == 'D') ? (long long)va_arg(arp, int) : (long long)va_arg(arp, unsigned int);
       }
 
-      if(d == 'D' && (v & 0x8000000000000000)) {
+      if (d == 'D' && (v & 0x8000000000000000)) {
          v = 0 - v;
          f |= FLAG_SIGNED_NEGATIVE;
       }
@@ -234,27 +234,27 @@ static void xvprintf_internal(const char* fmt, va_list arp, char** outptr, char*
       do {
          d = (char)(v % r);
          v /= r;
-         if(d > 9)
+         if (d > 9)
             d += (c == 'x') ? 0x27 : 0x07;
          s[i++] = d + '0';
-      } while(v && i < sizeof(s));
+      } while (v && i < sizeof(s));
 
-      if(f & FLAG_SIGNED_NEGATIVE) {
+      if (f & FLAG_SIGNED_NEGATIVE) {
          s[i++] = '-';
       }
 
       j = i;
       d = (f & FLAG_ZERO_PADDING) ? '0' : ' ';
 
-      while(!(f & FLAG_LEFT_JUSTIFIED) && j++ < w) {
+      while (!(f & FLAG_LEFT_JUSTIFIED) && j++ < w) {
          putc_internal(d, outptr, outptr_limit);
       }
 
       do {
          putc_internal(s[--i], outptr, outptr_limit);
-      } while(i);
+      } while (i);
 
-      while(j++ < w) {
+      while (j++ < w) {
          putc_internal(' ', outptr, outptr_limit);
       }
    }
@@ -312,7 +312,7 @@ vsnprintf(char* buff, unsigned long n, const char* fmt, va_list arp)
    char* outptr = buff;
    char* snprintf_limit = buff + n - (n ? 1 : 0);
 
-   if((!buff && n) || outptr > snprintf_limit) {
+   if ((!buff && n) || outptr > snprintf_limit) {
       __builtin_trap();
       __UNREACHED__;
    }
@@ -321,11 +321,11 @@ vsnprintf(char* buff, unsigned long n, const char* fmt, va_list arp)
 
    int distance = outptr - buff;
 
-   if(n == 0) {
+   if (n == 0) {
       return distance;
    }
 
-   if(outptr > snprintf_limit - 1) {
+   if (outptr > snprintf_limit - 1) {
       *snprintf_limit = 0;
    }
    else {

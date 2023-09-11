@@ -329,7 +329,7 @@ namespace multiboot2
             return tag.generic.type == tag_type;
          };
 
-         if(const auto it{ std::find_if(begin(), end(), matches_tag_type) }; it != end()) {
+         if (const auto it{ std::find_if(begin(), end(), matches_tag_type) }; it != end()) {
             return { *it };
          }
 
@@ -339,7 +339,7 @@ namespace multiboot2
       template<typename TAG>
       std::optional<TAG> find_and_extract_tag() const
       {
-         if(const auto tag{ find_tag(TAG::TYPE) }; tag) {
+         if (const auto tag{ find_tag(TAG::TYPE) }; tag) {
             return tag->template get_full_tag<TAG>();
          }
          return std::nullopt;
@@ -355,7 +355,7 @@ namespace multiboot2
    inline std::optional<mb2_header_reader> locate_header(const std::vector<unsigned char>& binary)
    {
       // We need the binary to hold at least the size of the fixed part.
-      if(binary.size() < sizeof(mb2_header_fixed)) {
+      if (binary.size() < sizeof(mb2_header_fixed)) {
          return std::nullopt;
       }
 
@@ -373,16 +373,16 @@ namespace multiboot2
       const auto search_end{ binary.begin() + std::min(MB2_HDR_MAX, binary.size()) - 8 };
 
       auto search_begin{ binary.begin() };
-      while(search_begin < search_end) {
+      while (search_begin < search_end) {
          const auto found{ std::search(search_begin, search_end, MB2_HDR_MAGIC.begin(), MB2_HDR_MAGIC.end()) };
 
-         if(found == search_end) {
+         if (found == search_end) {
             return std::nullopt;
          }
 
          // The specification also mandates a 64-bit alignment. We keep looking
          // until that requirement is fulfilled.
-         if(const auto offset{ std::distance(binary.begin(), found) }; offset % 8 == 0) {
+         if (const auto offset{ std::distance(binary.begin(), found) }; offset % 8 == 0) {
             return mb2_header_reader{ binary.data() + offset };
          }
          else {

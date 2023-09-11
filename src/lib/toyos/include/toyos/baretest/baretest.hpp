@@ -84,11 +84,11 @@ namespace baretest
    baretest::test_case::result_t test_##test_name()                         \
    {                                                                        \
       printf("test case: %s\n", __func__);                                  \
-      if(not(condition)) {                                                  \
+      if (not(condition)) {                                                 \
          return baretest::test_case::result_t::SKIPPED;                     \
       }                                                                     \
       int val = setjmp(baretest::get_env());                                \
-      if(val) {                                                             \
+      if (val) {                                                            \
          return baretest::test_case::result_t::FAILURE;                     \
       }                                                                     \
       test_impl_##test_name();                                              \

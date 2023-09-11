@@ -67,19 +67,19 @@ namespace cbl
       {
          auto cur_elem{ new_elem };
 
-         if(cur_elem == std::end(m)) {
+         if (cur_elem == std::end(m)) {
             return;
          }
 
-         if(const auto pre_elem{ std::prev(new_elem) };
-            cur_elem != std::begin(m) and cur_elem->second == pre_elem->second) {
+         if (const auto pre_elem{ std::prev(new_elem) };
+             cur_elem != std::begin(m) and cur_elem->second == pre_elem->second) {
             // merge with predecessor
             cur_elem->first = pre_elem->first;
             cur_elem = m.erase(pre_elem);
          }
 
-         if(const auto post_elem{ std::next(cur_elem) };
-            post_elem != std::end(m) and cur_elem->second == post_elem->second) {
+         if (const auto post_elem{ std::next(cur_elem) };
+             post_elem != std::end(m) and cur_elem->second == post_elem->second) {
             // merge with successor
             m.erase(post_elem);
          }
@@ -111,7 +111,7 @@ namespace cbl
       std::optional<mod_ival_pair> find(ival_t point)
       {
          auto cr{ static_cast<const this_t&>(*this).find(point) };
-         if(!cr) {
+         if (!cr) {
             return {};
          }
          return { mod_ival_pair{ cr->first, const_cast<value_t&>(cr->second) } };
@@ -143,7 +143,7 @@ namespace cbl
       interval_range iterate_range(ival_t begin_point, ival_t end_point) const
       {
          auto begin_{ lower_bound(begin_point) };
-         if(begin_->first != begin_point) {
+         if (begin_->first != begin_point) {
             begin_ = std::prev(begin_);
          }
 
@@ -167,21 +167,21 @@ namespace cbl
          const auto lba{ lower_bound(ival.a) };  // first elem greater or equal ival.a
          const auto lbb{ lower_bound(ival.b) };  // first elem greater or equal ival.b
 
-         if(lba == lbb) {  // we insert something inside another interval
+         if (lba == lbb) {  // we insert something inside another interval
             assert(lba != std::begin(m));
 
             const auto interv_to_insert{ std::prev(lbb) };
 
-            if(val == interv_to_insert->second) {  // pointless insert with same value
+            if (val == interv_to_insert->second) {  // pointless insert with same value
                return true;
             }
 
-            if(ival.b == ival_last) {  // interval to the end, just insert one point
+            if (ival.b == ival_last) {  // interval to the end, just insert one point
                m.insert(lbb, pair_t{ ival.a, val });
                return true;
             }
 
-            if(lbb == std::end(m) or ival.b != lbb->first) {  // we have to insert two points at ival.a and ival.b
+            if (lbb == std::end(m) or ival.b != lbb->first) {  // we have to insert two points at ival.a and ival.b
                const auto cur_val{ std::prev(lba)->second };
                const auto following{ m.insert(lbb, pair_t{ ival.a, val }) };
 
@@ -195,9 +195,9 @@ namespace cbl
             return true;
          }
 
-         if(lbb == std::end(m)) {  // we insert something at the end
+         if (lbb == std::end(m)) {  // we insert something at the end
 
-            if(ival.b == ival_last) {  // we insert up to the end, so delete everything up to the end
+            if (ival.b == ival_last) {  // we insert up to the end, so delete everything up to the end
                m.erase(lba, lbb);
                const auto inserted{ m.insert(std::end(m), pair_t{ ival.a, val }) };
                merge(inserted);
@@ -207,7 +207,7 @@ namespace cbl
             auto prev{ std::prev(lbb) };
             prev = m.erase(lba, prev);
 
-            if(prev->second == val) {  // values are the same, just shift following interval to the ival.a
+            if (prev->second == val) {  // values are the same, just shift following interval to the ival.a
                prev->first = ival.a;
                merge(prev);
             }
@@ -223,7 +223,7 @@ namespace cbl
          auto delete_up_to{ lbb };
          auto prev_lbb{ std::prev(lbb) };
 
-         if(ival.b != lbb->first) {  // if we do not end exactly on lbb, we need to shift prev_lbb forward
+         if (ival.b != lbb->first) {  // if we do not end exactly on lbb, we need to shift prev_lbb forward
             prev_lbb->first = ival.b;
             delete_up_to = prev_lbb;
          }
@@ -243,18 +243,18 @@ namespace cbl
          const it_t next{ upper_bound(point) };
          const it_t actual{ std::prev(next) };
 
-         if(next != std::end(m)) {
-            if(actual == std::begin(m)) {
+         if (next != std::end(m)) {
+            if (actual == std::begin(m)) {
                next->first = 0;
             }
             else {
                const it_t before{ std::prev(actual) };
-               if(before->second == next->second) {
+               if (before->second == next->second) {
                   m.erase(next);
                }
             }
          }
-         else if(actual == std::begin(m)) {  // we have just one interval
+         else if (actual == std::begin(m)) {  // we have just one interval
             actual->second = value_t{};
             return true;
          }
@@ -295,8 +295,8 @@ namespace cbl
       {
          interval_impl<ival_t> final_range;
 
-         for(const auto& elem : *this) {
-            if(elem.second == key) {
+         for (const auto& elem : *this) {
+            if (elem.second == key) {
                // We do a self-search here because the current iterator does only
                // provide the beginning of the region and not the end which we need
                // to calculate the region size. This is a workaround!
@@ -305,7 +305,7 @@ namespace cbl
                // access the entire interval during iteration.
                auto pair{ find(elem.first) };
                const interval_impl<ival_t>& candidate{ pair->first };
-               if(candidate.size() >= size and candidate.a + size <= limit) {
+               if (candidate.size() >= size and candidate.a + size <= limit) {
                   ival_t end = std::min(candidate.b, limit);
                   final_range = { end - size, end };
                }

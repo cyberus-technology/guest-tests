@@ -197,7 +197,7 @@ struct __PACKED__ hpet
       do {
          main_hi = main_counter_hi;
          main_lo = main_counter_lo;
-      } while(main_hi != main_counter_hi);
+      } while (main_hi != main_counter_hi);
 
       return (main_hi << 32) | main_lo;
    }
@@ -256,7 +256,7 @@ protected:
 
    static void configure_field(volatile uint32_t* field, uint32_t mask, bool set)
    {
-      if(set) {
+      if (set) {
          *field |= mask;
       }
       else {

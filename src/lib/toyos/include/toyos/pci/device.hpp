@@ -199,7 +199,7 @@ protected:
       bar_iterator& operator++()
       {
          bar_index_ += operator*()->is_64bit() ? 2 : 1;
-         if(bar_index_ >= dev_.bar_count()) {
+         if (bar_index_ >= dev_.bar_count()) {
             bar_index_ = BAR_INDEX_INVALID;
          }
 
@@ -301,9 +301,9 @@ public:
    size_t find_cap(uint16_t id) const
    {
       uint8_t off{ cap_offset() };
-      while(off and off != 0xff) {
+      while (off and off != 0xff) {
          auto* cap = reinterpret_cast<volatile capability*>(uintptr_t(cfg_base_) + off);
-         if(cap->id == id) {
+         if (cap->id == id) {
             return off;
          }
          off = cap->next;
@@ -313,15 +313,15 @@ public:
 
    size_t find_ext_cap(uint16_t id) const
    {
-      if(not find_cap(pci::pcie_capability::ID)) {
+      if (not find_cap(pci::pcie_capability::ID)) {
          // Non-PCIe devices do not have an extended config space.
          return 0;
       }
 
       uint16_t off{ 256 };  // The extended config space always starts at the end of the legacy space.
-      while(off and off != 0xfff) {
+      while (off and off != 0xfff) {
          auto* cap = reinterpret_cast<volatile ext_capability*>(uintptr_t(cfg_base_) + off);
-         if(cap->id == id) {
+         if (cap->id == id) {
             return off;
          }
          off = cap->version_and_next >> 4;

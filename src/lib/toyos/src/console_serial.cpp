@@ -9,8 +9,8 @@ static console* active_console{ nullptr };
 void console_serial_base::putc(char c)
 {
    unsigned retry_count{ 100000 };
-   while(not(inb(base + LSR) & THB_EMPTY)) {
-      if(not --retry_count) {
+   while (not(inb(base + LSR) & THB_EMPTY)) {
+      if (not --retry_count) {
          return;
       }
    }
@@ -38,14 +38,14 @@ console_serial_base::console_serial_base(uint16_t port, unsigned baud)
    //    udelay(1000000 /* us */ * 22 / baud);
    // Just use a rough 2Ghz tick estimate meanwhile.
    uint64_t delay_ticks = 2000u * 1000000u * 22u / baud;
-   for(uint64_t delay = 0; delay < delay_ticks; delay++) {
+   for (uint64_t delay = 0; delay < delay_ticks; delay++) {
       cpu_pause();
    };
 }
 
 void console_serial::putchar(unsigned char c)
 {
-   if(active_console) {
+   if (active_console) {
       active_console->putc(c);
    }
 }

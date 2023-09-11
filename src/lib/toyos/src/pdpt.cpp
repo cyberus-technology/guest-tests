@@ -35,7 +35,7 @@ PDPTE::PDPTE(const pdpt_entry_t& config)
    raw |= config.pat * PAT_MASK;
    raw |= config.execute * XD_MASK;
 
-   if(config.pagesize) {
+   if (config.pagesize) {
       raw |= config.address & LPAGE_MASK;
       raw |= (static_cast<uint64_t>(config.key) << PROT_KEY_SHIFT) & PROT_KEY_MASK;
    }
@@ -78,7 +78,7 @@ void PDPTE::set_accessed(bool acc, tlb_invalidation invl)
 
 bool PDPTE::set_dirty(bool dirty, tlb_invalidation invl)
 {
-   if(set_bits_if_big_ps(D_MASK, dirty * D_MASK)) {
+   if (set_bits_if_big_ps(D_MASK, dirty * D_MASK)) {
       invalidate_entry(invl);
       return true;
    }
@@ -87,7 +87,7 @@ bool PDPTE::set_dirty(bool dirty, tlb_invalidation invl)
 
 bool PDPTE::set_global(bool global, tlb_invalidation invl)
 {
-   if(set_bits_if_big_ps(GL_MASK, global * GL_MASK)) {
+   if (set_bits_if_big_ps(GL_MASK, global * GL_MASK)) {
       invalidate_entry(invl);
       return true;
    }
@@ -96,7 +96,7 @@ bool PDPTE::set_global(bool global, tlb_invalidation invl)
 
 bool PDPTE::set_pat(bool pat, tlb_invalidation invl)
 {
-   if(set_bits_if_big_ps(PAT_MASK, pat * PAT_MASK)) {
+   if (set_bits_if_big_ps(PAT_MASK, pat * PAT_MASK)) {
       invalidate_entry(invl);
       return true;
    }
@@ -110,7 +110,7 @@ void PDPTE::set_exec_disable(bool exec, tlb_invalidation invl)
 
 bool PDPTE::set_prot_key(uint8_t key, tlb_invalidation invl)
 {
-   if(set_bits_if_big_ps(PROT_KEY_MASK, static_cast<uint64_t>(key) << PROT_KEY_SHIFT)) {
+   if (set_bits_if_big_ps(PROT_KEY_MASK, static_cast<uint64_t>(key) << PROT_KEY_SHIFT)) {
       invalidate_entry(invl);
       return true;
    }
@@ -119,7 +119,7 @@ bool PDPTE::set_prot_key(uint8_t key, tlb_invalidation invl)
 
 std::optional<phy_addr_t> PDPTE::get_pdir() const
 {
-   if(not is_large() && is_present()) {
+   if (not is_large() && is_present()) {
       return { phy_addr_t(raw() & ADDR_MASK) };
    }
    return {};
@@ -127,7 +127,7 @@ std::optional<phy_addr_t> PDPTE::get_pdir() const
 
 bool PDPTE::set_pdir(phy_addr_t addr, tlb_invalidation invl)
 {
-   if(set_bits_if_small_ps(ADDR_MASK, uintptr_t(addr))) {
+   if (set_bits_if_small_ps(ADDR_MASK, uintptr_t(addr))) {
       invalidate_entry(invl);
       return true;
    }
@@ -136,7 +136,7 @@ bool PDPTE::set_pdir(phy_addr_t addr, tlb_invalidation invl)
 
 std::optional<phy_addr_t> PDPTE::get_page() const
 {
-   if(is_large() && is_present()) {
+   if (is_large() && is_present()) {
       return { phy_addr_t(raw() & LPAGE_MASK) };
    }
    return {};
@@ -144,7 +144,7 @@ std::optional<phy_addr_t> PDPTE::get_page() const
 
 bool PDPTE::set_page(phy_addr_t addr, tlb_invalidation invl)
 {
-   if(set_bits_if_big_ps(LPAGE_MASK, uintptr_t(addr))) {
+   if (set_bits_if_big_ps(LPAGE_MASK, uintptr_t(addr))) {
       invalidate_entry(invl);
       return true;
    }
@@ -153,13 +153,13 @@ bool PDPTE::set_page(phy_addr_t addr, tlb_invalidation invl)
 
 void PDPTE::invalidate_entry(tlb_invalidation invl) const
 {
-   if(invl == tlb_invalidation::no) {
+   if (invl == tlb_invalidation::no) {
       return;
    }
-   if(is_global()) {
+   if (is_global()) {
       memory_manager::invalidate_tlb_all();
    }
-   else if(is_large()) {
+   else if (is_large()) {
       memory_manager::invalidate_tlb(memory_manager::phy_to_lin(*get_page()));
    }
    else {

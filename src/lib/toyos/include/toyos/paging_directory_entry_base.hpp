@@ -51,7 +51,7 @@ protected:
 public:
    std::optional<uint8_t> get_prot_key() const
    {
-      if(is_large() && is_present()) {
+      if (is_large() && is_present()) {
          return { static_cast<uint8_t>((raw() & PROT_KEY_MASK) >> PROT_KEY_SHIFT) };
       }
       return {};
@@ -77,7 +77,7 @@ public:
 protected:
    bool set_bits_if_small_ps(uint64_t clr_mask, uint64_t set_mask)
    {
-      if(not is_large()) {
+      if (not is_large()) {
          set_bits(clr_mask, set_mask);
          return true;
       }
@@ -86,7 +86,7 @@ protected:
 
    bool set_bits_if_big_ps(uint64_t clr_mask, uint64_t set_mask)
    {
-      if(is_large()) {
+      if (is_large()) {
          set_bits(clr_mask, set_mask);
          return true;
       }

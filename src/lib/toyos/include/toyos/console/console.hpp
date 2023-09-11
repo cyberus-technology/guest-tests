@@ -15,7 +15,7 @@ public:
 
    void puts_default(const std::string& str)
    {
-      for(const char& c : str) {
+      for (const char& c : str) {
          putc(c);
       }
    }

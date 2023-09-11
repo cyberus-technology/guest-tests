@@ -47,7 +47,7 @@ namespace multiboot2
          std::vector<uint8_t> entries_raw;
          entries_raw.reserve(entries.size() * sizeof(mmap_entry));
 
-         for(const auto& e : entries) {
+         for (const auto& e : entries) {
             insert_bytewise(e, entries_raw);
          }
 
@@ -87,7 +87,7 @@ namespace multiboot2
 
          insert_bytewise(fix, ret);
 
-         for(const auto& item_raw : raw_data) {
+         for (const auto& item_raw : raw_data) {
             std::copy(item_raw.begin(), item_raw.end(), std::back_inserter(ret));
          }
 

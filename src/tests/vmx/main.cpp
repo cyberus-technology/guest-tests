@@ -13,7 +13,7 @@
    {                                                                       \
       irq_handler::guard _(irq_handle);                                    \
       irq_info.reset();                                                    \
-      if(setjmp(jump_buffer) == 0) {                                       \
+      if (setjmp(jump_buffer) == 0) {                                      \
          FUNCTION                                                          \
       }                                                                    \
       BARETEST_ASSERT((irq_info.vec == static_cast<uint32_t>(EXCEPTION))); \

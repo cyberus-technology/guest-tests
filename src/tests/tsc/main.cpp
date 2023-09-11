@@ -24,7 +24,7 @@ TEST_CASE(tsc_only_moves_forward_strictly_monotonic)
 
    uint64_t tsc1{ rdtsc() };
 
-   for(unsigned i = 0; i < REPETITIONS; ++i) {
+   for (unsigned i = 0; i < REPETITIONS; ++i) {
       uint64_t tsc2{ rdtsc() };
       BARETEST_ASSERT(tsc2 > tsc1);
       tsc1 = tsc2;
@@ -35,7 +35,7 @@ static const std::initializer_list<uint64_t> test_tscs{ 0x13371337ul, 0xf0000000
 
 TEST_CASE(tsc_is_modified_when_writing_to_ia32_time_stamp_counter)
 {
-   for(auto tsc : test_tscs) {
+   for (auto tsc : test_tscs) {
       wrmsr(x86::msr::IA32_TIME_STAMP_COUNTER, tsc);
       BARETEST_ASSERT(rdtsc() > tsc);
    }
@@ -43,7 +43,7 @@ TEST_CASE(tsc_is_modified_when_writing_to_ia32_time_stamp_counter)
 
 TEST_CASE_CONDITIONAL(tsc_is_modified_when_writing_to_ia32_tsc_adjust, tsc_adjust_supported())
 {
-   for(auto tsc : test_tscs) {
+   for (auto tsc : test_tscs) {
       // Clear all time stamp counter modifications.
       // See SDM 18.17.3: Time Stamp Counter Adjustment
       wrmsr(x86::msr::IA32_TSC_ADJUST, 0);
@@ -63,7 +63,7 @@ TEST_CASE_CONDITIONAL(local_apic_timer_uses_tsc_as_configured, lapic_supports_ts
                      .mode = lvt_modes::DEADLINE,
                      .mask = 0 });
 
-   for(auto tsc : test_tscs) {
+   for (auto tsc : test_tscs) {
       // Set the TSC to a specific value
       wrmsr(x86::msr::IA32_TIME_STAMP_COUNTER, tsc);
 
@@ -77,9 +77,9 @@ TEST_CASE_CONDITIONAL(local_apic_timer_uses_tsc_as_configured, lapic_supports_ts
       unsigned retry_counter{ 100 };
       uint64_t read_back{ ~0ul };
 
-      while(--retry_counter) {
+      while (--retry_counter) {
          read_back = rdmsr(x86::msr::IA32_TSC_DEADLINE);
-         if(read_back == 0) {
+         if (read_back == 0) {
             break;
          }
       }

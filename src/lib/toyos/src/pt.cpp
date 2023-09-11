@@ -89,7 +89,7 @@ void PTE::set_global(bool global, tlb_invalidation invl)
 
 std::optional<phy_addr_t> PTE::get_phys_addr() const
 {
-   if(is_present()) {
+   if (is_present()) {
       return { phy_addr_t(raw() & ADDR_MASK) };
    }
    return {};
@@ -103,7 +103,7 @@ void PTE::set_phys_addr(phy_addr_t addr, tlb_invalidation invl)
 
 std::optional<uint8_t> PTE::get_prot_key() const
 {
-   if(is_present()) {
+   if (is_present()) {
       return { static_cast<uint8_t>((raw() & PROT_KEY_MASK) >> PROT_KEY_SHIFT) };
    }
    return {};
@@ -117,10 +117,10 @@ void PTE::set_prot_key(uint8_t key, tlb_invalidation invl)
 
 void PTE::invalidate_entry(tlb_invalidation invl) const
 {
-   if(invl == tlb_invalidation::no) {
+   if (invl == tlb_invalidation::no) {
       return;
    }
-   if(is_global()) {
+   if (is_global()) {
       memory_manager::invalidate_tlb_all();
    }
    else {

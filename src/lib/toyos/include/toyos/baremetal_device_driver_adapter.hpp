@@ -95,7 +95,7 @@ protected:
       assert(tsc_ticks_per_micro_second_ != 0);
 
       auto target{ rdtsc() + tsc_ticks_per_micro_second_ * duration.count() };
-      while(rdtsc() < target) {
+      while (rdtsc() < target) {
          cpu_pause();
       }
    }
@@ -108,7 +108,7 @@ private:
       auto micros{ std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::seconds(1)) };
       auto target{ hpet_->main_counter() + hpet_->microseconds_to_ticks(micros.count()) };
       uint64_t tsc{ rdtsc() };
-      while(hpet_->main_counter() < target) {
+      while (hpet_->main_counter() < target) {
          cpu_pause();
       }
 

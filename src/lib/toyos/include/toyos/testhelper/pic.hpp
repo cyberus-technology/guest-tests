@@ -27,7 +27,7 @@ public:
    explicit pic(uint8_t vector_base)
       : vector_base_(vector_base)
    {
-      if(not math::is_aligned(vector_base, 3)) {
+      if (not math::is_aligned(vector_base, 3)) {
          PANIC("Base vector has to be aligned to 8!");
       }
 
@@ -86,12 +86,12 @@ public:
 
    bool is_spurious(uint8_t vec)
    {
-      if(not is_pic_vector(vec)) {
+      if (not is_pic_vector(vec)) {
          return false;
       }
 
       uint8_t irq = (vec - vector_base_);
-      if(irq != SPURIOUS_IRQ and irq != SPURIOUS_IRQ + 8) {
+      if (irq != SPURIOUS_IRQ and irq != SPURIOUS_IRQ + 8) {
          return false;
       }
 
@@ -100,22 +100,22 @@ public:
 
    void mask(uint8_t vec)
    {
-      if(is_master_vector(vec)) {
+      if (is_master_vector(vec)) {
          outb(MASTER_DATA, inb(MASTER_DATA) | (1u << (vec - vector_base_)));
       }
 
-      if(is_slave_vector(vec)) {
+      if (is_slave_vector(vec)) {
          outb(SLAVE_DATA, inb(SLAVE_DATA) | (1u << (vec - vector_base_ - 8)));
       }
    }
 
    void unmask(uint8_t vec)
    {
-      if(is_master_vector(vec)) {
+      if (is_master_vector(vec)) {
          outb(MASTER_DATA, inb(MASTER_DATA) & ~(1u << (vec - vector_base_)));
       }
 
-      if(is_slave_vector(vec)) {
+      if (is_slave_vector(vec)) {
          outb(SLAVE_DATA, inb(SLAVE_DATA) & ~(1u << (vec - vector_base_ - 8)));
          unmask(CASCADE_IRQ);
       }
@@ -123,8 +123,8 @@ public:
 
    bool eoi(uint8_t vec)
    {
-      if(is_pic_vector(vec)) {
-         if(is_slave_vector(vec)) {
+      if (is_pic_vector(vec)) {
+         if (is_slave_vector(vec)) {
             outb(SLAVE_CMD, EOI);
          }
 

@@ -49,7 +49,7 @@ void prologue()
       write_to_register(LAPIC_INIT_COUNT, DEADLINE_OFFSET);
       start_time = rdtsc();
 
-      while(not irq_info.valid) {
+      while (not irq_info.valid) {
       };
 
       uint64_t oneshot_time = finish_time - start_time;
@@ -59,7 +59,7 @@ void prologue()
       wrmsr(msr::IA32_TSC_DEADLINE, rdtsc() + DEADLINE_OFFSET);
       start_time = rdtsc();
 
-      while(not irq_info.valid) {
+      while (not irq_info.valid) {
       };
 
       uint64_t deadline_time = finish_time - start_time;
@@ -82,18 +82,18 @@ static void lapic_irq_handler(intr_regs* regs)
 static void counting_irq_handler(intr_regs*)
 {
    ++irq_count;
-   if(irq_count < EXPECTED_IRQS) {
+   if (irq_count < EXPECTED_IRQS) {
       send_eoi();
    }
 }
 
 static void measuring_irq_handler(intr_regs*)
 {
-   if(irq_count == 0) {
+   if (irq_count == 0) {
       start_time = rdtsc();
    }
    ++irq_count;
-   if(irq_count == EXPECTED_IRQS) {
+   if (irq_count == EXPECTED_IRQS) {
       finish_time = rdtsc();
    }
    send_eoi();
@@ -108,7 +108,7 @@ void wait_for_interrupts(irq_handler_t handler, uint32_t irqs_expected)
    enable_interrupts();
    write_lvt_mask(lvt_entry::TIMER, 0);
 
-   while(irq_count < irqs_expected) {
+   while (irq_count < irqs_expected) {
    }
 
    write_lvt_mask(lvt_entry::TIMER, 1);
@@ -120,7 +120,7 @@ void wait_for_interrupts(irq_handler_t handler, uint32_t irqs_expected)
 void drain_periodic_timer_irqs()
 {
    enable_interrupts_for_single_instruction();
-   while(irq_info.valid) {
+   while (irq_info.valid) {
       irq_info.reset();
       send_eoi();
       enable_interrupts_for_single_instruction();
@@ -168,7 +168,7 @@ TEST_CASE_CONDITIONAL(higher_divide_conf_should_lead_to_slower_cycles, false)
 
    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .mode = lvt_modes::PERIODIC, .mask = 1 });
 
-   for(uint32_t conf = 1; conf <= 128; conf *= 2) {
+   for (uint32_t conf = 1; conf <= 128; conf *= 2) {
       write_divide_conf(conf);
       total_times.push_back(measure_timer_period());
    }
@@ -177,15 +177,15 @@ TEST_CASE_CONDITIONAL(higher_divide_conf_should_lead_to_slower_cycles, false)
    // a factor around 2, and i multiply by 1000 to have a better accuracy
    const cbl::interval factor_range(1900, 2101);
    bool success = true;
-   for(uint32_t i = 0; i < total_times.size() - 1; ++i) {
+   for (uint32_t i = 0; i < total_times.size() - 1; ++i) {
       uint32_t factor = (total_times.at(i + 1) * 1000) / total_times.at(i);
       success = factor_range.contains(factor) ? success : false;
    }
 
    // printing the factors for debugging
-   if(not success) {
+   if (not success) {
       info("The test failed, some information for debugging: ");
-      for(uint32_t i = 0; i < total_times.size() - 1; ++i) {
+      for (uint32_t i = 0; i < total_times.size() - 1; ++i) {
          uint32_t factor = (total_times.at(i + 1) * 1000) / total_times.at(i);
          info("  factor \t{} is \t{}", i, factor);
       }
@@ -199,7 +199,7 @@ TEST_CASE(timer_mode_tsc_deadline_should_send_irqs_on_specific_time)
    irq_handler::guard handler_guard(lapic_irq_handler);
    lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_modes::DEADLINE);
 
-   for(uint32_t i = 0; i < 10; ++i) {
+   for (uint32_t i = 0; i < 10; ++i) {
       uint64_t deadline = rdtsc() + (1 << i);
 
       wrmsr(msr::IA32_TSC_DEADLINE, deadline);
@@ -220,7 +220,7 @@ TEST_CASE(deadlines_in_the_past_should_produce_interrupts_immediately)
    irq_handler::guard handler_guard(lapic_irq_handler);
    lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_modes::DEADLINE);
 
-   for(uint32_t i = 0; i < 10; ++i) {
+   for (uint32_t i = 0; i < 10; ++i) {
       uint64_t deadline = rdtsc() - (1 << i);
       irq_info.reset();
 
@@ -240,7 +240,7 @@ TEST_CASE(deadlines_in_the_past_should_produce_interrupts_immediately)
          // The assumption is that the interrupt is now already pending and will
          // be delivered immediately.
          enable_interrupts_for_single_instruction();
-      } while(!irq_info.valid && (elapsed < maximum_grace_period));
+      } while (!irq_info.valid && (elapsed < maximum_grace_period));
 
       info("\"Immediate\" interrupt delivery took about {} cycles.", elapsed);
       BARETEST_ASSERT(elapsed < maximum_grace_period);
@@ -269,7 +269,7 @@ TEST_CASE(switch_from_deadline_to_oneshot_should_disarm_the_timer)
    BARETEST_ASSERT((read_from_register(LAPIC_CURR_COUNT) == 0));
 
    // the 512 is there to give the interrupt some time
-   while(rdtsc() <= deadline + 512) {
+   while (rdtsc() <= deadline + 512) {
    };
 
    BARETEST_ASSERT(not irq_info.valid);
@@ -293,10 +293,10 @@ TEST_CASE(switch_from_periodic_to_deadline_should_disarm_the_timer)
    uint64_t start = rdtsc();
 
    // again, the * 2 is there to give the interrupt some time
-   while(rdtsc() <= start + DEADLINE_OFFSET * (tsc_to_bus_ratio * 2)) {
+   while (rdtsc() <= start + DEADLINE_OFFSET * (tsc_to_bus_ratio * 2)) {
    };
 
-   if(irq_info.valid) {
+   if (irq_info.valid) {
       info("Test failed, got irq {}.", static_cast<uint32_t>(irq_info.vec))
    }
    BARETEST_ASSERT(not irq_info.valid);
@@ -382,7 +382,7 @@ TEST_CASE(switch_from_periodic_to_oneshot_eventually_stops_timer)
 
    enable_interrupts();
    // Wait for at one interrupt.
-   while(!irq_info.valid) {
+   while (!irq_info.valid) {
    }
    disable_interrupts();
 

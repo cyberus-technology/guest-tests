@@ -93,7 +93,7 @@ namespace pci_internal
          new_raw |= static_cast<uint32_t>(val) & ADDRESS_MASK;
          raw = new_raw;
 
-         if(is_64bit()) {
+         if (is_64bit()) {
             raw_hi = static_cast<uint32_t>(val >> 32);
          }
       }

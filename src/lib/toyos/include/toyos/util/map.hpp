@@ -54,11 +54,11 @@ namespace cbl
      */
       std::optional<iterator> insert(const_iterator it, key_t key, value_t val)
       {
-         if(it != end() && !(key < it->first)) {
+         if (it != end() && !(key < it->first)) {
             std::cout << "BAD HINT! (1: " << key << " !< " << it->first << ")\n";
             return insert(key, val);
          }
-         if(it != begin() && !(std::prev(it, 1)->first < key)) {
+         if (it != begin() && !(std::prev(it, 1)->first < key)) {
             std::cout << "BAD HINT! (2)\n";
             return insert(key, val);
          }
@@ -78,7 +78,7 @@ namespace cbl
       std::optional<iterator> insert(key_t key, value_t val)
       {
          const auto pos(std::lower_bound(std::begin(vec), std::end(vec), key, pair_comp_key));
-         if(pos == std::end(vec) || pos->first != key) {
+         if (pos == std::end(vec) || pos->first != key) {
             auto it(vec.emplace(pos, std::make_pair(std::move(key), std::move(val))));
             return { it };
          }
@@ -96,7 +96,7 @@ namespace cbl
       iterator find(const key_t& k) const
       {
          const auto rng(std::find(std::begin(vec), std::end(vec), k, pair_comp_key));
-         if(rng.first == rng.second) {
+         if (rng.first == rng.second) {
             return rng.first;
          }
          return std::end(vec);
@@ -202,7 +202,7 @@ namespace cbl
       std::optional<iterator> insert(const_iterator it, key_t key, value_t val)
       {
          const auto ret(map.emplace_hint(it, std::make_pair(std::move(key), std::move(val))));
-         if(ret != end()) {
+         if (ret != end()) {
             return { ret };
          }
          return {};
@@ -219,7 +219,7 @@ namespace cbl
       std::optional<iterator> insert(key_t key, value_t val)
       {
          const auto ret(map.emplace(std::make_pair(std::move(key), std::move(val))));
-         if(ret.second) {
+         if (ret.second) {
             return { ret.first };
          }
          return {};

@@ -48,7 +48,7 @@ class pci_bus
          do {
             cfg_base_ += PAGE_SIZE;
             ++bdf_;
-         } while(cfg_base_ != cfg_end_ and not pci_device(cfg_base_, bdf_).is_valid());
+         } while (cfg_base_ != cfg_end_ and not pci_device(cfg_base_, bdf_).is_valid());
          return *this;
       }
 

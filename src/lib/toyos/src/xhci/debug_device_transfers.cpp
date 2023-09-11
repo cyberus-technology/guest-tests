@@ -10,7 +10,7 @@ void xhci_debug_device::write_byte(unsigned char c)
    assert(output_buffer_.length() < OUT_BUF_SIZE);
 
    output_buffer_ += c;
-   if(output_buffer_.length() == OUT_BUF_SIZE) {
+   if (output_buffer_.length() == OUT_BUF_SIZE) {
       flush();
    }
 }
@@ -21,7 +21,7 @@ void xhci_debug_device::write_line(const std::string& str)
 
    static constexpr size_t CHUNK_SIZE{ std::min(OUT_BUF_SIZE, TRANSFER_MAX) };
 
-   for(size_t chunk{ 0 }; chunk < (str.length() / CHUNK_SIZE) + 1; chunk++) {
+   for (size_t chunk{ 0 }; chunk < (str.length() / CHUNK_SIZE) + 1; chunk++) {
       auto substring = str.substr(chunk * CHUNK_SIZE, CHUNK_SIZE);
       queue_write_transfer(substring);
    }
@@ -29,7 +29,7 @@ void xhci_debug_device::write_line(const std::string& str)
 
 void xhci_debug_device::flush()
 {
-   if(output_buffer_.length() > 0) {
+   if (output_buffer_.length() > 0) {
       queue_write_transfer(output_buffer_);
       output_buffer_ = "";
    }
@@ -47,9 +47,9 @@ void xhci_debug_device::queue_write_transfer(const std::string& str)
    // Apparently, the debug device can't handle multiple outstanding requests.
    // Until we find out why this happens or how to improve it, we
    // block until the current request is done.
-   while(not out_ring_.empty()) {
+   while (not out_ring_.empty()) {
       // Help with the event loop to minimize latency
-      if(not handle_events()) {
+      if (not handle_events()) {
          // Drop request if connection was lost
          return;
       }

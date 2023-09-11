@@ -15,7 +15,7 @@ void irq_handler::set(const irq_handler_t& new_handler)
 
 void irq_entry(intr_regs* regs)
 {
-   if(irq_handler_fn) {
+   if (irq_handler_fn) {
       irq_handler_fn(regs);
    }
    else {

@@ -11,7 +11,7 @@
 
 TEST_CASE(mov_from_segment)
 {
-   for(auto f : { mov_from_cs, mov_from_ds, mov_from_es, mov_from_fs, mov_from_gs, mov_from_ss }) {
+   for (auto f : { mov_from_cs, mov_from_ds, mov_from_es, mov_from_fs, mov_from_gs, mov_from_ss }) {
       baretest::expectation<uint16_t> sel_native(f(false));
       uint16_t sel_emul{ f(true) };
       BARETEST_VERIFY(sel_native == sel_emul);
@@ -29,7 +29,7 @@ TEST_CASE(mov_to_segment)
    };
 
    baretest::expectation<uint16_t> data(SEL_DATA);
-   for(auto p : segment_pairs) {
+   for (auto p : segment_pairs) {
       p.second(SEL_DATA, true);
       auto sel = p.first(false);
       BARETEST_VERIFY(data == sel);

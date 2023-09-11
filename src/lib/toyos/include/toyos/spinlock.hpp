@@ -23,7 +23,7 @@ public:
    void lock()
    {
       const unsigned my_ticket{ next_ticket.fetch_add(1) };
-      while(my_ticket != current_ticket.load()) {
+      while (my_ticket != current_ticket.load()) {
          // As Hedron and SuperNOVA use only a single time-slice per CPU, we know that a thread on another CPU
          // currently holds the lock. Thus we busy-wait until someone unlocks this lock.
          cpu_pause();
@@ -46,14 +46,14 @@ public:
       explicit optional_guard(spinlock* lock_)
          : lock(lock_)
       {
-         if(lock) {
+         if (lock) {
             lock->lock();
          }
       }
 
       ~optional_guard()
       {
-         if(lock) {
+         if (lock) {
             lock->unlock();
          }
       }

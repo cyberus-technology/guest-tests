@@ -38,11 +38,11 @@ public:
    std::optional<free_block_id> get_free(math::order_t order) const
    {
       // Search for the minimal sufficient order for which a free block exists
-      while(order <= max_ord and free_blocks[order].empty()) {
+      while (order <= max_ord and free_blocks[order].empty()) {
          ++order;
       }
 
-      if(order > max_ord) {
+      if (order > max_ord) {
          return {};
       }
 
@@ -86,7 +86,7 @@ public:
       // No merge if we're given a block of maximal order
 
       math::order_t ord{ block.get_ord() };
-      if(ord >= max_ord) {
+      if (ord >= max_ord) {
          return {};
       }
 
@@ -98,7 +98,7 @@ public:
       auto& free_order_blocks{ free_blocks[ord] };
 
       auto buddy_it{ free_order_blocks.find(buddy_addr) };
-      if(buddy_it == free_order_blocks.end()) {
+      if (buddy_it == free_order_blocks.end()) {
          return {};
       }
 
@@ -217,7 +217,7 @@ public:
       // Search for a sufficiently large free block
 
       auto opt_id{ blocks.get_free(order) };
-      if(not opt_id) {
+      if (not opt_id) {
          trace(TRACE_BUDDY, "Out of memory");
          return {};
       }
@@ -227,7 +227,7 @@ public:
       free_block_id id{ *opt_id };
       trace(TRACE_BUDDY, "Choose order {} block at addr {#x}", id.get_ord(), id.get_addr());
 
-      while(id.get_ord() > order) {
+      while (id.get_ord() > order) {
          id = blocks.split_free(id);
       }
 
@@ -256,7 +256,7 @@ public:
       std::optional<free_block_id> opt_id{ blocks.add_free(addr, order) };
       ASSERT(opt_id, "no opt_id");
 
-      while((opt_id = blocks.merge_free(*opt_id))) {
+      while ((opt_id = blocks.merge_free(*opt_id))) {
          trace(TRACE_BUDDY, "Merged order {} buddies at address {#x}", opt_id->get_ord(), opt_id->get_addr());
       }
    }
@@ -280,7 +280,7 @@ using buddy = buddy_impl<>;
 template<class POOL>
 inline void buddy_reclaim_range(const cbl::interval& ival, POOL& pool)
 {
-   for(auto range : cbl::order_range(ival, pool.max_order)) {
+   for (auto range : cbl::order_range(ival, pool.max_order)) {
       pool.free(range.a, math::order_max(range.size()));
    }
 }

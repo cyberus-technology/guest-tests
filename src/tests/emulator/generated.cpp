@@ -117,8 +117,8 @@ TEST_CASE(manual_test_instruction)
       }
    };
    auto values = { 0ul, 0xfful, 0xcafeul, 0xcafed00dul, 0xacafed00dul };
-   for(const auto v1 : values) {
-      for(const auto v2 : values) {
+   for (const auto v1 : values) {
+      for (const auto v2 : values) {
          result result_native(v1, v2), result_emul(v1, v2);
          asm volatile(
             "test %[op1_native_16], %[op2_native_16];"

@@ -14,14 +14,14 @@ void xhci_console_base::puts(const std::string& str)
 void xhci_console_base::putc(char c)
 {
    dbc_dev_.write_byte(c);
-   if(is_line_ending(c)) {
+   if (is_line_ending(c)) {
       dbc_dev_.flush();
    }
 }
 
 void xhci_console_base::putchar(unsigned char c)
 {
-   if(active_console) {
+   if (active_console) {
       active_console->putc(c);
    }
 }

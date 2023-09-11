@@ -6,7 +6,7 @@
 
 void xhci_device::power_cycle_ports()
 {
-   for(auto portsc : get_ports()) {
+   for (auto portsc : get_ports()) {
       portsc->poweroff();
       adapter_.delay(DELAY_POWER);
       portsc->poweron();
@@ -15,7 +15,7 @@ void xhci_device::power_cycle_ports()
 
 void xhci_device::reset_ports()
 {
-   for(auto portsc : get_ports()) {
+   for (auto portsc : get_ports()) {
       portsc->reset();
    }
 }
@@ -23,19 +23,19 @@ void xhci_device::reset_ports()
 bool xhci_device::do_handover() const
 {
    auto cap_ = find_cap<legsup_capability>();
-   if(not cap_) {
+   if (not cap_) {
       trace(TRACE_XHCI, "Could not find legacy support capability.");
       return true;
    }
    auto cap = *cap_;
 
-   if(cap->os_owned()) {
+   if (cap->os_owned()) {
       return true;
    }
 
    cap->clear_bios();
    cap->set_os();
-   while(not cap->os_owned()) {
+   while (not cap->os_owned()) {
       adapter_.delay(DELAY_RELAX);
    }
 

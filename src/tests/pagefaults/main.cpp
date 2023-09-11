@@ -51,7 +51,7 @@ static void irq_handler_fn(intr_regs* regs)
 
 void prologue()
 {
-   for(uint32_t i = 0; i < 6; ++i) {
+   for (uint32_t i = 0; i < 6; ++i) {
       pool.free(phy_addr_t(ptr_to_num(&my_buddy_mem) + PAGE_SIZE * i));
    }
 
@@ -60,11 +60,11 @@ void prologue()
    pml4[0] = PML4E({ .address = uintptr_t(&pdpt), .present = true, .readwrite = true, .usermode = true });
 
    uint64_t lpage = 0;  // address for the large pages
-   for(uint32_t i = 0; i < 4; ++i) {
+   for (uint32_t i = 0; i < 4; ++i) {
       PD& pd = PD::alloc(pool);
       pdpt[i] = PDPTE::pdpte_to_pdir({ .address = uintptr_t(&pd), .present = true, .readwrite = true, .usermode = true });
 
-      for(auto& e : pd) {
+      for (auto& e : pd) {
          e = PDE::pde_to_2mb_page({ .address = lpage, .present = true, .readwrite = true, .usermode = true });
          lpage += 2_MiB;  // add 2mb, cause its a large page
       }
@@ -86,7 +86,7 @@ TEST_CASE(writing_to_unwriteable_page_with_cr0_wp_unset_should_not_cause_a_pagef
 
    pde.set_writeable(false, tlb_invalidation::yes);
 
-   if(setjmp(jump_buffer) == 0) {
+   if (setjmp(jump_buffer) == 0) {
       *num_to_ptr<uint64_t>(TEST_ADDR) = 42;
    }
 
@@ -106,7 +106,7 @@ TEST_CASE(writing_to_unwriteable_page_with_cr0_wp_set_should_cause_a_pagefault)
 
    pde.set_writeable(false, tlb_invalidation::yes);
 
-   if(setjmp(jump_buffer) == 0) {
+   if (setjmp(jump_buffer) == 0) {
       *num_to_ptr<uint64_t>(TEST_ADDR) = 42;
    }
 
@@ -129,7 +129,7 @@ TEST_CASE(reading_from_unwriteable_page_should_not_cause_a_pagefault)
    *num_to_ptr<uint64_t>(TEST_ADDR) = 42;
    pde.set_writeable(false, tlb_invalidation::yes);
 
-   if(setjmp(jump_buffer) == 0) {
+   if (setjmp(jump_buffer) == 0) {
       BARETEST_ASSERT(*num_to_ptr<uint64_t>(TEST_ADDR) == 42);
    }
 
@@ -146,7 +146,7 @@ TEST_CASE(writing_to_not_present_page_should_cause_a_pagefault)
 
    pde.set_present(false, tlb_invalidation::yes);
 
-   if(setjmp(jump_buffer) == 0) {
+   if (setjmp(jump_buffer) == 0) {
       *num_to_ptr<uint64_t>(TEST_ADDR) = 42;
    }
 
@@ -169,7 +169,7 @@ TEST_CASE(reading_from_not_present_page_should_cause_a_pagefault)
    *num_to_ptr<uint64_t>(TEST_ADDR) = 42;
    pde.set_present(false, tlb_invalidation::yes);
 
-   if(setjmp(jump_buffer) == 0) {
+   if (setjmp(jump_buffer) == 0) {
       BARETEST_ASSERT(*num_to_ptr<uint64_t>(TEST_ADDR) == 42);
    }
 

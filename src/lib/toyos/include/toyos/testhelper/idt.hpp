@@ -48,7 +48,7 @@ struct __PACKED__ idt
 
    idt()
    {
-      for(size_t idx{ 0 }; idx < 256; idx++) {
+      for (size_t idx{ 0 }; idx < 256; idx++) {
          entries[idx].configure(irq_handlers[idx]);
       }
 

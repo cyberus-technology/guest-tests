@@ -22,9 +22,9 @@ inline std::vector<T> tokenize(const T& input, const typename T::value_type toke
    T arg;
    std::vector<T> ret;
 
-   for(const auto& c : input) {
-      if(c == token) {
-         if(arg.find_first_not_of(token) != T::npos) {
+   for (const auto& c : input) {
+      if (c == token) {
+         if (arg.find_first_not_of(token) != T::npos) {
             ret.push_back(arg);
          }
          arg.clear();
@@ -32,7 +32,7 @@ inline std::vector<T> tokenize(const T& input, const typename T::value_type toke
       }
       arg.push_back(c);
    }
-   if(arg.find_first_not_of(token) != T::npos) {
+   if (arg.find_first_not_of(token) != T::npos) {
       ret.push_back(arg);
    }
 
@@ -56,7 +56,7 @@ inline std::vector<std::u16string> tokenize(const char16_t* input, char16_t toke
 template<typename T>
 bool swap_erase(std::vector<T>& vec, const typename std::vector<T>::iterator& it)
 {
-   if(it != vec.end()) {
+   if (it != vec.end()) {
       std::iter_swap(it, vec.end() - 1);
       vec.erase(vec.end() - 1);
       return true;

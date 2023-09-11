@@ -18,7 +18,7 @@ void test_setjmp_generic(int val, int expected)
    jmp_buf env;
    int ret{ setjmp(env) };
 
-   if(ret == 0) {
+   if (ret == 0) {
       longjmp(env, val);
    }
 

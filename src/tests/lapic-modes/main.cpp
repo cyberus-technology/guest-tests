@@ -36,8 +36,8 @@ static void irq_handler_fn(intr_regs* regs)
 {
    irq_info.record(regs->vector, regs->error_code);
    // the gpe does not need an EOI
-   if(regs->vector != to_underlying(exception::GP)) {
-      if(not x2apic_mode_enabled()) {
+   if (regs->vector != to_underlying(exception::GP)) {
+      if (not x2apic_mode_enabled()) {
          send_eoi();
       }
       else {
@@ -79,7 +79,7 @@ TEST_CASE(lapic_lvt_entries_when_apic_global_disabled)
    global_apic_disable();
 
    uint32_t DISABLED_LVT{ ~0u };
-   for(const auto reg : lvt_regs) {
+   for (const auto reg : lvt_regs) {
       BARETEST_ASSERT(read_from_register(reg) == DISABLED_LVT);
    }
 
@@ -93,7 +93,7 @@ TEST_CASE(lapic_lvt_entries_when_apic_software_disabled)
    software_apic_disable();
 
    uint32_t MASKED_LVT{ LVT_MASK_MASK << LVT_MASK_SHIFT };
-   for(const auto reg : lvt_regs) {
+   for (const auto reg : lvt_regs) {
       BARETEST_ASSERT(read_from_register(reg) == MASKED_LVT);
    }
 
@@ -179,7 +179,7 @@ static bool read_x2msr_raises_gpe(const x2apic_msr& msr)
    irq_handler::guard _(irq_handler_fn);
    irq_info.reset();
 
-   if(setjmp(jump_buffer) == 0) {
+   if (setjmp(jump_buffer) == 0) {
       msr.read();
    }
    return irq_info.valid and irq_info.vec == to_underlying(exception::GP);
@@ -190,7 +190,7 @@ static bool write_x2msr_raises_gpe(const x2apic_msr& msr, uint64_t value)
    irq_handler::guard _(irq_handler_fn);
    irq_info.reset();
 
-   if(setjmp(jump_buffer) == 0) {
+   if (setjmp(jump_buffer) == 0) {
       write_x2_msr(msr.addr, value);
    }
    return irq_info.valid and irq_info.vec == to_underlying(exception::GP);
@@ -198,11 +198,11 @@ static bool write_x2msr_raises_gpe(const x2apic_msr& msr, uint64_t value)
 
 TEST_CASE_CONDITIONAL(x2apic_msr_access_out_of_x2mode_raises_gpe, x2apic_mode_supported())
 {
-   for(const auto& msr : x2apic_msrs) {
+   for (const auto& msr : x2apic_msrs) {
       BARETEST_ASSERT(read_x2msr_raises_gpe(msr));
    }
 
-   for(const auto& msr : x2apic_msrs) {
+   for (const auto& msr : x2apic_msrs) {
       BARETEST_ASSERT(write_x2msr_raises_gpe(msr, 0));
    }
 }
@@ -222,8 +222,8 @@ TEST_CASE_CONDITIONAL(x2apic_initial_preserved_values, x2apic_mode_supported())
    x2apic_mode_guard guard{ &mmio_buffer };
 
    // check that register values are preserved
-   for(const auto& msr : x2apic_msrs) {
-      if(msr.is_readable() and msr.is_preserved_on_init()) {
+   for (const auto& msr : x2apic_msrs) {
+      if (msr.is_readable() and msr.is_preserved_on_init()) {
          auto mmio_addr{ msr.mmio_addr() };
          // if it is preserved on init, there has to be an mmio register value
          BARETEST_ASSERT(mmio_addr);
@@ -260,8 +260,8 @@ TEST_CASE_CONDITIONAL(x2apic_write_readonly_raises_gpe, x2apic_mode_supported())
 {
    x2apic_mode_guard guard;
    static constexpr uint64_t VALUE{ 0 };
-   for(const auto& msr : x2apic_msrs) {
-      if(not msr.is_writeable()) {
+   for (const auto& msr : x2apic_msrs) {
+      if (not msr.is_writeable()) {
          BARETEST_ASSERT(write_x2msr_raises_gpe(msr, VALUE));
       }
    }
@@ -270,8 +270,8 @@ TEST_CASE_CONDITIONAL(x2apic_write_readonly_raises_gpe, x2apic_mode_supported())
 TEST_CASE_CONDITIONAL(x2apic_read_writeonly_raises_gpe, x2apic_mode_supported())
 {
    x2apic_mode_guard guard;
-   for(const auto& msr : x2apic_msrs) {
-      if(not msr.is_readable()) {
+   for (const auto& msr : x2apic_msrs) {
+      if (not msr.is_readable()) {
          BARETEST_ASSERT(read_x2msr_raises_gpe(msr));
       }
    }
@@ -288,8 +288,8 @@ TEST_CASE_CONDITIONAL(x2apic_write_high_32bit_raises_gpe, x2apic_mode_supported(
    x2apic_mode_guard guard;
    // 64 bit value with one of the higher 32 bit set to 1
    static constexpr uint64_t HIGH_VALUE{ 1ul << 32u };
-   for(const auto& msr : x2apic_msrs) {
-      if(msr.is_32bit() and msr.is_writeable()) {
+   for (const auto& msr : x2apic_msrs) {
+      if (msr.is_32bit() and msr.is_writeable()) {
          BARETEST_ASSERT(write_x2msr_raises_gpe(msr, HIGH_VALUE));
       }
    }
@@ -317,7 +317,7 @@ TEST_CASE_CONDITIONAL(x2apic_self_ipi, x2apic_mode_supported())
    uint8_t spurious_vector = read_x2_msr(msr::X2APIC_SVR) & SVR_VECTOR_MASK;
    BARETEST_ASSERT(vector != spurious_vector);
 
-   if(setjmp(jump_buffer) == 0) {
+   if (setjmp(jump_buffer) == 0) {
       write_x2_msr(msr::X2APIC_X2_SELF_IPI, vector);
       asm("sti; hlt; cli");
    }
@@ -335,7 +335,7 @@ TEST_CASE(invalid_apic_mode)
    irq_handler::guard irq_guard(irq_handler_fn);
    irq_info.reset();
 
-   if(setjmp(jump_buffer) == 0) {
+   if (setjmp(jump_buffer) == 0) {
       // disable apic and enable x2apic mode
       global_apic_disable();
       x2apic_mode_enable();
@@ -353,7 +353,7 @@ TEST_CASE(apic_transition_disabled_to_x2mode)
    irq_handler::guard irq_guard(irq_handler_fn);
    irq_info.reset();
 
-   if(setjmp(jump_buffer) == 0) {
+   if (setjmp(jump_buffer) == 0) {
       // disable apic
       global_apic_disable();
 

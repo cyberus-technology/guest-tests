@@ -134,7 +134,7 @@ namespace pci
       void msi_addr(uint64_t addr) volatile
       {
          msg_addr = addr;
-         if(is_64bit()) {
+         if (is_64bit()) {
             msg_addr_hi = addr >> 32;
          }
       }
@@ -142,7 +142,7 @@ namespace pci
       /// Sets the MSI data, honoring 32/64-bit.
       void msi_data(uint64_t data) volatile
       {
-         if(is_64bit()) {
+         if (is_64bit()) {
             msg_data_64b = data;
          }
          else {
@@ -158,7 +158,7 @@ namespace pci
          msg_ctrl = rhs.msg_ctrl;
          msg_addr = rhs.msg_addr;
 
-         if(rhs.is_64bit()) {
+         if (rhs.is_64bit()) {
             msg_addr_hi = rhs.msg_addr_hi;
             msg_data_64b = rhs.msg_data_64b;
          }

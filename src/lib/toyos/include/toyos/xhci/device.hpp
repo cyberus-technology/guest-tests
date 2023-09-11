@@ -57,7 +57,7 @@ public:
       auto find_fn = [](const capability* candidate) { return candidate->id() == T::ID; };
 
       auto cap = std::find_if(caps.begin(), caps.end(), find_fn);
-      if(cap != caps.end()) {
+      if (cap != caps.end()) {
          return static_cast<T*>(*cap);
       }
 
