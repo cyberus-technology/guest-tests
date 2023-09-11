@@ -39,10 +39,6 @@ function(prep_and_use_linker_script target-name source-file)
   add_custom_target(
     ${target-name}-linker-script-generated DEPENDS ${resulting-ld-script}
     )
-  set_target_properties(
-    ${target-name}-linker-script-generated
-    PROPERTIES INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/include
-    )
   add_dependencies(${target-name} ${target-name}-linker-script-generated)
   set_target_properties(
     ${target-name} PROPERTIES LINK_DEPENDS ${resulting-ld-script}
