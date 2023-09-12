@@ -8,18 +8,18 @@ function(guesttest_linkage target-name)
   add_custom_command(
     TARGET ${target-name}
     POST_BUILD
-    COMMAND ${CMAKE_OBJCOPY} ARGS -SO elf32-i386 ${target-name}
-            ${target-name}-elf32
+    COMMAND ${CMAKE_OBJCOPY} ARGS -O elf32-i386 ${target-name}.elf64
+            ${target-name}.elf32
     )
 
   install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/${target-name}-elf32
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/${target-name}.elf32
     DESTINATION .
     COMPONENT "guest-integration-tests"
     )
 
   install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/${target-name}
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/${target-name}.elf64
     DESTINATION .
     COMPONENT "guest-integration-tests"
     )
@@ -35,15 +35,17 @@ function(add_guesttest test_name)
     ${ARGN}
     )
 
-  add_executable(${test_name}_guesttest ${test_name}/main.cpp)
+  add_executable(${test_name} ${test_name}/main.cpp)
+
+  set_target_properties(${test_name} PROPERTIES SUFFIX ".elf64")
 
   target_link_libraries(
-    ${test_name}_guesttest PRIVATE toyos ${GUESTTEST_ARGS_EXTRA_LIBS}
+    ${test_name} PRIVATE toyos ${GUESTTEST_ARGS_EXTRA_LIBS}
     )
 
-  target_sources(${test_name}_guesttest PRIVATE ${GUESTTEST_ARGS_EXTRA_SOURCES})
+  target_sources(${test_name} PRIVATE ${GUESTTEST_ARGS_EXTRA_SOURCES})
 
-  guesttest_linkage(${test_name}_guesttest)
+  guesttest_linkage(${test_name})
 
 endfunction()
 

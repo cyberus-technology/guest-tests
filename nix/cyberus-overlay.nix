@@ -30,13 +30,13 @@ let
     let
       isoSymlink = final.cyberus.cbspkgs.lib.images.createIsoMultiboot {
         name = "${name}.iso-link";
-        kernel = "${toString allTests}/${name}_guesttest";
+        kernel = "${toString allTests}/${name}.elf64";
         kernelCmdline = "--serial 3f8";
       };
     in
     final.runCommand "${name}.iso" { } ''
       mkdir -p $out
-      cp ${toString isoSymlink} $out/${name}_guesttest.iso
+      cp ${toString isoSymlink} $out/${name}.iso
     '';
 
   # Attribute set that maps the name of each test to a derivation that contains
@@ -61,23 +61,23 @@ let
         passthru = testByVariant';
       } ''
       mkdir -p $out
-      cp ${toString allTests}/${name}_guesttest $out
-      cp ${toString allTests}/${name}_guesttest-elf32 $out
-      cp ${toString testByVariant'.iso}/${name}_guesttest.iso $out
+      cp ${toString allTests}/${name}.elf32 $out
+      cp ${toString allTests}/${name}.elf64 $out
+      cp ${toString testByVariant'.iso}/${name}.iso $out
     '';
 
   # Creates an attribute set that maps the binary variants of a test to a
   # derivation that only exports that single variant.
   testByVariant = name: {
-    elf32 = extractTestVariant "-elf32" name;
-    elf64 = extractTestVariant "" name;
+    elf32 = extractTestVariant ".elf32" name;
+    elf64 = extractTestVariant ".elf64" name;
     iso = isoToCmakeStyleOutputFile name;
   };
 
   # Extracts a single binary variant of a test from the CMake build of all tests.
   extractTestVariant = suffix: name: final.runCommand "guesttest-${name}${suffix}" { } ''
     mkdir -p $out
-    cp ${allTests}/${name}_guesttest${suffix} $out
+    cp ${allTests}/${name}${suffix} $out
   '';
 
 in
