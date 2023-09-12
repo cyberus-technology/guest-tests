@@ -50,7 +50,6 @@ function(add_guesttest test_name)
 endfunction()
 
 add_guesttest(cpuid EXTRA_SOURCES cpuid/benchmark.cpp)
-add_guesttest(cxx EXTRA_SOURCES cxx/setjmp.cpp)
 add_guesttest(debugport)
 add_guesttest(
   emulator
@@ -67,6 +66,7 @@ add_guesttest(
 add_guesttest(emulator-syscall EXTRA_SOURCES emulator-syscall/compat.S)
 add_guesttest(exceptions)
 add_guesttest(fpu)
+add_guesttest(hello-world EXTRA_SOURCES hello-world/setjmp.cpp)
 add_guesttest(lapic-modes EXTRA_SOURCES lapic-modes/x2apic_test_tools.cpp)
 add_guesttest(lapic-priority EXTRA_SOURCES lapic-priority/benchmark.cpp)
 add_guesttest(lapic-timer)

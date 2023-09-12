@@ -3,12 +3,12 @@ final: prev:
 let
   testNames = [
     "cpuid"
-    "cxx"
     "debugport"
     "emulator"
     "emulator-syscall"
     "exceptions"
     "fpu"
+    "hello-world"
     "lapic-modes"
     "lapic-priority"
     "lapic-timer"
