@@ -35,7 +35,9 @@ build:nix:
     - nix-build -A tests && test -f result/lapic-timer.elf64
     - nix-build -A tests.lapic-timer && test -f result/lapic-timer.elf32
     - nix-build -A tests.lapic-timer && test -f result/lapic-timer.elf64
-    - nix-build -A tests.lapic-timer.iso && test -f result/lapic-timer_guesttest.iso
+    - nix-build -A tests.lapic-timer.elf32 && test -h result
+    - nix-build -A tests.lapic-timer.elf64 && test -h result
+    - nix-build -A tests.lapic-timer.iso && test -h result
 
 test:nix-shell:
   <<: *nix_build_template

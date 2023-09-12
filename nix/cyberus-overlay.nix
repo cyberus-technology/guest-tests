@@ -26,18 +26,12 @@ let
 
   # Generates a bootable ISO for the provided test and makes sure the
   # derivation has the same output structure as the other binary variants.
-  isoToCmakeStyleOutputFile = name:
-    let
-      isoSymlink = final.cyberus.cbspkgs.lib.images.createIsoMultiboot {
-        name = "guest-test-${name}-iso-link";
-        kernel = "${toString allTests}/${name}.elf64";
-        kernelCmdline = "--serial 3f8";
-      };
-    in
-    final.runCommand "${name}.iso" { } ''
-      mkdir -p $out
-      cp ${toString isoSymlink} $out/${name}.iso
-    '';
+  testAsBootableIso = name:
+    final.cyberus.cbspkgs.lib.images.createIsoMultiboot {
+      name = "guest-test-${name}-iso-link";
+      kernel = "${toString allTests}/${name}.elf32";
+      kernelCmdline = "--serial";
+    };
 
   # Attribute set that maps the name of each test to a derivation that contains
   # all binary variants of that test. Each inner attribute provides the
@@ -61,23 +55,25 @@ let
         passthru = testByVariant';
       } ''
       mkdir -p $out
-      cp ${toString allTests}/${name}.elf32 $out
-      cp ${toString allTests}/${name}.elf64 $out
-      cp ${toString testByVariant'.iso}/${name}.iso $out
+      cp ${toString testByVariant'.elf32} $out/${name}.elf32
+      cp ${toString testByVariant'.elf64} $out/${name}.elf64
+      cp ${toString testByVariant'.iso} $out/${name}.iso
     '';
 
   # Creates an attribute set that maps the binary variants of a test to a
   # derivation that only exports that single variant.
+  #
+  # Here, the result is directly a simlink to the boot item.
   testByVariant = name: {
     elf32 = extractTestVariant ".elf32" name;
     elf64 = extractTestVariant ".elf64" name;
-    iso = isoToCmakeStyleOutputFile name;
+    iso = testAsBootableIso name;
   };
 
   # Extracts a single binary variant of a test from the CMake build of all tests.
+  # Here, the result is directly a simlink to the boot item.
   extractTestVariant = suffix: name: final.runCommand "guest-test-${name}-${suffix}" { } ''
-    mkdir -p $out
-    cp ${allTests}/${name}${suffix} $out
+    ln -s ${allTests}/${name}${suffix} $out
   '';
 
 in

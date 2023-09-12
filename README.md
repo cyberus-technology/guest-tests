@@ -6,8 +6,8 @@ emulates cpuid or the LAPIC. Each test binary is bootable via
 [Multiboot1](https://www.gnu.org/software/grub/manual/multiboot/multiboot.html),
 [Multiboot2](https://www.gnu.org/software/grub/manual/multiboot2/multiboot.html),
 and [Xen PVH](https://xenbits.xen.org/docs/unstable/misc/pvh.html). They are
-build as ELF, ELF32 (same content but different ELF header for Multiboot1),
-and bootable ISO.
+build as ELF, ELF32 (same content but different ELF header for Multiboot1
+bootloaders), and bootable ISO.
 
 The tests report success or failures by printing text. The output follows the
 [SoTest protocol](https://docs.sotest.io/user/protocol/).
@@ -33,7 +33,10 @@ cmake .. -G Ninja -DCMAKE_INSTALL_PREFIX=./install && ninja
 ### Nix
 - all tests with all binary variants: \
   `nix-build -A tests`
+  - `./result` is a directory with all corresponding boot items
 - specific test with all binary variants: \
   `nix-build -A tests.<name>` (such as `lapic-timer`)
+  - `./result` is a directory with all corresponding boot items
 - specific test with specific binary variants: \
   `nix-build -A tests.<name>.{elf32|elf64|iso}`
+  - `./result` is a symlink to the boot item
