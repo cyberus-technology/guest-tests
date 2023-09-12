@@ -3,7 +3,7 @@
 , cmake
 }:
 stdenv.mkDerivation {
-  pname = "cyberus-guest-tests";
+  pname = "guest-tests";
   version = "1.0.0";
 
   src = nix-gitignore.gitignoreSourcePure [ ] ../src;

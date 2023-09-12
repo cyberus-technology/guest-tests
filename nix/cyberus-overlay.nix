@@ -29,7 +29,7 @@ let
   isoToCmakeStyleOutputFile = name:
     let
       isoSymlink = final.cyberus.cbspkgs.lib.images.createIsoMultiboot {
-        name = "${name}.iso-link";
+        name = "guest-test-${name}-iso-link";
         kernel = "${toString allTests}/${name}.elf64";
         kernelCmdline = "--serial 3f8";
       };
@@ -56,7 +56,7 @@ let
     let
       testByVariant' = testByVariant name;
     in
-    final.runCommand "guesttest-${name}-all"
+    final.runCommand "guest-test-${name}-all"
       {
         passthru = testByVariant';
       } ''
@@ -75,7 +75,7 @@ let
   };
 
   # Extracts a single binary variant of a test from the CMake build of all tests.
-  extractTestVariant = suffix: name: final.runCommand "guesttest-${name}${suffix}" { } ''
+  extractTestVariant = suffix: name: final.runCommand "guest-test-${name}-${suffix}" { } ''
     mkdir -p $out
     cp ${allTests}/${name}${suffix} $out
   '';
