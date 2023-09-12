@@ -31,10 +31,15 @@ build:regular_release:
 build:nix:
   <<: *nix_build_template
   script:
-    - nix-build -A tests.all
-    - test -f result/tests/lapic-timer_guesttest
-    - nix-build -A tests.lapic-timer # some random individual test
-    - test -f result/lapic-timer_guesttest
+    - nix-build -A tests && test -f result/lapic-timer.elf32
+    - nix-build -A tests && test -f result/lapic-timer.elf64
+    - nix-build -A tests && test -f result/lapic-timer.iso
+    - nix-build -A tests.lapic-timer && test -f result/lapic-timer.elf32
+    - nix-build -A tests.lapic-timer && test -f result/lapic-timer.elf64
+    - nix-build -A tests.lapic-timer && test -f result/lapic-timer.iso
+    - nix-build -A tests.lapic-timer.elf32 && test -h result
+    - nix-build -A tests.lapic-timer.elf64 && test -h result
+    - nix-build -A tests.lapic-timer.iso && test -h result
 
 test:nix-shell:
   <<: *nix_build_template
