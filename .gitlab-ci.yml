@@ -45,3 +45,12 @@ test:nix-shell:
   <<: *nix_build_template
   script:
     - nix-shell --pure --run "echo Works"
+
+test:integration:
+  <<: *nix_build_template
+  variables:
+    # For sotest-protocol-parser
+    NIXPKGS_ALLOW_UNFREE: 1
+  script:
+    - nix-build -A runTests.kvm.qemu
+    - nix-build -A runTests.kvm.chv
