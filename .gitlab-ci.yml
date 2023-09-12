@@ -33,8 +33,10 @@ build:nix:
   script:
     - nix-build -A tests && test -f result/lapic-timer.elf32
     - nix-build -A tests && test -f result/lapic-timer.elf64
+    - nix-build -A tests && test -f result/lapic-timer.iso
     - nix-build -A tests.lapic-timer && test -f result/lapic-timer.elf32
     - nix-build -A tests.lapic-timer && test -f result/lapic-timer.elf64
+    - nix-build -A tests.lapic-timer && test -f result/lapic-timer.iso
     - nix-build -A tests.lapic-timer.elf32 && test -h result
     - nix-build -A tests.lapic-timer.elf64 && test -h result
     - nix-build -A tests.lapic-timer.iso && test -h result

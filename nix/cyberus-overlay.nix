@@ -20,18 +20,9 @@ let
     "vmx"
   ];
 
-  # All tests from the CMake build.
+  # All tests from the CMake build in all variants (elf32, elf64, iso).
   allTests = final.cyberus.guest-tests.tests;
-  createIsoMultiboot = final.cyberus.cbspkgs.lib.images.createIsoMultiboot;
 
-  # Generates a bootable ISO for the provided test and makes sure the
-  # derivation has the same output structure as the other binary variants.
-  testAsBootableIso = name:
-    final.cyberus.cbspkgs.lib.images.createIsoMultiboot {
-      name = "guest-test-${name}-iso-link";
-      kernel = "${toString allTests}/${name}.elf32";
-      kernelCmdline = "--serial";
-    };
 
   # Attribute set that maps the name of each test to a derivation that contains
   # all binary variants of that test. Each inner attribute provides the
@@ -67,7 +58,7 @@ let
   testByVariant = name: {
     elf32 = extractTestVariant ".elf32" name;
     elf64 = extractTestVariant ".elf64" name;
-    iso = testAsBootableIso name;
+    iso = extractTestVariant ".iso" name;
   };
 
   # Extracts a single binary variant of a test from the CMake build of all tests.
@@ -78,5 +69,5 @@ let
 
 in
 {
-  tests = ((final.callPackage ./build.nix { }).overrideAttrs { passthru = testsByName; });
+  tests = ((final.callPackage ./build.nix { inherit testNames; }).overrideAttrs { passthru = testsByName; });
 }
