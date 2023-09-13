@@ -43,12 +43,11 @@ let
     in
     final.runCommand "guest-test-${name}-all"
       {
+        nativeBuildInputs = [ final.fd ];
         passthru = testByVariant';
       } ''
       mkdir -p $out
-      cp ${toString testByVariant'.elf32} $out/${name}.elf32
-      cp ${toString testByVariant'.elf64} $out/${name}.elf64
-      cp ${toString testByVariant'.iso} $out/${name}.iso
+      fd ${name} ${toString allTests} | xargs -I {} ln -s {} $out
     '';
 
   # Creates an attribute set that maps the binary variants of a test to a
