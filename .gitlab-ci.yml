@@ -1,4 +1,10 @@
+stages:
+  - style
+  - build
+  - test
+
 .build_regular_template: &build_regular_template
+  stage: build
   image: gcc:12
   before_script:
     - apt-get update && apt-get install -y cmake ninja-build xorriso
@@ -18,6 +24,12 @@
     - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "ssh://git@${CI_SERVER_HOST}/"
 
 
+style:format:
+  <<: *nix_build_template
+  stage: style
+  script:
+    - nix-shell --run "./scripts/format.sh --check"
+
 build:regular_debug:
   <<: *build_regular_template
   variables:
@@ -30,6 +42,7 @@ build:regular_release:
 
 build:nix:
   <<: *nix_build_template
+  stage: build
   script:
     - nix-build -A tests && test -f result/lapic-timer.elf32
     - nix-build -A tests && test -f result/lapic-timer.elf64
@@ -43,5 +56,16 @@ build:nix:
 
 test:nix-shell:
   <<: *nix_build_template
+  stage: test
   script:
     - nix-shell --pure --run "echo Works"
+
+test:integration:
+  <<: *nix_build_template
+  stage: test
+  variables:
+    # For sotest-protocol-parser
+    NIXPKGS_ALLOW_UNFREE: 1
+  script:
+    - nix-build nix/release.nix -A runTests.kvm.qemu
+    - nix-build nix/release.nix -A runTests.kvm.chv
