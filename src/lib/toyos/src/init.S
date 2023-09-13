@@ -35,6 +35,10 @@ mb2_header_start:
 .long 0                                                                // arch
 .long (mb2_header_end - mb2_header_start)                              // hdr length
 .long (0x100000000 - (mb2_header_end - mb2_header_start) - 0xe85250d6) // checksum
+// From here starts the tags field. This field is terminated by an end tag
+.short 0                                                               // tag type
+.short 0                                                               // optional flag
+.long 8                                                                // size of tag
 
 mb2_header_end:
 
