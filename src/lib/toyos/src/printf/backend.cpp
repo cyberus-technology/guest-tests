@@ -15,37 +15,37 @@ static std::array<printf_backend_fn, MAX_BACKENDS> backends;
 
 void print_to_all_backends(unsigned char c)
 {
-   for (const auto& print_fn : backends) {
-      if (print_fn != nullptr) {
-         print_fn(c);
-      }
-   }
+    for (const auto& print_fn : backends) {
+        if (print_fn != nullptr) {
+            print_fn(c);
+        }
+    }
 }
 
 void add_printf_backend(printf_backend_fn backend)
 {
-   auto free_slot{ std::find(backends.begin(), backends.end(), nullptr) };
-   if (free_slot == backends.end()) {
-      // no more space - alert on already registered backends
-      puts("maximum number of printf backends already registered");
-      __builtin_trap();
-   }
-   *free_slot = backend;
+    auto free_slot{ std::find(backends.begin(), backends.end(), nullptr) };
+    if (free_slot == backends.end()) {
+        // no more space - alert on already registered backends
+        puts("maximum number of printf backends already registered");
+        __builtin_trap();
+    }
+    *free_slot = backend;
 
-   // backends are expected to be seldom added/removed, so re-registering
-   // on every call ain't harmful
-   xdev_out(print_to_all_backends);
+    // backends are expected to be seldom added/removed, so re-registering
+    // on every call ain't harmful
+    xdev_out(print_to_all_backends);
 }
 
 void remove_printf_backend(printf_backend_fn backend)
 {
-   auto existing = std::find(backends.begin(), backends.end(), backend);
-   if (existing != backends.end()) {
-      *existing = nullptr;
-   }
+    auto existing = std::find(backends.begin(), backends.end(), backend);
+    if (existing != backends.end()) {
+        *existing = nullptr;
+    }
 }
 
 void remove_all_printf_backends()
 {
-   backends.fill(nullptr);
+    backends.fill(nullptr);
 }

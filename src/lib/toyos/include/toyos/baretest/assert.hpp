@@ -28,15 +28,15 @@
 namespace baretest
 {
 
-   constexpr int ASSERT_FAILED = 1;
+    constexpr int ASSERT_FAILED = 1;
 
-   __attribute__((noreturn)) void fail(const char* msg, ...);
+    __attribute__((noreturn)) void fail(const char* msg, ...);
 
 }  // namespace baretest
 
-#define BARETEST_ASSERT(cond)                                              \
-   do {                                                                    \
-      if (not(cond)) {                                                     \
-         baretest::fail("Assertion failed @ %s:%d\n", __FILE__, __LINE__); \
-      }                                                                    \
-   } while (0);
+#define BARETEST_ASSERT(cond)                                                 \
+    do {                                                                      \
+        if (not(cond)) {                                                      \
+            baretest::fail("Assertion failed @ %s:%d\n", __FILE__, __LINE__); \
+        }                                                                     \
+    } while (0);

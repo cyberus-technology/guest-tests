@@ -8,5 +8,5 @@
 
 inline bool ibrs_supported()
 {
-   return cpuid(CPUID_LEAF_EXTENDED_FEATURES).edx & LVL_0000_0007_EDX_IBRS_IBPB;
+    return cpuid(CPUID_LEAF_EXTENDED_FEATURES).edx & LVL_0000_0007_EDX_IBRS_IBPB;
 }

@@ -24,6 +24,6 @@
  * Creates an ELF note section that is prefixed with `.note`.
  */
 #define ELFNOTE(section_name, name, type, desc) \
-   ELFNOTE_START(section_name, name, type)      \
-   desc;                                        \
-   ELFNOTE_END
+    ELFNOTE_START(section_name, name, type)     \
+    desc;                                       \
+    ELFNOTE_END

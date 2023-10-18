@@ -10,22 +10,22 @@
 
 class console
 {
-public:
-   virtual ~console() {}
+ public:
+    virtual ~console() {}
 
-   void puts_default(const std::string& str)
-   {
-      for (const char& c : str) {
-         putc(c);
-      }
-   }
+    void puts_default(const std::string& str)
+    {
+        for (const char& c : str) {
+            putc(c);
+        }
+    }
 
-   virtual void puts(const std::string& str) = 0;
+    virtual void puts(const std::string& str) = 0;
 
-   virtual void putc(char c) = 0;
+    virtual void putc(char c) = 0;
 
-   static bool is_line_ending(const char c)
-   {
-      return c == '\n' or c == '\r';
-   }
+    static bool is_line_ending(const char c)
+    {
+        return c == '\n' or c == '\r';
+    }
 };

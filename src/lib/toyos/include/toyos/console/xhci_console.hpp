@@ -8,13 +8,13 @@
 
 class xhci_console_baremetal final : public xhci_console_base
 {
-public:
-   xhci_console_baremetal(const std::u16string& identifier, const cbl::interval& mmio_region, const cbl::interval& dma_region, xhci_debug_device::power_cycle_method power_method)
-      : xhci_console_base(std::make_unique<baremetal_device_driver_adapter>(dma_region), identifier, mmio_region, power_method)
-   {}
+ public:
+    xhci_console_baremetal(const std::u16string& identifier, const cbl::interval& mmio_region, const cbl::interval& dma_region, xhci_debug_device::power_cycle_method power_method)
+        : xhci_console_base(std::make_unique<baremetal_device_driver_adapter>(dma_region), identifier, mmio_region, power_method)
+    {}
 
-   virtual void putc(char c) override
-   {
-      xhci_console_base::putc(c);
-   }
+    virtual void putc(char c) override
+    {
+        xhci_console_base::putc(c);
+    }
 };
