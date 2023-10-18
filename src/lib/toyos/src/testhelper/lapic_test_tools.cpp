@@ -58,10 +58,10 @@ void lapic_test_tools::write_spurious_vector(uint8_t value)
 void lapic_test_tools::lapic_set_task_priority(uint8_t priority, bool use_mmio)
 {
     if (use_mmio) {
-        set_cr8(priority);
+        write_reg_generic(LAPIC_TPR, LAPIC_TPR_CLASS_MASK, LAPIC_TPR_CLASS_SHIFT, priority);
     }
     else {
-        write_reg_generic(LAPIC_TPR, LAPIC_TPR_CLASS_MASK, LAPIC_TPR_CLASS_SHIFT, priority);
+        set_cr8(priority);
     }
 }
 

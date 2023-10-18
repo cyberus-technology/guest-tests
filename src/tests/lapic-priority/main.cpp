@@ -224,7 +224,7 @@ void test_setting_lapic_tpr_to_f_should_inhibit_all_interrupts(dest_sh sh)
     // the value for the self ipi is just a random vector
     send_self_ipi(MAX_VECTOR, sh);
 
-    lapic_set_task_priority(0xf);
+    lapic_set_task_priority(0xf, false);
     enable_interrupts_for_single_instruction();
     BARETEST_ASSERT(not irq_info.valid);
     lapic_set_task_priority(0x0);
