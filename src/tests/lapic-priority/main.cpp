@@ -214,7 +214,7 @@ static void lapic_irq_handler_tpr(intr_regs* regs)
     }
 }
 
-void test_setting_lapic_tpr_to_f_should_inhibit_all_interrupts(dest_sh sh)
+void test_setting_lapic_tpr_to_f_should_inhibit_all_interrupts(dest_sh sh, bool use_mmio)
 {
     drain_interrupts();
 
@@ -224,7 +224,7 @@ void test_setting_lapic_tpr_to_f_should_inhibit_all_interrupts(dest_sh sh)
     // the value for the self ipi is just a random vector
     send_self_ipi(MAX_VECTOR, sh);
 
-    lapic_set_task_priority(0xf, false);
+    lapic_set_task_priority(0xf, use_mmio);
     enable_interrupts_for_single_instruction();
     BARETEST_ASSERT(not irq_info.valid);
     lapic_set_task_priority(0x0);
@@ -235,14 +235,24 @@ void test_setting_lapic_tpr_to_f_should_inhibit_all_interrupts(dest_sh sh)
     BARETEST_ASSERT((confirmed_vectors.front() == MAX_VECTOR));
 }
 
-TEST_CASE(setting_lapic_tpr_to_f_should_inhibit_all_interrupts_ipi_shorthand)
+TEST_CASE(setting_lapic_tpr_to_f_should_inhibit_all_interrupts_ipi_shorthand_cr8)
 {
-    test_setting_lapic_tpr_to_f_should_inhibit_all_interrupts(dest_sh::SELF);
+    test_setting_lapic_tpr_to_f_should_inhibit_all_interrupts(dest_sh::SELF, false);
 }
 
-TEST_CASE(setting_lapic_tpr_to_f_should_inhibit_all_interrupts_ipi_no_shorthand)
+TEST_CASE(setting_lapic_tpr_to_f_should_inhibit_all_interrupts_ipi_no_shorthand_cr8)
 {
-    test_setting_lapic_tpr_to_f_should_inhibit_all_interrupts(dest_sh::NO_SH);
+    test_setting_lapic_tpr_to_f_should_inhibit_all_interrupts(dest_sh::NO_SH, false);
+}
+
+TEST_CASE(setting_lapic_tpr_to_f_should_inhibit_all_interrupts_ipi_shorthand_mmio)
+{
+    test_setting_lapic_tpr_to_f_should_inhibit_all_interrupts(dest_sh::SELF, true);
+}
+
+TEST_CASE(setting_lapic_tpr_to_f_should_inhibit_all_interrupts_ipi_no_shorthand_mmio)
+{
+    test_setting_lapic_tpr_to_f_should_inhibit_all_interrupts(dest_sh::NO_SH, true);
 }
 
 void drain_inhibited_interrupts()
