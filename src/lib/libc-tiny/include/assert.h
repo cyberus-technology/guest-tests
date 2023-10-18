@@ -8,6 +8,6 @@
 #define assert(x) ASSERT(x, "Assertion failed")
 #else
 #define assert(x) \
-   do {           \
-   } while (0)
+    do {          \
+    } while (0)
 #endif

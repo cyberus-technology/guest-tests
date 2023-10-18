@@ -79,52 +79,52 @@ __shared_weak_count::__release_shared() _NOEXCEPT
 
 void __shared_weak_count::__release_weak() _NOEXCEPT
 {
-   // NOTE: The acquire load here is an optimization of the very
-   // common case where a shared pointer is being destructed while
-   // having no other contended references.
-   //
-   // BENEFIT: We avoid expensive atomic stores like XADD and STREX
-   // in a common case.  Those instructions are slow and do nasty
-   // things to caches.
-   //
-   // IS THIS SAFE?  Yes.  During weak destruction, if we see that we
-   // are the last reference, we know that no-one else is accessing
-   // us. If someone were accessing us, then they would be doing so
-   // while the last shared / weak_ptr was being destructed, and
-   // that's undefined anyway.
-   //
-   // If we see anything other than a 0, then we have possible
-   // contention, and need to use an atomicrmw primitive.
-   // The same arguments don't apply for increment, where it is legal
-   // (though inadvisable) to share shared_ptr references between
-   // threads, and have them all get copied at once.  The argument
-   // also doesn't apply for __release_shared, because an outstanding
-   // weak_ptr::lock() could read / modify the shared count.
-   if (__libcpp_atomic_load(&__shared_weak_owners_, _AO_Acquire) == 0) {
-      // no need to do this store, because we are about
-      // to destroy everything.
-      //__libcpp_atomic_store(&__shared_weak_owners_, -1, _AO_Release);
-      __on_zero_shared_weak();
-   }
-   else if (__libcpp_atomic_refcount_decrement(__shared_weak_owners_) == -1)
-      __on_zero_shared_weak();
+    // NOTE: The acquire load here is an optimization of the very
+    // common case where a shared pointer is being destructed while
+    // having no other contended references.
+    //
+    // BENEFIT: We avoid expensive atomic stores like XADD and STREX
+    // in a common case.  Those instructions are slow and do nasty
+    // things to caches.
+    //
+    // IS THIS SAFE?  Yes.  During weak destruction, if we see that we
+    // are the last reference, we know that no-one else is accessing
+    // us. If someone were accessing us, then they would be doing so
+    // while the last shared / weak_ptr was being destructed, and
+    // that's undefined anyway.
+    //
+    // If we see anything other than a 0, then we have possible
+    // contention, and need to use an atomicrmw primitive.
+    // The same arguments don't apply for increment, where it is legal
+    // (though inadvisable) to share shared_ptr references between
+    // threads, and have them all get copied at once.  The argument
+    // also doesn't apply for __release_shared, because an outstanding
+    // weak_ptr::lock() could read / modify the shared count.
+    if (__libcpp_atomic_load(&__shared_weak_owners_, _AO_Acquire) == 0) {
+        // no need to do this store, because we are about
+        // to destroy everything.
+        //__libcpp_atomic_store(&__shared_weak_owners_, -1, _AO_Release);
+        __on_zero_shared_weak();
+    }
+    else if (__libcpp_atomic_refcount_decrement(__shared_weak_owners_) == -1)
+        __on_zero_shared_weak();
 }
 
 __shared_weak_count* __shared_weak_count::lock() _NOEXCEPT
 {
-   long object_owners = __libcpp_atomic_load(&__shared_owners_);
-   while (object_owners != -1) {
-      if (__libcpp_atomic_compare_exchange(&__shared_owners_, &object_owners, object_owners + 1))
-         return this;
-   }
-   return nullptr;
+    long object_owners = __libcpp_atomic_load(&__shared_owners_);
+    while (object_owners != -1) {
+        if (__libcpp_atomic_compare_exchange(&__shared_owners_, &object_owners, object_owners + 1))
+            return this;
+    }
+    return nullptr;
 }
 
 #if !defined(_LIBCPP_NO_RTTI) || !defined(_LIBCPP_BUILD_STATIC)
 
 const void* __shared_weak_count::__get_deleter(const type_info&) const _NOEXCEPT
 {
-   return nullptr;
+    return nullptr;
 }
 
 #endif  // _LIBCPP_NO_RTTI
@@ -204,23 +204,23 @@ pointer_safety get_pointer_safety() _NOEXCEPT
 
 void* __undeclare_reachable(void* p)
 {
-   return p;
+    return p;
 }
 
 void* align(size_t alignment, size_t size, void*& ptr, size_t& space)
 {
-   void* r = nullptr;
-   if (size <= space) {
-      char* p1 = static_cast<char*>(ptr);
-      char* p2 = reinterpret_cast<char*>(reinterpret_cast<size_t>(p1 + (alignment - 1)) & -alignment);
-      size_t d = static_cast<size_t>(p2 - p1);
-      if (d <= space - size) {
-         r = p2;
-         ptr = r;
-         space -= d;
-      }
-   }
-   return r;
+    void* r = nullptr;
+    if (size <= space) {
+        char* p1 = static_cast<char*>(ptr);
+        char* p2 = reinterpret_cast<char*>(reinterpret_cast<size_t>(p1 + (alignment - 1)) & -alignment);
+        size_t d = static_cast<size_t>(p2 - p1);
+        if (d <= space - size) {
+            r = p2;
+            ptr = r;
+            space -= d;
+        }
+    }
+    return r;
 }
 
 _LIBCPP_END_NAMESPACE_STD

@@ -13,11 +13,11 @@
 #define LIKELY(x) __builtin_expect((x), 1)
 #define UNLIKELY(x) __builtin_expect((x), 0)
 
-#define __UNREACHED__          \
-   do {                        \
-      __builtin_trap();        \
-      __builtin_unreachable(); \
-   } while (0);
+#define __UNREACHED__            \
+    do {                         \
+        __builtin_trap();        \
+        __builtin_unreachable(); \
+    } while (0);
 
 #ifdef __cplusplus
 #define EXTERN_C extern "C"
@@ -60,7 +60,7 @@
 #define DEBUG_ONLY(x)
 #else
 #define DEBUG_ONLY(x) \
-   do {               \
-      x               \
-   } while (0);
+    do {              \
+        x             \
+    } while (0);
 #endif

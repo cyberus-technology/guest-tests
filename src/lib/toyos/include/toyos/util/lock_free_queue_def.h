@@ -97,16 +97,16 @@
 
 struct lock_less_queue_meta_t
 {
-   uint64_t version;
-   uint64_t entry_num;
-   uint64_t entry_size;
+    uint64_t version;
+    uint64_t entry_num;
+    uint64_t entry_size;
 };
 
 // We align both read_position and write_position to cache line boundaries to prevent false-sharing.
 struct alignas(LFQ_CACHE_LINE_SIZE) lock_less_queue_t
 {
-   lock_less_queue_meta_t meta_data;                      // offset 0
-   alignas(LFQ_CACHE_LINE_SIZE) uint64_t read_position;   // offset 64
-   alignas(LFQ_CACHE_LINE_SIZE) uint64_t write_position;  // offset 128
-                                                          // The data follows here. The first data element also needs to be aligned to CACHE_LINE_SIZE.
+    lock_less_queue_meta_t meta_data;                      // offset 0
+    alignas(LFQ_CACHE_LINE_SIZE) uint64_t read_position;   // offset 64
+    alignas(LFQ_CACHE_LINE_SIZE) uint64_t write_position;  // offset 128
+                                                           // The data follows here. The first data element also needs to be aligned to CACHE_LINE_SIZE.
 };

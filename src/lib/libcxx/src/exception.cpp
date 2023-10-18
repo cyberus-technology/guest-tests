@@ -12,7 +12,7 @@
 #include "typeinfo"
 
 #if defined(LIBCXXRT) || defined(LIBCXX_BUILDING_LIBCXXABI) \
-   || (defined(__APPLE__) && !defined(_LIBCPP_BUILDING_HAS_NO_ABI_LIBRARY))
+    || (defined(__APPLE__) && !defined(_LIBCPP_BUILDING_HAS_NO_ABI_LIBRARY))
 #include <cxxabi.h>
 using namespace __cxxabiv1;
 #define HAVE_DEPENDENT_EH_ABI 1

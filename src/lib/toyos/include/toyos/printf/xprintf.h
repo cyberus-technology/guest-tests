@@ -20,18 +20,18 @@ extern "C"
 
 #if _USE_XFUNC_OUT
 #define xdev_out(func) xfunc_out = func
-   extern void (*xfunc_out)(unsigned char);
+    extern void (*xfunc_out)(unsigned char);
 
 #ifndef LIB_TYPE_HOSTED
-   int putc(char c);
-   int putchar(int c);
-   int puts(const char* str);
+    int putc(char c);
+    int putchar(int c);
+    int puts(const char* str);
 
-   int printf(const char* fmt, ...);
-   int vprintf(const char* fmt, va_list arp);
-   int sprintf(char* buff, const char* fmt, ...);
-   int snprintf(char* buff, unsigned long n, const char* fmt, ...);
-   int vsnprintf(char* buff, unsigned long n, const char* fmt, va_list arp);
+    int printf(const char* fmt, ...);
+    int vprintf(const char* fmt, va_list arp);
+    int sprintf(char* buff, const char* fmt, ...);
+    int snprintf(char* buff, unsigned long n, const char* fmt, ...);
+    int vsnprintf(char* buff, unsigned long n, const char* fmt, va_list arp);
 
 #define DW_CHAR sizeof(char)
 #define DW_SHORT sizeof(short)
