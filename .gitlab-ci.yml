@@ -1,3 +1,7 @@
+include:
+  # Taken from https://docs.gitlab.com/ee/ci/yaml/workflow.html#workflowrules-templates
+  - template: 'Workflows/MergeRequest-Pipelines.gitlab-ci.yml'
+
 stages:
   - style
   - build
