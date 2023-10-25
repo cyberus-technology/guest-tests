@@ -1,6 +1,15 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
+/**
+ * LAPIC timer tests. Tests the three timer modes
+ * - oneshot,
+ * - periodic, and
+ * - TSC deadline.
+ *
+ * The latter is only tested if it is supported by the platform.
+ */
+
 #include <toyos/baretest/baretest.hpp>
 #include <toyos/testhelper/irq_handler.hpp>
 #include <toyos/testhelper/irqinfo.hpp>
@@ -15,6 +24,7 @@ using x86::msr;
 volatile uint32_t irq_count{ 0 };
 volatile uint64_t start_time{ 0 };
 volatile uint64_t finish_time{ 0 };
+// Only properly initialized when hypervisor supports TSC deadline mode.
 volatile uint32_t tsc_to_bus_ratio{ 0 };
 static constexpr uint32_t EXPECTED_IRQS{ 128 };
 static constexpr uint32_t TIMER_INIT_COUNT{ 4096 };
@@ -39,8 +49,11 @@ void prologue()
         enable_interrupts_for_single_instruction();
     }
 
-    {
-        // i need to know the tsc to bus ratio
+    // Determine the tsc-to-bus ratio
+    if (!supports_tsc_deadline_mode()) {
+        printf("WARN: TSC_DEADLINE mode not supported\n");
+    }
+    else {
         irq_info.reset();
         irq_handler::guard handler_guard(calibrating_irq_handler);
         write_divide_conf(1);
@@ -65,7 +78,7 @@ void prologue()
         uint64_t deadline_time = finish_time - start_time;
 
         tsc_to_bus_ratio = oneshot_time / deadline_time;
-        ASSERT(tsc_to_bus_ratio != 0, "tsc to bus ratio is zero");
+        ASSERT(tsc_to_bus_ratio != 0, "tsc-to-bus ratio is zero");
     }
 }
 
@@ -194,7 +207,7 @@ TEST_CASE_CONDITIONAL(higher_divide_conf_should_lead_to_slower_cycles, false)
     BARETEST_ASSERT(success);
 }
 
-TEST_CASE(timer_mode_tsc_deadline_should_send_irqs_on_specific_time)
+TEST_CASE_CONDITIONAL(timer_mode_tsc_deadline_should_send_irqs_on_specific_time, supports_tsc_deadline_mode())
 {
     irq_handler::guard handler_guard(lapic_irq_handler);
     lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_modes::DEADLINE);
@@ -215,7 +228,7 @@ TEST_CASE(timer_mode_tsc_deadline_should_send_irqs_on_specific_time)
     }
 }
 
-TEST_CASE(deadlines_in_the_past_should_produce_interrupts_immediately)
+TEST_CASE_CONDITIONAL(deadlines_in_the_past_should_produce_interrupts_immediately, supports_tsc_deadline_mode())
 {
     irq_handler::guard handler_guard(lapic_irq_handler);
     lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_modes::DEADLINE);
@@ -251,7 +264,7 @@ TEST_CASE(deadlines_in_the_past_should_produce_interrupts_immediately)
     }
 }
 
-TEST_CASE(switch_from_deadline_to_oneshot_should_disarm_the_timer)
+TEST_CASE_CONDITIONAL(switch_from_deadline_to_oneshot_should_disarm_the_timer, supports_tsc_deadline_mode())
 {
     irq_handler::guard handler_guard(lapic_irq_handler);
     lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_modes::DEADLINE);
@@ -277,7 +290,7 @@ TEST_CASE(switch_from_deadline_to_oneshot_should_disarm_the_timer)
     disable_interrupts();
 }
 
-TEST_CASE(switch_from_periodic_to_deadline_should_disarm_the_timer)
+TEST_CASE_CONDITIONAL(switch_from_periodic_to_deadline_should_disarm_the_timer, supports_tsc_deadline_mode())
 {
     irq_handler::guard handler_guard(lapic_irq_handler);
     lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_modes::PERIODIC);

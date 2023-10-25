@@ -13,11 +13,6 @@ static bool tsc_adjust_supported()
     return cpuid(0x7).ebx & LVL_0000_0007_EBX_TSCADJUST;
 }
 
-static bool lapic_supports_tsc_deadline_mode()
-{
-    return cpuid(0x1).ecx & LVL_0000_0001_ECX_TSCD;
-}
-
 TEST_CASE(tsc_only_moves_forward_strictly_monotonic)
 {
     static constexpr unsigned REPETITIONS{ 100000 };
@@ -54,7 +49,7 @@ TEST_CASE_CONDITIONAL(tsc_is_modified_when_writing_to_ia32_tsc_adjust, tsc_adjus
     }
 }
 
-TEST_CASE_CONDITIONAL(local_apic_timer_uses_tsc_as_configured, lapic_supports_tsc_deadline_mode())
+TEST_CASE_CONDITIONAL(local_apic_timer_uses_tsc_as_configured, supports_tsc_deadline_mode())
 {
     lapic_enabler lenabler;
 
