@@ -226,4 +226,6 @@ namespace lapic_test_tools
     void send_self_ipi(uint8_t vector, dest_sh sh = dest_sh::SELF, dest_mode dest = dest_mode::PHYSICAL, dlv_mode dlv = dlv_mode::FIXED);
 
     bool check_irr(uint8_t vector);
+
+    bool supports_tsc_deadline_mode();
 }  // namespace lapic_test_tools

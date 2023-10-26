@@ -290,3 +290,8 @@ bool lapic_test_tools::check_irr(uint8_t vector)
 
     return read_from_register(irr_address) & irr_bit;
 }
+
+bool lapic_test_tools::supports_tsc_deadline_mode()
+{
+    return cpuid(0x1).ecx & LVL_0000_0001_ECX_TSCD;
+}
