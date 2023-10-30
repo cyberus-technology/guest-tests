@@ -4,17 +4,5 @@
         "repo": "git@gitlab.vpn.cyberus-technology.de:infrastructure/cbspkgs.git",
         "rev": "b2d679af1774037c040db787a17e2ab0486670b2",
         "type": "git"
-    },
-    "nixpkgs": {
-        "branch": "nixos-23.05",
-        "description": "Nix Packages collection",
-        "homepage": null,
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "4077a0e4ac3356222bc1f0a070af7939c3098535",
-        "sha256": "1rvcqq166z72p4c0m5hcgqlbj8hkdzmgva1j0w42wq3q14lvrvfp",
-        "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/4077a0e4ac3356222bc1f0a070af7939c3098535.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
