@@ -6,6 +6,9 @@
 #include "../x86/x86asm.hpp"
 #include <toyos/util/interval.hpp>
 
+/**
+ * Driver for the Intel 8259 Programmable Interrupt Controller (PIC).
+ */
 class pic
 {
     static constexpr uint16_t MASTER_CMD{ 0x20 };
@@ -23,12 +26,20 @@ class pic
     static constexpr uint8_t CASCADE_IRQ{ 2 };
     static constexpr uint8_t SPURIOUS_IRQ{ 7 };
 
+    /**
+     * Tells that the EOI belongs to the special vector and not the highest
+     * vector.
+     *
+     * Source: "Figure 8. Operation Command Word Format" in spec.
+     */
+    static constexpr uint8_t SPECIFIC_EOI_FLAGS{ 0x60 };
+
  public:
     explicit pic(uint8_t vector_base)
         : vector_base_(vector_base)
     {
         if (not math::is_aligned(vector_base, 3)) {
-            PANIC("Base vector has to be aligned to 8!");
+            PANIC("Base vector has to be aligned to 8! Is=%x", vector_base);
         }
 
         // Mask all interrupts
@@ -121,6 +132,9 @@ class pic
         }
     }
 
+    /**
+     * Sends an EOI for the highest interrupt.
+     */
     bool eoi(uint8_t vec)
     {
         if (is_pic_vector(vec)) {
