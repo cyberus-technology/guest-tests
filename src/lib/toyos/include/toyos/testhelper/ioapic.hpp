@@ -3,8 +3,9 @@
 
 #pragma once
 
-#include "toyos/util/math.hpp"
 #include <toyos/util/cast_helpers.hpp>
+#include <toyos/util/math.hpp>
+#include <toyos/util/trace.hpp>
 #include <toyos/x86/arch.hpp>
 
 #include <toyos/util/interval.hpp>
@@ -102,8 +103,9 @@ class ioapic
         /// Delivery mode
         enum class dlv_mode : uint8_t
         {
-            FIXED = 0,  ///< Fixed delivery mode
-            NMI = 4,    ///< NMI delivery mode
+            FIXED = 0,   ///< Fixed delivery mode
+            NMI = 4,     ///< NMI delivery mode
+            EXTINT = 7,  ///< Ext Int delivery mode (PIC)
         };
 
         /// Definitions of the individual components of the bitfield
@@ -127,18 +129,52 @@ class ioapic
         };
 
         /// Constructs a redirection entry for a given pin and raw value.
+        /// The entry uses physical destination mode.
         redirection_entry(uint8_t pin, uint64_t value)
             : index(pin), raw(value) {}
 
         /// Constructs a redirection entry for a given pin, vector, destination, and edge/level configuration.
-        redirection_entry(uint8_t pin, uint8_t vec, uint8_t dst, trigger trg)
+        /// The entry uses physical destination mode.
+        redirection_entry(uint8_t pin, uint8_t vec, uint8_t dst, trigger trg, dlv_mode mode)
             : index(pin)
         {
             vector(vec);
-            delivery_mode(dlv_mode::FIXED);
+            delivery_mode(mode);
             dest(dst);
             trigger_mode(trg);
-            set_active_low();
+
+            // Default behaviour is that IRQ 0-15 (exceptions) are edge-high,
+            // whereas IRQ 16..IOAPIC_MAX_PIN is level-low.
+            //
+            // This is also what the original NOVA hypervisor configured
+            // (https://github.com/udosteinberg/NOVA/blob/master/src/gsi.cpp#L42).
+            //
+            // This is not always the case, the correct trigger mode and
+            // polarity depends on the ACPI PCI Routing table (_PRT), but it
+            // requires a full ACPICA stack to parse the DSDT. In addition,
+            // there may be ACPI source overrides which can override the _PRT.
+            // And then there's the MP Table (legacy) which also defines
+            // polarity and trigger mode. You need to combine all these
+            // information to find the effective interrupt routing information.
+            // Complicated stuff...
+            //
+            // More reference: https://people.freebsd.org/~jhb/papers/bsdcan/2007/article/node5.html
+            if (mode != dlv_mode::EXTINT) {
+                // In the case of an ExtInt, the vector is specified by the
+                // external interrupt controller.
+                ASSERT(vec >= 16, "Vector must be >= 16. Low numbers are reserved for exceptions.");
+            }
+            else {
+                ASSERT(trg == trigger::EDGE, "According to the IOAPIC spec, EXTINT interrupts are edge-triggered.");
+            }
+            // simplification: fine for our test cases
+            if (trg == trigger::LEVEL) {
+                set_active_low();
+            }
+            else {
+                set_active_high();
+            }
+
             unmask();
         }
 
