@@ -213,7 +213,7 @@ TEST_CASE_CONDITIONAL(hfi_interrupt, has_hardware_feedback_interface())
 
     irq_handler::guard handler_guard(lapic_irq_handler);
     lapic_enabler lenabler{};
-    lvt_guard lvt_guard(lvt_entry::THERMAL_SENSOR, MAX_VECTOR, 0);
+    lvt_guard lvt_guard(lvt_entry::THERMAL_SENSOR, MAX_VECTOR, lvt_timer_mode::ONESHOT);
     irq_info.reset();
 
     struct hfi_global_header
