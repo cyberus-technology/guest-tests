@@ -520,7 +520,7 @@ struct hpet_test_ctx
 
         if (cfg.legacy_active) {
             global_pic.mask(HPET_IRQ_VEC);
-            global_pic.eoi(HPET_IRQ_VEC);
+            BARETEST_ASSERT(global_pic.eoi());
         }
     }
 

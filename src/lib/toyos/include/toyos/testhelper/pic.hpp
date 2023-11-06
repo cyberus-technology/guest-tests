@@ -135,19 +135,39 @@ class pic
     /**
      * Sends an EOI for the highest interrupt.
      */
-    bool eoi(uint8_t vec)
+    bool eoi()
     {
-        if (is_pic_vector(vec)) {
-            if (is_slave_vector(vec)) {
-                outb(SLAVE_CMD, EOI);
-            }
-
-            outb(MASTER_CMD, EOI);
-            return true;
+        auto opt_isr_vec = position_of_highest_bit(get_isr());
+        if (!opt_isr_vec.has_value()) {
+            return false;
         }
-        return false;
+        auto vec = opt_isr_vec.value() + vector_base_;
+        if (is_slave_vector(vec)) {
+            outb(SLAVE_CMD, EOI);
+        }
+        outb(MASTER_CMD, EOI);
+
+        return true;
     }
 
  private:
     uint8_t vector_base_;
+
+    /**
+     * Returns the position of the highest bit that is set. Useful to check
+     * which vector is set in ISR or IRR.
+     */
+    static std::optional<uint16_t> position_of_highest_bit(uint16_t val)
+    {
+        if (val == 0) {
+            return std::nullopt;
+        }
+        for (uint16_t i = 16; i > 0; i--) {
+            auto pos = i - 1;
+            if (((val >> pos) & 1) == 1) {
+                return { pos };
+            }
+        }
+        __UNREACHED__
+    }
 };
