@@ -112,6 +112,9 @@ static void measuring_irq_handler(intr_regs*)
     send_eoi();
 }
 
+/**
+ * Waits for interrupts without performing VM exits (i.e., no HLT).
+ */
 void wait_for_interrupts(irq_handler_t handler, uint32_t irqs_expected)
 {
     clear_irq_count();
@@ -140,6 +143,12 @@ void drain_periodic_timer_irqs()
     }
 }
 
+/**
+ * Tests that periodic timer interrupts are delivered, even if the guest doesn't
+ * perform a VM exit at the time the interrupt source is asserted.
+ *
+ * TL;DR: This tests that VMMs poke the vCPU.
+ */
 TEST_CASE(timer_mode_periodic_should_cycle)
 {
     irq_handler::guard _(lapic_irq_handler);
@@ -149,7 +158,6 @@ TEST_CASE(timer_mode_periodic_should_cycle)
     write_divide_conf(1);
     write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
 
-    clear_irq_count();
     wait_for_interrupts(counting_irq_handler, EXPECTED_IRQS);
 
     BARETEST_ASSERT((irq_count == EXPECTED_IRQS));
