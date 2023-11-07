@@ -57,7 +57,7 @@ void prologue()
         irq_info.reset();
         irq_handler::guard handler_guard(calibrating_irq_handler);
         write_divide_conf(1);
-        lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_modes::ONESHOT);
+        lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_timer_mode::ONESHOT);
         enable_interrupts();
         write_to_register(LAPIC_INIT_COUNT, DEADLINE_OFFSET);
         start_time = rdtsc();
@@ -68,7 +68,7 @@ void prologue()
         uint64_t oneshot_time = finish_time - start_time;
 
         irq_info.reset();
-        write_lvt_mode(lvt_entry::TIMER, lvt_modes::DEADLINE);
+        write_lvt_timer_mode(lvt_entry::TIMER, lvt_timer_mode::DEADLINE);
         wrmsr(msr::IA32_TSC_DEADLINE, rdtsc() + DEADLINE_OFFSET);
         start_time = rdtsc();
 
@@ -112,6 +112,9 @@ static void measuring_irq_handler(intr_regs*)
     send_eoi();
 }
 
+/**
+ * Waits for interrupts without performing VM exits (i.e., no HLT).
+ */
 void wait_for_interrupts(irq_handler_t handler, uint32_t irqs_expected)
 {
     clear_irq_count();
@@ -140,16 +143,21 @@ void drain_periodic_timer_irqs()
     }
 }
 
+/**
+ * Tests that periodic timer interrupts are delivered, even if the guest doesn't
+ * perform a VM exit at the time the interrupt source is asserted.
+ *
+ * TL;DR: This tests that VMMs poke the vCPU.
+ */
 TEST_CASE(timer_mode_periodic_should_cycle)
 {
     irq_handler::guard _(lapic_irq_handler);
 
-    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .mode = lvt_modes::PERIODIC, .mask = 1 });
+    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .timer_mode = lvt_timer_mode::PERIODIC, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::MASKED });
 
     write_divide_conf(1);
     write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
 
-    clear_irq_count();
     wait_for_interrupts(counting_irq_handler, EXPECTED_IRQS);
 
     BARETEST_ASSERT((irq_count == EXPECTED_IRQS));
@@ -179,7 +187,7 @@ TEST_CASE_CONDITIONAL(higher_divide_conf_should_lead_to_slower_cycles, false)
     std::vector<uint64_t> total_times;
     drain_periodic_timer_irqs();
 
-    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .mode = lvt_modes::PERIODIC, .mask = 1 });
+    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .timer_mode = lvt_timer_mode::PERIODIC, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::MASKED });
 
     for (uint32_t conf = 1; conf <= 128; conf *= 2) {
         write_divide_conf(conf);
@@ -210,7 +218,7 @@ TEST_CASE_CONDITIONAL(higher_divide_conf_should_lead_to_slower_cycles, false)
 TEST_CASE_CONDITIONAL(timer_mode_tsc_deadline_should_send_irqs_on_specific_time, supports_tsc_deadline_mode())
 {
     irq_handler::guard handler_guard(lapic_irq_handler);
-    lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_modes::DEADLINE);
+    lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_timer_mode::DEADLINE);
 
     for (uint32_t i = 0; i < 10; ++i) {
         uint64_t deadline = rdtsc() + (1 << i);
@@ -231,7 +239,7 @@ TEST_CASE_CONDITIONAL(timer_mode_tsc_deadline_should_send_irqs_on_specific_time,
 TEST_CASE_CONDITIONAL(deadlines_in_the_past_should_produce_interrupts_immediately, supports_tsc_deadline_mode())
 {
     irq_handler::guard handler_guard(lapic_irq_handler);
-    lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_modes::DEADLINE);
+    lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_timer_mode::DEADLINE);
 
     for (uint32_t i = 0; i < 10; ++i) {
         uint64_t deadline = rdtsc() - (1 << i);
@@ -267,7 +275,7 @@ TEST_CASE_CONDITIONAL(deadlines_in_the_past_should_produce_interrupts_immediatel
 TEST_CASE_CONDITIONAL(switch_from_deadline_to_oneshot_should_disarm_the_timer, supports_tsc_deadline_mode())
 {
     irq_handler::guard handler_guard(lapic_irq_handler);
-    lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_modes::DEADLINE);
+    lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_timer_mode::DEADLINE);
     irq_info.reset();
 
     enable_interrupts();
@@ -276,7 +284,7 @@ TEST_CASE_CONDITIONAL(switch_from_deadline_to_oneshot_should_disarm_the_timer, s
     uint64_t deadline = rdtsc() + 4 * DEADLINE_OFFSET;
 
     wrmsr(msr::IA32_TSC_DEADLINE, deadline);
-    write_lvt_mode(lvt_entry::TIMER, lvt_modes::ONESHOT);
+    write_lvt_timer_mode(lvt_entry::TIMER, lvt_timer_mode::ONESHOT);
 
     ASSERT(rdtsc() < deadline, "Assumption broken");
     BARETEST_ASSERT((read_from_register(LAPIC_CURR_COUNT) == 0));
@@ -293,7 +301,7 @@ TEST_CASE_CONDITIONAL(switch_from_deadline_to_oneshot_should_disarm_the_timer, s
 TEST_CASE_CONDITIONAL(switch_from_periodic_to_deadline_should_disarm_the_timer, supports_tsc_deadline_mode())
 {
     irq_handler::guard handler_guard(lapic_irq_handler);
-    lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_modes::PERIODIC);
+    lvt_guard lvt_guard(lvt_entry::TIMER, MAX_VECTOR, lvt_timer_mode::PERIODIC);
     irq_info.reset();
 
     // i need some time to change the lvt mode, so i choose a high div count
@@ -302,7 +310,7 @@ TEST_CASE_CONDITIONAL(switch_from_periodic_to_deadline_should_disarm_the_timer, 
 
     // deadline offset because i need a large value
     write_to_register(LAPIC_INIT_COUNT, DEADLINE_OFFSET);
-    write_lvt_mode(lvt_entry::TIMER, lvt_modes::DEADLINE);
+    write_lvt_timer_mode(lvt_entry::TIMER, lvt_timer_mode::DEADLINE);
     uint64_t start = rdtsc();
 
     // again, the * 2 is there to give the interrupt some time
@@ -325,14 +333,14 @@ TEST_CASE(switch_from_oneshot_to_periodic_does_not_disarm_the_timer)
     irq_handler::guard _(lapic_irq_handler);
 
     // Start in oneshot mode.
-    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .mode = lvt_modes::ONESHOT, .mask = 1 });
+    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .timer_mode = lvt_timer_mode::ONESHOT, .mask = lvt_mask::MASKED });
 
     // Start the timer. Take the `DEADLINE_OFFSET` so that the timer interrupt
     // will (hopefully) not trigger before we switch modes.
     write_to_register(LAPIC_INIT_COUNT, DEADLINE_OFFSET);
 
     const auto curr_count_in_oneshot = read_from_register(LAPIC_CURR_COUNT);
-    write_lvt_mode(lvt_entry::TIMER, lvt_modes::PERIODIC);
+    write_lvt_timer_mode(lvt_entry::TIMER, lvt_timer_mode::PERIODIC);
     const auto curr_count_in_periodic = read_from_register(LAPIC_CURR_COUNT);
 
     // If the current count is at 0, the oneshot timer already expired.
@@ -360,7 +368,7 @@ TEST_CASE(switch_from_oneshot_to_periodic_after_oneshot_expired_does_not_rearm_t
 {
     irq_handler::guard _(lapic_irq_handler);
 
-    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .mode = lvt_modes::ONESHOT, .mask = 1 });
+    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .timer_mode = lvt_timer_mode::ONESHOT, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::MASKED });
 
     write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
     wait_for_interrupts(counting_irq_handler, 1);
@@ -369,13 +377,13 @@ TEST_CASE(switch_from_oneshot_to_periodic_after_oneshot_expired_does_not_rearm_t
     // When the value remains 0 after a mode switch, the timer did not
     // start again.
     BARETEST_ASSERT((read_from_register(LAPIC_CURR_COUNT) == 0));
-    write_lvt_mode(lvt_entry::TIMER, lvt_modes::PERIODIC);
+    write_lvt_timer_mode(lvt_entry::TIMER, lvt_timer_mode::PERIODIC);
     BARETEST_ASSERT((read_from_register(LAPIC_CURR_COUNT) == 0));
 }
 
 TEST_CASE(switch_from_periodic_to_oneshot_eventually_stops_timer)
 {
-    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .mode = lvt_modes::PERIODIC, .mask = 1 });
+    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .timer_mode = lvt_timer_mode::PERIODIC, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::MASKED });
 
     // Ensure the periodic timer ticks multiple times.
     write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
@@ -391,7 +399,7 @@ TEST_CASE(switch_from_periodic_to_oneshot_eventually_stops_timer)
     // handler first.
     irq_handler::guard _(lapic_irq_handler);
     irq_info.reset();
-    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .mode = lvt_modes::ONESHOT, .mask = 0 });
+    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .timer_mode = lvt_timer_mode::ONESHOT, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::UNMASKED });
 
     enable_interrupts();
     // Wait for at one interrupt.

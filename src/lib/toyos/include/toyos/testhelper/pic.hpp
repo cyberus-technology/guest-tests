@@ -6,6 +6,9 @@
 #include "../x86/x86asm.hpp"
 #include <toyos/util/interval.hpp>
 
+/**
+ * Driver for the Intel 8259 Programmable Interrupt Controller (PIC).
+ */
 class pic
 {
     static constexpr uint16_t MASTER_CMD{ 0x20 };
@@ -23,12 +26,20 @@ class pic
     static constexpr uint8_t CASCADE_IRQ{ 2 };
     static constexpr uint8_t SPURIOUS_IRQ{ 7 };
 
+    /**
+     * Tells that the EOI belongs to the special vector and not the highest
+     * vector.
+     *
+     * Source: "Figure 8. Operation Command Word Format" in spec.
+     */
+    static constexpr uint8_t SPECIFIC_EOI_FLAGS{ 0x60 };
+
  public:
     explicit pic(uint8_t vector_base)
         : vector_base_(vector_base)
     {
         if (not math::is_aligned(vector_base, 3)) {
-            PANIC("Base vector has to be aligned to 8!");
+            PANIC("Base vector has to be aligned to 8! Is=%x", vector_base);
         }
 
         // Mask all interrupts
@@ -121,19 +132,42 @@ class pic
         }
     }
 
-    bool eoi(uint8_t vec)
+    /**
+     * Sends an EOI for the highest interrupt.
+     */
+    bool eoi()
     {
-        if (is_pic_vector(vec)) {
-            if (is_slave_vector(vec)) {
-                outb(SLAVE_CMD, EOI);
-            }
-
-            outb(MASTER_CMD, EOI);
-            return true;
+        auto opt_isr_vec = position_of_highest_bit(get_isr());
+        if (!opt_isr_vec.has_value()) {
+            return false;
         }
-        return false;
+        auto vec = opt_isr_vec.value() + vector_base_;
+        if (is_slave_vector(vec)) {
+            outb(SLAVE_CMD, EOI);
+        }
+        outb(MASTER_CMD, EOI);
+
+        return true;
     }
 
  private:
     uint8_t vector_base_;
+
+    /**
+     * Returns the position of the highest bit that is set. Useful to check
+     * which vector is set in ISR or IRR.
+     */
+    static std::optional<uint16_t> position_of_highest_bit(uint16_t val)
+    {
+        if (val == 0) {
+            return std::nullopt;
+        }
+        for (uint16_t i = 16; i > 0; i--) {
+            auto pos = i - 1;
+            if (((val >> pos) & 1) == 1) {
+                return { pos };
+            }
+        }
+        __UNREACHED__
+    }
 };

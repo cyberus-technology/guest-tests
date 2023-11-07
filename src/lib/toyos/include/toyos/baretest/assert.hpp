@@ -34,9 +34,12 @@ namespace baretest
 
 }  // namespace baretest
 
-#define BARETEST_ASSERT(cond)                                                 \
-    do {                                                                      \
-        if (not(cond)) {                                                      \
-            baretest::fail("Assertion failed @ %s:%d\n", __FILE__, __LINE__); \
-        }                                                                     \
+#define BARETEST_ASSERT(cond)                              \
+    do {                                                   \
+        if (not(cond)) {                                   \
+            baretest::fail(                                \
+                "Assertion failed @ %s:%d: '" #cond "'\n", \
+                __FILE__,                                  \
+                __LINE__);                                 \
+        }                                                  \
     } while (0);

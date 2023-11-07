@@ -66,8 +66,10 @@ namespace lapic_test_tools
     constexpr uint32_t LAPIC_DLV_STS_MASK{ 1u << 12 };
     constexpr uint32_t SVR_VECTOR_MASK{ 0xff };
     constexpr uint32_t LVT_VECTOR_MASK{ 0xff };
-    constexpr uint32_t LVT_MODE_SHIFT{ 17 };
-    constexpr uint32_t LVT_MODE_MASK{ 0b11 };
+    constexpr uint32_t LVT_TIMER_MODE_SHIFT{ 17 };
+    constexpr uint32_t LVT_TIMER_MODE_MASK{ 0b11 };
+    constexpr uint32_t LVT_DLV_MODE_SHIFT{ 8 };
+    constexpr uint32_t LVT_DLV_MODE_MASK{ 0b111 };
     constexpr uint32_t LVT_MASK_SHIFT{ 16 };
     constexpr uint32_t LVT_MASK_MASK{ 0b1 };
     constexpr uint32_t LAPIC_TPR_CLASS_SHIFT{ 4 };
@@ -108,11 +110,10 @@ namespace lapic_test_tools
         THERMAL_SENSOR = 0x330,
     };
 
-    struct lvt_entry_t
+    enum class lvt_mask : uint32_t
     {
-        uint32_t vector;
-        uint32_t mode;
-        uint32_t mask;
+        UNMASKED = 0,
+        MASKED = 1,
     };
 
     enum dest_sh
@@ -129,13 +130,13 @@ namespace lapic_test_tools
         ASSERT = 1,
     };
 
-    enum dest_mode
+    enum class dest_mode : uint32_t
     {
         PHYSICAL = 0,
         LOGICAL = 1,
     };
 
-    enum dlv_mode
+    enum class lvt_dlv_mode : uint32_t
     {
         FIXED = 0,
         LOWEST = 1,
@@ -146,11 +147,19 @@ namespace lapic_test_tools
         EXTINT = 7,
     };
 
-    enum lvt_modes
+    enum class lvt_timer_mode : uint32_t
     {
         ONESHOT = 0,
         PERIODIC = 1,
         DEADLINE = 2,
+    };
+
+    struct lvt_entry_t
+    {
+        uint32_t vector;
+        lvt_timer_mode timer_mode;
+        lvt_dlv_mode dlv_mode;
+        lvt_mask mask;
     };
 
     void mask_pic();
@@ -177,7 +186,7 @@ namespace lapic_test_tools
 
     void write_lvt_mask(lvt_entry entry, uint32_t mask);
 
-    void write_lvt_mode(lvt_entry entry, uint32_t mode);
+    void write_lvt_timer_mode(lvt_entry entry, lvt_timer_mode mode);
 
     void write_lvt_entry(lvt_entry entry, lvt_entry_t data);
 
@@ -223,7 +232,7 @@ namespace lapic_test_tools
  */
     [[nodiscard]] bool software_apic_enabled();
 
-    void send_self_ipi(uint8_t vector, dest_sh sh = dest_sh::SELF, dest_mode dest = dest_mode::PHYSICAL, dlv_mode dlv = dlv_mode::FIXED);
+    void send_self_ipi(uint8_t vector, dest_sh sh = dest_sh::SELF, dest_mode dest = dest_mode::PHYSICAL, lvt_dlv_mode dlv = lvt_dlv_mode::FIXED);
 
     bool check_irr(uint8_t vector);
 

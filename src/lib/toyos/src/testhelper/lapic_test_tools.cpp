@@ -81,9 +81,9 @@ void lapic_test_tools::write_lvt_mask(lvt_entry entry, uint32_t mask)
     write_lvt_generic(entry, LVT_MASK_MASK, LVT_MASK_SHIFT, mask);
 }
 
-void lapic_test_tools::write_lvt_mode(lvt_entry entry, uint32_t mode)
+void lapic_test_tools::write_lvt_timer_mode(lvt_entry entry, lvt_timer_mode mode)
 {
-    write_lvt_generic(entry, LVT_MODE_MASK, LVT_MODE_SHIFT, mode);
+    write_lvt_generic(entry, LVT_TIMER_MODE_MASK, LVT_TIMER_MODE_SHIFT, static_cast<uint32_t>(mode));
 }
 
 void lapic_test_tools::write_lvt_entry(lvt_entry entry, lvt_entry_t data)
@@ -93,12 +93,15 @@ void lapic_test_tools::write_lvt_entry(lvt_entry entry, lvt_entry_t data)
     // put vector into data
     lvt_data &= ~LVT_VECTOR_MASK;
     lvt_data |= data.vector;
-    // put mode into data
-    lvt_data &= ~(LVT_MODE_MASK << LVT_MODE_SHIFT);
-    lvt_data |= ((data.mode & LVT_MODE_MASK) << LVT_MODE_SHIFT);
+    // put timer mode into data
+    lvt_data &= ~(LVT_TIMER_MODE_MASK << LVT_TIMER_MODE_SHIFT);
+    lvt_data |= (((static_cast<uint32_t>(data.timer_mode)) & LVT_TIMER_MODE_MASK) << LVT_TIMER_MODE_SHIFT);
+    // put dlv mode into data
+    lvt_data &= ~(LVT_DLV_MODE_MASK << LVT_DLV_MODE_SHIFT);
+    lvt_data |= (((static_cast<uint32_t>(data.dlv_mode)) & LVT_DLV_MODE_MASK) << LVT_DLV_MODE_SHIFT);
     // put mask into data
     lvt_data &= ~(LVT_MASK_MASK << LVT_MASK_SHIFT);
-    lvt_data |= ((data.mask & LVT_MASK_MASK) << LVT_MASK_SHIFT);
+    lvt_data |= (((static_cast<uint32_t>(data.mask)) & LVT_MASK_MASK) << LVT_MASK_SHIFT);
     // write to register
     write_to_register(lvt_address, lvt_data);
 }
@@ -174,7 +177,7 @@ uint32_t lapic_test_tools::ticks_per_second(uint32_t divisor)
         uint32_t previous_init_count{ read_from_register(LAPIC_INIT_COUNT) };
 
         write_divide_conf(1);
-        write_lvt_entry(lvt_entry::TIMER, { .vector = 0x0, .mode = lvt_modes::ONESHOT, .mask = 0x1 });
+        write_lvt_entry(lvt_entry::TIMER, { .vector = 0x0, .timer_mode = lvt_timer_mode::ONESHOT, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::MASKED });
 
         wait_till_next_second();
         write_to_register(LAPIC_INIT_COUNT, LAPIC_MAX_COUNT);
@@ -196,7 +199,7 @@ void lapic_test_tools::enable_periodic_timer(uint32_t interrupt_vector, uint32_t
     disable_interrupts();
 
     write_divide_conf(LAPIC_DIVISOR);
-    write_lvt_entry(lvt_entry::TIMER, { .vector = interrupt_vector, .mode = lvt_modes::PERIODIC, .mask = 0x0 });
+    write_lvt_entry(lvt_entry::TIMER, { .vector = interrupt_vector, .timer_mode = lvt_timer_mode::PERIODIC, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::UNMASKED });
     uint32_t init_count = uint64_t(ticks_per_second(LAPIC_DIVISOR)) * period_in_ms / 1000ul;
     write_to_register(LAPIC_INIT_COUNT, init_count);
 
@@ -239,14 +242,14 @@ void lapic_test_tools::software_apic_enable()
     return (read_from_register(LAPIC_SVR) & (SVR_ENABLED_MASK << SVR_ENABLED_SHIFT)) != 0u;
 }
 
-void lapic_test_tools::send_self_ipi(uint8_t vector, dest_sh sh, dest_mode dest, dlv_mode dlv)
+void lapic_test_tools::send_self_ipi(uint8_t vector, dest_sh sh, dest_mode dest, lvt_dlv_mode dlv)
 {
     // Avoid invalid combinations of delivery modes and vectors according to Intel SDM, Vol. 3, 10.6.1.
     // Vector is ignored for NMI and points to start routine for STARTUP.
-    if (dlv == FIXED or dlv == LOWEST) {
+    if (dlv == lvt_dlv_mode::FIXED or dlv == lvt_dlv_mode::LOWEST) {
         // don't use reserved vectors
         assert(vector == 2 or vector >= 32);
-        assert(vector != NMI);
+        assert(vector != static_cast<uint32_t>(lvt_dlv_mode::NMI));
 
         // don't use spurious vector
         [[maybe_unused]] uint8_t spurious_vector{
@@ -254,7 +257,7 @@ void lapic_test_tools::send_self_ipi(uint8_t vector, dest_sh sh, dest_mode dest,
         };
         assert(vector != spurious_vector);
     }
-    else if (dlv == SMI or dlv == INIT) {
+    else if (dlv == lvt_dlv_mode::SMI or dlv == lvt_dlv_mode::INIT) {
         // vector field must be programmed to 0 for future compatibility
         assert(vector == 0);
     }
@@ -263,8 +266,8 @@ void lapic_test_tools::send_self_ipi(uint8_t vector, dest_sh sh, dest_mode dest,
 
     uint64_t icr_entry = 0;
 
-    icr_entry |= dlv << ICR_DLV_MODE_SHIFT;
-    icr_entry |= dest << ICR_DEST_MODE_SHIFT;
+    icr_entry |= static_cast<uint32_t>(dlv) << ICR_DLV_MODE_SHIFT;
+    icr_entry |= static_cast<uint32_t>(dest) << ICR_DEST_MODE_SHIFT;
     icr_entry |= level::ASSERT << ICR_LEVEL_SHIFT;
     icr_entry |= sh << ICR_DEST_SH_SHIFT;
 

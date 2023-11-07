@@ -14,6 +14,7 @@ let
     "lapic-timer"
     "msr"
     "pagefaults"
+    "pit-timer"
     "sgx"
     "sgx-launch-control"
     "tsc"
@@ -62,7 +63,7 @@ let
 
   # Extracts a single binary variant of a test from the CMake build of all tests.
   # Here, the result is directly a simlink to the boot item.
-  extractTestVariant = suffix: name: final.runCommand "guest-test-${name}-${suffix}" { } ''
+  extractTestVariant = suffix: name: final.runCommand "guest-test-${name}${suffix}" { } ''
     ln -s ${allTests}/${name}${suffix} $out
   '';
 

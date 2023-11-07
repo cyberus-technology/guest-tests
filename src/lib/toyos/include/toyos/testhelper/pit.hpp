@@ -7,7 +7,7 @@
 #include <toyos/x86/x86asm.hpp>
 
 /**
- * A driver for the programmable interval timer.
+ * A driver for the Intel 8253/8254 Programmable Interval Timer (PIT).
  * You can only choose the operating mode, everything else is always:
  *  channel:        channel 0
  *  access mode:    lowest byte then highest byte

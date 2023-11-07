@@ -44,7 +44,13 @@ void prologue()
 {
     software_apic_enable();
     write_spurious_vector(SPURIOUS_TEST_VECTOR);
-    write_lvt_entry(lvt_entry::LINT0, { .vector = 0, .mode = dlv_mode::EXTINT, .mask = 0 });
+    write_lvt_entry(lvt_entry::LINT0, { .vector = 0,
+                                        // This looks a bit strange, but the helper that we have is
+                                        // mostly only used for the timer register. This value is
+                                        // ignored by LINT0.
+                                        .timer_mode = lvt_timer_mode::ONESHOT,
+                                        .dlv_mode = lvt_dlv_mode::EXTINT,
+                                        .mask = lvt_mask::UNMASKED });
     irq_handler::guard _(drain_irq);
     enable_interrupts_for_single_instruction();
     std::iota(std::begin(expected_vectors), std::end(expected_vectors), MIN_VECTOR);
@@ -420,7 +426,7 @@ static void lapic_irq_handler_nmi(intr_regs* regs)
 {
     ++irq_count;
     if (irq_count == 1) {
-        send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, dlv_mode::NMI);
+        send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, lvt_dlv_mode::NMI);
         enable_interrupts_for_single_instruction();
     }
     else if (irq_count == 2) {
@@ -438,7 +444,7 @@ TEST_CASE(self_nmi_should_call_handler_while_interrupts_are_closed_and_second_nm
     irq_handler::guard _(lapic_irq_handler_nmi);
     irq_count = 0;
     send_self_ipi(MAX_VECTOR);
-    send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, dlv_mode::NMI);
+    send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, lvt_dlv_mode::NMI);
 
     wait_until_irq_count_equals(3);
     // the eoi for the ipi above
@@ -448,7 +454,7 @@ TEST_CASE(self_nmi_should_call_handler_while_interrupts_are_closed_and_second_nm
 static void lapic_irq_handler_two_nmis(intr_regs*)
 {
     if (irq_count == 0) {
-        send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, dlv_mode::NMI);
+        send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, lvt_dlv_mode::NMI);
     }
     ++irq_count;
 }
@@ -459,7 +465,7 @@ TEST_CASE(sending_an_nmi_while_handling_another_should_work)
 
     irq_handler::guard _(lapic_irq_handler_two_nmis);
     irq_count = 0;
-    send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, dlv_mode::NMI);
+    send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, lvt_dlv_mode::NMI);
 
     wait_until_irq_count_equals(2);
 }
@@ -472,7 +478,7 @@ TEST_CASE_CONDITIONAL(sending_self_nmi_with_shorthand_shouldnt_work, not hv_bit_
     irq_handler::guard _(lapic_irq_handler);
     irq_info.reset();
 
-    send_self_ipi(NMI_VECTOR, dest_sh::SELF, dest_mode::PHYSICAL, dlv_mode::NMI);
+    send_self_ipi(NMI_VECTOR, dest_sh::SELF, dest_mode::PHYSICAL, lvt_dlv_mode::NMI);
 
     wait_a_sec();
     BARETEST_ASSERT(not(irq_info.valid));
@@ -520,7 +526,7 @@ struct hpet_test_ctx
 
         if (cfg.legacy_active) {
             global_pic.mask(HPET_IRQ_VEC);
-            global_pic.eoi(HPET_IRQ_VEC);
+            BARETEST_ASSERT(global_pic.eoi());
         }
     }
 
@@ -692,7 +698,7 @@ TEST_CASE_CONDITIONAL(receiving_nmi_and_fixed_interrupt_simultaneously_should_de
 
     // prepare fixed int
     send_self_ipi(MAX_VECTOR);
-    send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, dlv_mode::NMI);
+    send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, lvt_dlv_mode::NMI);
 
     wait_a_sec();
     enable_interrupts_for_single_instruction();
@@ -714,7 +720,7 @@ static void fast_nmi_test_handler(intr_regs* regs)
 
     if (irq_count < NUM_FAST_NMI) {
         // We're in NMI_BLOCKING state, send another NMI so a VMM has to request an NMI window at this point.
-        send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, dlv_mode::NMI);
+        send_self_ipi(NMI_VECTOR, dest_sh::NO_SH, dest_mode::PHYSICAL, lvt_dlv_mode::NMI);
     }
     else {
         // Disable periodic NMI by masking the redirection entry
@@ -742,7 +748,7 @@ TEST_CASE_CONDITIONAL(fast_triggering_NMIs_should_not_kill_vmm, hpet_available()
 
     using redirection_entry = ioapic::redirection_entry;
     auto lapic_id{ (read_from_register(LAPIC_ID) >> LAPIC_ID_SHIFT) & LAPIC_ID_MASK };
-    auto irt{ redirection_entry(hpet_gsi, NMI_VECTOR, lapic_id, redirection_entry::trigger::EDGE) };
+    auto irt{ redirection_entry(hpet_gsi, NMI_VECTOR, lapic_id, redirection_entry::trigger::EDGE, redirection_entry::dlv_mode::FIXED) };
     irt.delivery_mode(ioapic::redirection_entry::dlv_mode::NMI);
     io_apic.set_irt(irt);
 
