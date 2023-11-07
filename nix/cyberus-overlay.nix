@@ -14,6 +14,7 @@ let
     "lapic-timer"
     "msr"
     "pagefaults"
+    "pit-timer"
     "sgx"
     "sgx-launch-control"
     "tsc"
