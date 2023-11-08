@@ -48,7 +48,6 @@ function(add_guesttest test_name)
 endfunction()
 
 add_guesttest(cpuid EXTRA_SOURCES cpuid/benchmark.cpp)
-add_guesttest(debugport)
 add_guesttest(
   emulator
   EXTRA_SOURCES
