@@ -2,53 +2,132 @@ let
   pkgs = import ./cbspkgs.nix;
 
   allTests = pkgs.cyberus.guest-tests.tests;
+  allTestNames = builtins.attrNames allTests.passthru;
 
-  # Runs a single guest test in QEMU with KVM as backend. It boots the guest
-  # test as Multiboot1 kernel and as bootable ISO. The test succeeds if the
-  # sotest record parser can succesfully parse the output.
-  runIntegrationTestKvmQemu = name: pkgs.runCommand "run-${name}-integration-test-kvm-qemu"
+  # Creates a QEMU command.
+  createQemuCommand =
+    { testname
+    , bootMultiboot ? false
+    , bootIso ? false
+    , bootEfi ? false
+    ,
+    }:
+    let
+      base = "${pkgs.qemu}/bin/qemu-system-x86_64 --machine q35,accel=kvm -no-reboot -display none -cpu host -serial stdio -nodefaults";
+    in
+    if bootMultiboot then {
+      setup = "";
+      main = "${base} -kernel ${allTests.${testname}.elf32}";
+    }
+    else if bootIso then {
+      setup = "";
+      main = "${base} -cdrom ${allTests.${testname}.iso}";
+    }
+    else if bootEfi then {
+      setup = ''
+        mkdir -p uefi/EFI/BOOT
+        install -m 0644 ${allTests.${testname}.efi} uefi/EFI/BOOT/BOOTX64.EFI
+      '';
+      main = "${base} -bios ${pkgs.OVMF.fd}/FV/OVMF.fd -drive format=raw,file=fat:rw:./uefi";
+    }
+    else abort "You must specify one boot variant!"
+  ;
+
+  # Creates a Cloud Hypervisor command.
+  createChvCommand =
+    { testname }:
     {
-      nativeBuildInputs = [ pkgs.qemu pkgs.cyberus.cidoka.apps.sotest-protocol-parser ];
-    } ''
-    QEMU_BASE="qemu-system-x86_64 --enable-kvm -m 32 -no-reboot -display none -cpu host -serial stdio"
+      setup = "";
+      main = "${pkgs.cloud-hypervisor}/bin/cloud-hypervisor --memory size=256M --serial tty --console off --kernel ${allTests.${testname}.elf64}";
+    };
 
-    echo "Running guest test '${name}' as Multiboot1 kernel"
-    (timeout --preserve-status -k 4s 3s $QEMU_BASE \
-      -kernel ${toString allTests.${name}.elf32} \
-      -append "--serial") |& sotest-protocol-parser --stdin --echo
 
-    echo "Running guest test '${name}' as bootable iso"
-    (timeout --preserve-status -k 4s 3s $QEMU_BASE \
-      -cdrom ${toString allTests.${name}.iso}) |& sotest-protocol-parser --stdin --echo
+  # Creates a single test run of a test.
+  createTestRun =
+    # Test name.
+    testname:
+    # Classifier of the test for better log output.
+    classifier:
+    # VMM invocation.
+    vmmCommand:
+    pkgs.runCommand "${testname}-guest-test-${classifier}"
+      {
+        nativeBuildInputs = [
+          pkgs.ansi
+          pkgs.cyberus.cidoka.apps.sotest-protocol-parser
+        ];
+      } ''
+      set -euo pipefail
 
-    touch $out
-  '';
+      ${vmmCommand.setup}
 
-  # Runs a single guest test in QEMU with KVM as backend. It boots the guest
-  # test as Xen PVH direct boot kernel. The test succeeds if the sotest record
-  # parser can succesfully parse the output.
-  runIntegrationTestKvmChv = name: pkgs.runCommand "run-${name}-integration-test-kvm-cloud-hypervisor"
-    {
-      nativeBuildInputs = [ pkgs.cloud-hypervisor ];
-    } ''
-    CHV_BASE="cloud-hypervisor --memory size=32M --serial tty --console off"
+      echo -e "$(ansi bold)Running guest test '${testname}' via ${classifier}$(ansi reset)"
+      (timeout --preserve-status -k 4s 3s ${vmmCommand.main}) |& sotest-protocol-parser --stdin --echo
 
-    echo "Running guest test '${name}' via Xen PVH direct boot"
-    (timeout --preserve-status -k 4s 3s $CHV_BASE \
-      --kernel ${toString allTests.${name}.elf64} \
-      --cmdline "--serial") |& sotest-protocol-parser --stdin --echo
+      touch $out
+    '';
 
-    touch $out
-  '';
+  # Creates an attribut set with test runs for every single test run.
+  createTestRuns =
+    # Classifier of the test for better log output.
+    classifier:
+    # Creates the VMM invocation for the right test.
+    vmmCommandForTest:
+    builtins.foldl'
+      (acc: testname: {
+        "${testname}" = createTestRun testname classifier (vmmCommandForTest testname);
+      } // acc)
+      { }
+      allTestNames;
 in
-{
+rec {
   inherit (pkgs.cyberus.guest-tests) tests;
 
-  runTests = {
-    kvm = {
-      qemu = runIntegrationTestKvmQemu "hello-world";
-      chv = runIntegrationTestKvmQemu "hello-world";
+  # Attribute set containing various configurations to run the guest tests in
+  # a virtual machine.
+  #
+  # Structure:
+  #   VMM -> Backend -> Boot variant -> Guest Tests
+  #
+  # Some tests might not succeed (in every configuration) as they are primarily
+  # build for real hardware and our own virtualization solutions.
+  testRuns = {
+    qemu = {
+      kvm = rec {
+        default = multiboot;
+        # Direct kernel boot of Multiboot1 kernel.
+        multiboot = createTestRuns
+          "qemu-kvm_multiboot"
+          (testname: createQemuCommand {
+            inherit testname;
+            bootMultiboot = true;
+          });
+        # Legacy boot with ISO.
+        iso = createTestRuns "qemu-kvm_iso"
+          (testname: createQemuCommand {
+            inherit testname; bootIso = true;
+          });
+        # UEFI environment.
+        efi = createTestRuns "qemu-kvm_efi"
+          (testname: createQemuCommand {
+            inherit testname; bootEfi = true;
+          });
+      };
+    };
+    chv = {
+      kvm = rec {
+        default = xen-pvh;
+        xen-pvh = createTestRuns "qemu-kvm_efi"
+          (testname: createChvCommand {
+            inherit testname;
+          });
+      };
     };
   };
+
+  # Might be helpful for script-generated invocations of different tests.
+  testNames = pkgs.runCommand "print-guest-test-names" { } ''
+    echo "${builtins.concatStringsSep "\n" allTestNames}" > $out
+  '';
 
 }
