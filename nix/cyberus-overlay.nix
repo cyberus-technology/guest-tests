@@ -59,6 +59,7 @@ let
     elf32 = extractTestVariant ".elf32" name;
     elf64 = extractTestVariant ".elf64" name;
     iso = extractTestVariant ".iso" name;
+    efi = extractTestVariant ".efi" name;
   };
 
   # Extracts a single binary variant of a test from the CMake build of all tests.
