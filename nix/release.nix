@@ -130,4 +130,7 @@ rec {
     echo "${builtins.concatStringsSep "\n" allTestNames}" > $out
   '';
 
+  # SoTest bundle.
+  sotest = pkgs.callPackage ./sotest.nix { };
+
 }

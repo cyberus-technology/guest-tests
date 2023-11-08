@@ -67,7 +67,7 @@ test:nix-shell:
 # All test use the same base to boot. Hence, we test here that the hello-world
 # test comes up.
 
-test:boot:qemu:multiboot1:
+test:vm:hello-world-boots:multiboot1:
   <<: *nix_build_template
   stage: test
   variables:
@@ -76,7 +76,7 @@ test:boot:qemu:multiboot1:
   script:
     - nix-build nix/release.nix -A testRuns.qemu.kvm.multiboot.hello-world
 
-test:boot:qemu:iso:
+test:vm:hello-world-boots:iso:
   <<: *nix_build_template
   stage: test
   variables:
@@ -84,7 +84,7 @@ test:boot:qemu:iso:
   script:
     - nix-build nix/release.nix -A testRuns.qemu.kvm.iso.hello-world
 
-test:boot:qemu:efi:
+test:vm:hello-world-boots:efi:
   <<: *nix_build_template
   stage: test
   variables:
@@ -92,7 +92,7 @@ test:boot:qemu:efi:
   script:
     - nix-build nix/release.nix -A testRuns.qemu.kvm.efi.hello-world
 
-test:boot:chv:xen_pvh:
+test:vm:hello-world-boots:xen-pvh:
   <<: *nix_build_template
   stage: test
   variables:
@@ -102,9 +102,15 @@ test:boot:chv:xen_pvh:
 
 # We run all guest tests but allow them to fail. They are made for real
 # hardware and our own virtualization solutions, which aren't tested here.
-test:all_guest_tests:
+test:vm:all_guest_tests:
   <<: *nix_build_template
   stage: test
+  # No real dependency but doesn't make sense to run without the basic tests.
+  needs:
+    - test:vm:hello-world-boots:multiboot1
+    - test:vm:hello-world-boots:iso
+    - test:vm:hello-world-boots:efi
+    - test:vm:hello-world-boots:xen-pvh
   allow_failure: true
   variables:
     NIXPKGS_ALLOW_UNFREE: 1
@@ -146,6 +152,44 @@ test:all_guest_tests:
     - nix-build nix/release.nix -A testRuns.chv.kvm.default.tsc || true
     - nix-build nix/release.nix -A testRuns.chv.kvm.default.vmx || true
 
+test:sotest:submit:
+  <<: *nix_build_template
+  stage: test
+  # No real dependency but doesn't make sense to run without the basic tests.
+  needs:
+    - test:vm:hello-world-boots:iso
+    - test:vm:hello-world-boots:efi
+  script:
+    - nix-build nix/release.nix -A sotest
+    - RUN_SOTEST=$(nix-build nix/cbspkgs.nix -A cyberus.cbspkgs.run-sotest --no-out-link)/bin/run_sotest
+    - $RUN_SOTEST http://sotest:3000 result/project-config.yaml
+      --boot_files "result/bundle.zip"
+      --user "$CI_PROJECT_NAMESPACE - $GITLAB_USER_LOGIN"
+      --url "$CI_PROJECT_URL/commit/$CI_COMMIT_SHA"
+      --name "$CI_PROJECT_NAME $CI_COMMIT_REF_SLUG"
+      --priority 0
+      --testrun_id_file sotest_testrun_id.txt
+      --nopoll
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - sotest_testrun_id.txt
 
-
-
+test:sotest:poll:
+  <<: *nix_build_template
+  stage: test
+  needs:
+    - test:sotest:submit
+  timeout: 12h
+  script:
+    - POLL_SOTEST=$(nix-build nix/cbspkgs.nix -A cyberus.cbspkgs.run-sotest --no-out-link)/bin/poll_sotest
+    - $POLL_SOTEST http://sotest:3000
+      --id "$(cat sotest_testrun_id.txt)"
+      --junit-xml sotest-report.xml
+      --extract-records-to https://elastic.vpn.cyberus-technology.de
+  artifacts:
+    paths:
+      - sotest-report.xml
+    reports:
+      junit: sotest-report.xml
+    when: always

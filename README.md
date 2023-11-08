@@ -43,8 +43,8 @@ cmake .. -G Ninja -DCMAKE_INSTALL_PREFIX=./install && ninja
 
 ## Running the Guest Tests
 The guest test repo provides (CI) infrastructure that boots them on real
-hardware (**TODO, SOTEST**) as well as in virtual machines. They must succeed
-on real hardware but not when run in stock VMMs.
+hardware as well as in virtual machines. They must succeed on real hardware but
+not necessarily when run in stock VMMs.
 
 ### Nix
 The `release.nix` file exports a rich `testRuns` attribute that runs tests
@@ -58,3 +58,7 @@ $ nix-build nix/release.nix -A testRuns.qemu.kvm.default.hello-world
 $ nix-build nix/release.nix -A testRuns.qemu.kvm.multiboot.hello-world
 $ nix-build nix/release.nix -A testRuns.chv.kvm.xen-pvh.hello-world
 ```
+
+The SoTest bundle can be obtained by running
+
+`$ nix-build nix/release.nix -A sotest`.

@@ -27,14 +27,14 @@ let
       dontFixup = true;
     };
 
-  # TODO upstream to cbspkgs
   testAsEFI =
     name:
     let
       grubCfg = writeText "grub.cfg" ''
         set timeout=0
         menuentry 'Test' {
-          multiboot /boot/kernel --serial
+          # We need multiboot2 to get the ACPI RSDP.
+          multiboot2 /boot/kernel --serial
         }
       '';
     in
@@ -50,7 +50,7 @@ let
         --output $out/${name}.efi \
         --directory ${grub2_efi}/lib/grub/x86_64-efi \
         "/boot/grub/grub.cfg=${grubCfg}" \
-        "/boot/kernel=${cmakeProj}/${name}.elf32"
+        "/boot/kernel=${cmakeProj}/${name}.elf64"
         # ^ This is poorly documented, but the tool allows to specify key-value
         # pairs where the value on the right, a file, will be embedded into the
         # "(memdisk)" volume inside the grub image. -> "Graft point syntax"
