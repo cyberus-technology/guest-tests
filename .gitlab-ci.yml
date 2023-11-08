@@ -64,12 +64,88 @@ test:nix-shell:
   script:
     - nix-shell --pure --run "echo Works"
 
-test:integration:
+# All test use the same base to boot. Hence, we test here that the hello-world
+# test comes up.
+
+test:boot:qemu:multiboot1:
   <<: *nix_build_template
   stage: test
   variables:
     # For sotest-protocol-parser
     NIXPKGS_ALLOW_UNFREE: 1
   script:
-    - nix-build nix/release.nix -A runTests.kvm.qemu
-    - nix-build nix/release.nix -A runTests.kvm.chv
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.multiboot.hello-world
+
+test:boot:qemu:iso:
+  <<: *nix_build_template
+  stage: test
+  variables:
+    NIXPKGS_ALLOW_UNFREE: 1
+  script:
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.iso.hello-world
+
+test:boot:qemu:efi:
+  <<: *nix_build_template
+  stage: test
+  variables:
+    NIXPKGS_ALLOW_UNFREE: 1
+  script:
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.efi.hello-world
+
+test:boot:chv:xen_pvh:
+  <<: *nix_build_template
+  stage: test
+  variables:
+    NIXPKGS_ALLOW_UNFREE: 1
+  script:
+    - nix-build nix/release.nix -A testRuns.chv.kvm.xen-pvh.hello-world
+
+# We run all guest tests but allow them to fail. They are made for real
+# hardware and our own virtualization solutions, which aren't tested here.
+test:all_guest_tests:
+  <<: *nix_build_template
+  stage: test
+  allow_failure: true
+  variables:
+    NIXPKGS_ALLOW_UNFREE: 1
+  script:
+    # This list is generated using:
+    # nix-build nix/release.nix -A testNames && cat result | xargs -I {} printf "- nix-build nix/release.nix -A testRuns.qemu.chv.default.%s || true\n"
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.cpuid || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.debugport || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.emulator || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.emulator-syscall || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.exceptions || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.fpu || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.hello-world || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.lapic-modes || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.lapic-priority || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.lapic-timer || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.msr || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.pagefaults || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.pit-timer || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.sgx || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.sgx-launch-control || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.tsc || true
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.default.vmx || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.cpuid || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.debugport || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.emulator || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.emulator-syscall || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.exceptions || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.fpu || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.hello-world || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.lapic-modes || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.lapic-priority || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.lapic-timer || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.msr || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.pagefaults || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.pit-timer || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.sgx || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.sgx-launch-control || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.tsc || true
+    - nix-build nix/release.nix -A testRuns.chv.kvm.default.vmx || true
+
+
+
+
