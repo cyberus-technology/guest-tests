@@ -9,6 +9,8 @@
 #include <stdint.h>
 
 #include "console.hpp"
+#include "toyos/acpi_tables.hpp"
+#include "toyos/pci/bus.hpp"
 #include "toyos/util/algorithm.hpp"
 #include "toyos/util/interval.hpp"
 #include "toyos/x86/arch.hpp"
@@ -135,11 +137,70 @@ struct bda_serial_config
     std::array<uint16_t, 4> ports;
 };
 
+/**
+ * Finds the serial port in the BDA or returns the default COM1 port if it is
+ * not present.
+ * @return
+ */
 inline uint16_t find_serial_port_in_bda()
 {
     bda_serial_config* bda{ reinterpret_cast<bda_serial_config*>(bda_serial_config::BDA_SERIAL_ADDR) };
     return find_if_or(
         bda->ports, [](auto p) { return p; }, SERIAL_PORT_DEFAULT);
+}
+
+/**
+ * Applies port offset quirks for a list of known PCI serial cards and returns
+ * the actual I/O port.
+ */
+inline uint16_t serial_port_offset_quirks(uint16_t iobase, uint16_t vendor, uint16_t device)
+{
+    // XR16850 (WCH382) PCIe 2 port serial card.
+    if (vendor == 0x1c00 and device == 0x3253) {
+        return iobase + 0xc0;
+    }
+
+    // No additional offset quirks required.
+    return iobase;
+}
+
+/**
+ * Try to discover a serial port.
+ * We try to discover PCI Serial devices as first option, afterwards the BDA is
+ * searched. If none of the above discovery mechanisms detects a serial port,
+ * the default COM1 port is used.
+*/
+inline uint16_t discover_serial_port(acpi_mcfg* mcfg)
+{
+    if (not mcfg) {
+        return find_serial_port_in_bda();
+    }
+
+    auto serial_port = find_serial_port_in_bda();
+
+    pci_bus pcibus(static_cast<phy_addr_t>(mcfg->base), mcfg->busses());
+    auto pci_serial_dev{
+        std::find_if(pcibus.begin(), pcibus.end(), [](const pci_device& dev) { return dev.is_pci_serial(); })
+    };
+
+    if (pci_serial_dev == pcibus.end()) {
+        return serial_port;
+    }
+
+    for (unsigned i{ 0 }; i < PCI_NUM_BARS; i++) {
+        auto bar{ (*pci_serial_dev).bar(i) };
+        if (not bar->is_pio()) {
+            continue;
+        }
+
+        serial_port = serial_port_offset_quirks(
+            bar->address(),
+            (*pci_serial_dev).vendor_id(),
+            (*pci_serial_dev).device_id());
+        break;
+    }
+
+    return serial_port;
 }
 
 void serial_init(uint16_t port_begin);

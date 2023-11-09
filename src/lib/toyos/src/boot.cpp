@@ -124,8 +124,8 @@ static void initialize_cmdline(const std::string& cmdline, acpi_mcfg* mcfg)
     auto serial_option = p.option_value(option_index::SERIAL);
     auto xhci_option = p.option_value(option_index::XHCI);
 
-    if (serial_option) {
-        uint16_t port = *serial_option != "" ? std::stoull(*serial_option, nullptr, 16) : find_serial_port_in_bda();
+    if (serial_option.has_value()) {
+        uint16_t port = serial_option.value().empty() ? discover_serial_port(mcfg) : std::stoull(serial_option.value(), nullptr, 16);
         serial_init(port);
         add_printf_backend(console_serial::putchar);
     }
@@ -161,7 +161,7 @@ static void initialize_cmdline(const std::string& cmdline, acpi_mcfg* mcfg)
         }
     }
     else {
-        serial_init(find_serial_port_in_bda());
+        serial_init(discover_serial_port(mcfg));
         add_printf_backend(console_serial::putchar);
     }
 
