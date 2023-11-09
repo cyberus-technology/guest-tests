@@ -7,7 +7,7 @@ stages:
   - build
   - test
 
-.build_regular_template: &build_regular_template
+.build_regular_template:
   stage: build
   image: gcc:12
   before_script:
@@ -19,7 +19,7 @@ stages:
 
 # Gitlab CI environment template that enables Nix on the command line,
 # including nix-build and nix-shell.
-.nix_build_template: &nix_build_template
+.nix_build_template:
   interruptible: true
   tags:
     - native-nix-v2
@@ -28,46 +28,46 @@ stages:
     - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "ssh://git@${CI_SERVER_HOST}/"
 
 check:format:
-  <<: *nix_build_template
+  extends:
+    - .nix_build_template
   stage: check
   script:
     - nix-shell --run "./scripts/format.sh --check"
 
 check:nix-shell:
-  <<: *nix_build_template
+  extends:
+    - .nix_build_template
   stage: check
   script:
     - nix-shell --pure --run "echo nix-shell works"
 
 build:regular_debug:
-  <<: *build_regular_template
+  extends:
+    - .build_regular_template
   variables:
     CMAKE_BUILD_TYPE: "Debug"
 
 build:regular_release:
-  <<: *build_regular_template
+  extends:
+    - .build_regular_template
   variables:
     CMAKE_BUILD_TYPE: "Release"
 
+# Tests the Nix build and that the promised attribute structure is valid.
 build:nix:
-  <<: *nix_build_template
+  extends:
+    - .nix_build_template
   stage: build
   script:
-    - nix-build -A tests && test -f result/lapic-timer.elf32
-    - nix-build -A tests && test -f result/lapic-timer.elf64
-    - nix-build -A tests && test -f result/lapic-timer.iso
-    - nix-build -A tests.lapic-timer && test -f result/lapic-timer.elf32
-    - nix-build -A tests.lapic-timer && test -f result/lapic-timer.elf64
-    - nix-build -A tests.lapic-timer && test -f result/lapic-timer.iso
-    - nix-build -A tests.lapic-timer.elf32 && test -h result
-    - nix-build -A tests.lapic-timer.elf64 && test -h result
-    - nix-build -A tests.lapic-timer.iso && test -h result
+    - nix-build nix/release.nix -A verifyTestsAttributeStructure
+
 
 # All test use the same base to boot. Hence, we test here that the hello-world
 # test comes up.
 
 test:vm:hello-world-boots:multiboot1:
-  <<: *nix_build_template
+  extends:
+    - .nix_build_template
   stage: test
   variables:
     # For sotest-protocol-parser
@@ -76,7 +76,8 @@ test:vm:hello-world-boots:multiboot1:
     - nix-build nix/release.nix -A testRuns.qemu.kvm.multiboot.hello-world
 
 test:vm:hello-world-boots:iso:
-  <<: *nix_build_template
+  extends:
+    - .nix_build_template
   stage: test
   variables:
     NIXPKGS_ALLOW_UNFREE: 1
@@ -84,7 +85,8 @@ test:vm:hello-world-boots:iso:
     - nix-build nix/release.nix -A testRuns.qemu.kvm.iso.hello-world
 
 test:vm:hello-world-boots:efi:
-  <<: *nix_build_template
+  extends:
+    - .nix_build_template
   stage: test
   variables:
     NIXPKGS_ALLOW_UNFREE: 1
@@ -92,7 +94,8 @@ test:vm:hello-world-boots:efi:
     - nix-build nix/release.nix -A testRuns.qemu.kvm.efi.hello-world
 
 test:vm:hello-world-boots:xen-pvh:
-  <<: *nix_build_template
+  extends:
+    - .nix_build_template
   stage: test
   variables:
     NIXPKGS_ALLOW_UNFREE: 1
@@ -102,7 +105,8 @@ test:vm:hello-world-boots:xen-pvh:
 # We run all guest tests but allow them to fail. They are made for real
 # hardware and our own virtualization solutions, which aren't tested here.
 test:vm:kvm:
-  <<: *nix_build_template
+  extends:
+    - .nix_build_template
   stage: test
   # No real dependency but doesn't make sense to run without the basic tests.
   needs:
@@ -144,7 +148,8 @@ test:vm:kvm:
     - nix-build nix/release.nix -A testRuns.${VMM}.kvm.default.${GUEST_TEST}
 
 test:sotest:submit:
-  <<: *nix_build_template
+  extends:
+    - .nix_build_template
   stage: test
   # No real dependency but doesn't make sense to run without the basic tests.
   needs:
@@ -167,7 +172,8 @@ test:sotest:submit:
       - sotest_testrun_id.txt
 
 test:sotest:poll:
-  <<: *nix_build_template
+  extends:
+    - .nix_build_template
   stage: test
   needs:
     - test:sotest:submit
