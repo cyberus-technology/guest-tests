@@ -3,7 +3,7 @@ include:
   - template: 'Workflows/MergeRequest-Pipelines.gitlab-ci.yml'
 
 stages:
-  - style
+  - check
   - build
   - test
 
@@ -27,12 +27,17 @@ stages:
     - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "git@${CI_SERVER_HOST}:"
     - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "ssh://git@${CI_SERVER_HOST}/"
 
-
-style:format:
+check:format:
   <<: *nix_build_template
-  stage: style
+  stage: check
   script:
     - nix-shell --run "./scripts/format.sh --check"
+
+check:nix-shell:
+  <<: *nix_build_template
+  stage: check
+  script:
+    - nix-shell --pure --run "echo nix-shell works"
 
 build:regular_debug:
   <<: *build_regular_template
@@ -57,12 +62,6 @@ build:nix:
     - nix-build -A tests.lapic-timer.elf32 && test -h result
     - nix-build -A tests.lapic-timer.elf64 && test -h result
     - nix-build -A tests.lapic-timer.iso && test -h result
-
-test:nix-shell:
-  <<: *nix_build_template
-  stage: test
-  script:
-    - nix-shell --pure --run "echo Works"
 
 # All test use the same base to boot. Hence, we test here that the hello-world
 # test comes up.
