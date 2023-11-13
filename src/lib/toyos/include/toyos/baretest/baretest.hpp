@@ -85,6 +85,7 @@ namespace baretest
     {                                                                         \
         printf("test case: %s\n", __func__);                                  \
         if (not(condition)) {                                                 \
+            printf("- skipping as condition is NOT met: `" #condition "`\n"); \
             return baretest::test_case::result_t::SKIPPED;                    \
         }                                                                     \
         int val = setjmp(baretest::get_env());                                \
