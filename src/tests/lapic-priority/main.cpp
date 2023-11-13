@@ -730,11 +730,16 @@ static void fast_nmi_test_handler(intr_regs* regs)
     }
 }
 
-// This test checks whether the VMM handles concurrent NMI requests correctly. To do so, we
-// send an NMI to the VCPU and request another NMI while in NMI_BLOCKING state. This causes the
-// NMI handler to be executed all the time. At the same time, we program the redirection entry
-// for the HPET to also generate an NMI. The hope here is that the NMI triggered by the HPET will
+// This test checks whether the VMM handles concurrent NMI requests correctly.
+// To do so, we send an NMI to the VCPU and request another NMI while in
+// NMI_BLOCKING state. This causes the NMI handler to be executed all the time.
+// At the same time, we program the redirection entry for the HPET to also
+// generate an NMI. The hope here is that the NMI triggered by the HPET will
 // arrive while the VMM is handling the other NMI.
+//
+// We experienced some problems with this guest test in the past on some
+// machines, as this is a rather obscure but still valid case. Platforms not
+// supporting this natively are considered non-spec-compliant.
 TEST_CASE_CONDITIONAL(fast_triggering_NMIs_should_not_kill_vmm, hpet_available())
 {
     drain_interrupts();
@@ -748,8 +753,16 @@ TEST_CASE_CONDITIONAL(fast_triggering_NMIs_should_not_kill_vmm, hpet_available()
 
     using redirection_entry = ioapic::redirection_entry;
     auto lapic_id{ (read_from_register(LAPIC_ID) >> LAPIC_ID_SHIFT) & LAPIC_ID_MASK };
-    auto irt{ redirection_entry(hpet_gsi, NMI_VECTOR, lapic_id, redirection_entry::trigger::EDGE, redirection_entry::dlv_mode::FIXED) };
-    irt.delivery_mode(ioapic::redirection_entry::dlv_mode::NMI);
+
+    auto irt{
+        redirection_entry(
+            hpet_gsi,
+            NMI_VECTOR,
+            lapic_id,
+            redirection_entry::dlv_mode::NMI,
+            redirection_entry::trigger_mode::EDGE,
+            redirection_entry::pin_polarity::ACTIVE_HIGH)
+    };
     io_apic.set_irt(irt);
 
     while (irq_count < NUM_FAST_NMI) {
