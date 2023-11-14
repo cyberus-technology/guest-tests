@@ -53,11 +53,12 @@ TEST_CASE_CONDITIONAL(local_apic_timer_uses_tsc_as_configured, supports_tsc_dead
 {
     lapic_enabler lenabler;
 
+    /* never triggers because we're executing with interrupts disabled */
     write_lvt_entry(lvt_entry::TIMER,
-                    { .vector = 0x123 /* never triggers because we're executing with interrupts disabled */,
-                      .timer_mode = lvt_timer_mode::DEADLINE,
-                      .dlv_mode = lvt_dlv_mode::FIXED,
-                      .mask = lvt_mask::UNMASKED });
+                    lvt_entry_t::timer(
+                        0x123,
+                        lvt_mask::UNMASKED,
+                        lvt_timer_mode::DEADLINE));
 
     for (auto tsc : test_tscs) {
         // Set the TSC to a specific value

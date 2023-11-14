@@ -192,16 +192,12 @@ void prepare_pit_irq_env(PitInterruptDeliveryStrategy strategy)
     if (lapic_test_tools::global_apic_enabled()) {
         lapic_test_tools::write_lvt_entry(
             lvt_entry::LINT0,
-            {
-                .vector = LAPIC_LINT0_PIC_IRQ_VECTOR,
-                // This looks a bit strange, but the helper that we have is
-                // mostly only used for the timer register. This value is
-                // ignored by LINT0.
-                .timer_mode = lvt_timer_mode ::ONESHOT,
-                // TODO we could also deliver this as EXTINT (additionally?)
-                .dlv_mode = lvt_dlv_mode::FIXED,
-                .mask = mask_lint0 ? lvt_mask::MASKED : lvt_mask::UNMASKED,
-            });
+            lvt_entry_t::lintX(
+                LAPIC_LINT0_PIC_IRQ_VECTOR,
+                mask_lint0 ? lvt_mask::MASKED : lvt_mask::UNMASKED,
+                lvt_pin_polarity::ACTIVE_HIGH,
+                lvt_trigger_mode::EDGE,
+                lvt_dlv_mode::FIXED));
     }
 
     ioapic io_apic;

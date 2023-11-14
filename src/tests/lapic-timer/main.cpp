@@ -153,7 +153,11 @@ TEST_CASE(timer_mode_periodic_should_cycle)
 {
     irq_handler::guard _(lapic_irq_handler);
 
-    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .timer_mode = lvt_timer_mode::PERIODIC, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::MASKED });
+    write_lvt_entry(lvt_entry::TIMER,
+                    lvt_entry_t::timer(
+                        MAX_VECTOR,
+                        lvt_mask::MASKED,
+                        lvt_timer_mode::PERIODIC));
 
     write_divide_conf(1);
     write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
@@ -187,7 +191,11 @@ TEST_CASE_CONDITIONAL(higher_divide_conf_should_lead_to_slower_cycles, false)
     std::vector<uint64_t> total_times;
     drain_periodic_timer_irqs();
 
-    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .timer_mode = lvt_timer_mode::PERIODIC, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::MASKED });
+    write_lvt_entry(lvt_entry::TIMER,
+                    lvt_entry_t::timer(
+                        MAX_VECTOR,
+                        lvt_mask::MASKED,
+                        lvt_timer_mode::PERIODIC));
 
     for (uint32_t conf = 1; conf <= 128; conf *= 2) {
         write_divide_conf(conf);
@@ -333,7 +341,11 @@ TEST_CASE(switch_from_oneshot_to_periodic_does_not_disarm_the_timer)
     irq_handler::guard _(lapic_irq_handler);
 
     // Start in oneshot mode.
-    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .timer_mode = lvt_timer_mode::ONESHOT, .mask = lvt_mask::MASKED });
+    write_lvt_entry(lvt_entry::TIMER,
+                    lvt_entry_t::timer(
+                        MAX_VECTOR,
+                        lvt_mask::MASKED,
+                        lvt_timer_mode::ONESHOT));
 
     // Start the timer. Take the `DEADLINE_OFFSET` so that the timer interrupt
     // will (hopefully) not trigger before we switch modes.
@@ -368,7 +380,11 @@ TEST_CASE(switch_from_oneshot_to_periodic_after_oneshot_expired_does_not_rearm_t
 {
     irq_handler::guard _(lapic_irq_handler);
 
-    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .timer_mode = lvt_timer_mode::ONESHOT, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::MASKED });
+    write_lvt_entry(lvt_entry::TIMER,
+                    lvt_entry_t::timer(
+                        MAX_VECTOR,
+                        lvt_mask::MASKED,
+                        lvt_timer_mode::ONESHOT));
 
     write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
     wait_for_interrupts(counting_irq_handler, 1);
@@ -383,7 +399,12 @@ TEST_CASE(switch_from_oneshot_to_periodic_after_oneshot_expired_does_not_rearm_t
 
 TEST_CASE(switch_from_periodic_to_oneshot_eventually_stops_timer)
 {
-    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .timer_mode = lvt_timer_mode::PERIODIC, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::MASKED });
+    write_lvt_entry(lvt_entry::TIMER,
+
+                    lvt_entry_t::timer(
+                        MAX_VECTOR,
+                        lvt_mask::MASKED,
+                        lvt_timer_mode::PERIODIC));
 
     // Ensure the periodic timer ticks multiple times.
     write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
@@ -399,7 +420,11 @@ TEST_CASE(switch_from_periodic_to_oneshot_eventually_stops_timer)
     // handler first.
     irq_handler::guard _(lapic_irq_handler);
     irq_info.reset();
-    write_lvt_entry(lvt_entry::TIMER, { .vector = MAX_VECTOR, .timer_mode = lvt_timer_mode::ONESHOT, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::UNMASKED });
+    write_lvt_entry(lvt_entry::TIMER,
+                    lvt_entry_t::timer(
+                        MAX_VECTOR,
+                        lvt_mask::UNMASKED,
+                        lvt_timer_mode::ONESHOT));
 
     enable_interrupts();
     // Wait for at one interrupt.

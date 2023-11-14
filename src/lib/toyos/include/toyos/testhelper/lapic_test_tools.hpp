@@ -72,6 +72,10 @@ namespace lapic_test_tools
     constexpr uint32_t LVT_DLV_MODE_MASK{ 0b111 };
     constexpr uint32_t LVT_MASK_SHIFT{ 16 };
     constexpr uint32_t LVT_MASK_MASK{ 0b1 };
+    constexpr uint32_t LVT_TRIGGER_MODE_SHIFT{ 15 };
+    constexpr uint32_t LVT_TRIGGER_MODE_MASK{ 0b1 };
+    constexpr uint32_t LVT_PIN_POLARITY_SHIFT{ 13 };
+    constexpr uint32_t LVT_PIN_POLARITY_MASK{ 0b1 };
     constexpr uint32_t LAPIC_TPR_CLASS_SHIFT{ 4 };
     constexpr uint32_t LAPIC_TPR_CLASS_MASK{ 0xff };
     constexpr uint32_t ICR_DEST_MASK{ 0x3 };
@@ -136,6 +140,12 @@ namespace lapic_test_tools
         LOGICAL = 1,
     };
 
+    enum class lvt_trigger_mode : uint32_t
+    {
+        EDGE = 0,
+        LEVEL = 1,
+    };
+
     enum class lvt_dlv_mode : uint32_t
     {
         FIXED = 0,
@@ -145,6 +155,13 @@ namespace lapic_test_tools
         INIT = 5,
         START_UP = 6,
         EXTINT = 7,
+    };
+
+    /// Pin polarity.
+    enum class lvt_pin_polarity : uint32_t
+    {
+        ACTIVE_HIGH = 0,
+        ACTIVE_LOW = 1,
     };
 
     enum class lvt_timer_mode : uint32_t
@@ -157,9 +174,31 @@ namespace lapic_test_tools
     struct lvt_entry_t
     {
         uint32_t vector;
-        lvt_timer_mode timer_mode;
         lvt_dlv_mode dlv_mode;
+        lvt_pin_polarity pin_polarity;
+        lvt_trigger_mode trigger_mode;
         lvt_mask mask;
+        lvt_timer_mode timer_mode;
+
+        lvt_entry_t(uint32_t vector_, lvt_dlv_mode dlv_mode_, lvt_pin_polarity pin_polarity_, lvt_trigger_mode trigger_mode_, lvt_mask mask_, lvt_timer_mode timer_mode_);
+
+        /**
+         * Constructor with the relevant fields for the LVT timer register.
+         */
+        static lvt_entry_t timer(
+            uint32_t vector_,
+            lapic_test_tools::lvt_mask mask_,
+            lapic_test_tools::lvt_timer_mode timer_mode_);
+
+        /**
+         * Constructor with the relevant fields for a LVT lintX register.
+         */
+        static lvt_entry_t lintX(
+            uint32_t vec_,
+            lvt_mask mask_,
+            lvt_pin_polarity pin_polarity_,
+            lvt_trigger_mode trigger_mode,
+            lvt_dlv_mode dlv_mode_);
     };
 
     void mask_pic();

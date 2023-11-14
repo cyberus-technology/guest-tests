@@ -44,13 +44,13 @@ void prologue()
 {
     software_apic_enable();
     write_spurious_vector(SPURIOUS_TEST_VECTOR);
-    write_lvt_entry(lvt_entry::LINT0, { .vector = 0,
-                                        // This looks a bit strange, but the helper that we have is
-                                        // mostly only used for the timer register. This value is
-                                        // ignored by LINT0.
-                                        .timer_mode = lvt_timer_mode::ONESHOT,
-                                        .dlv_mode = lvt_dlv_mode::EXTINT,
-                                        .mask = lvt_mask::UNMASKED });
+    write_lvt_entry(lvt_entry::LINT0,
+                    lvt_entry_t::lintX(
+                        MAX_VECTOR,
+                        lvt_mask::UNMASKED,
+                        lvt_pin_polarity::ACTIVE_HIGH,
+                        lvt_trigger_mode::EDGE,
+                        lvt_dlv_mode::EXTINT));
     irq_handler::guard _(drain_irq);
     enable_interrupts_for_single_instruction();
     std::iota(std::begin(expected_vectors), std::end(expected_vectors), MIN_VECTOR);

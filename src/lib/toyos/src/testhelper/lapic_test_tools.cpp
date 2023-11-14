@@ -99,6 +99,12 @@ void lapic_test_tools::write_lvt_entry(lvt_entry entry, lvt_entry_t data)
     // put dlv mode into data
     lvt_data &= ~(LVT_DLV_MODE_MASK << LVT_DLV_MODE_SHIFT);
     lvt_data |= (((static_cast<uint32_t>(data.dlv_mode)) & LVT_DLV_MODE_MASK) << LVT_DLV_MODE_SHIFT);
+    // put trigger_mode into data
+    lvt_data &= ~(LVT_TRIGGER_MODE_MASK << LVT_TRIGGER_MODE_SHIFT);
+    lvt_data |= (((static_cast<uint32_t>(data.trigger_mode)) & LVT_TRIGGER_MODE_MASK) << LVT_TRIGGER_MODE_SHIFT);
+    // put pin-polarity into data
+    lvt_data &= ~(LVT_PIN_POLARITY_MASK << LVT_PIN_POLARITY_SHIFT);
+    lvt_data |= (((static_cast<uint32_t>(data.pin_polarity)) & LVT_PIN_POLARITY_MASK) << LVT_PIN_POLARITY_SHIFT);
     // put mask into data
     lvt_data &= ~(LVT_MASK_MASK << LVT_MASK_SHIFT);
     lvt_data |= (((static_cast<uint32_t>(data.mask)) & LVT_MASK_MASK) << LVT_MASK_SHIFT);
@@ -177,7 +183,11 @@ uint32_t lapic_test_tools::ticks_per_second(uint32_t divisor)
         uint32_t previous_init_count{ read_from_register(LAPIC_INIT_COUNT) };
 
         write_divide_conf(1);
-        write_lvt_entry(lvt_entry::TIMER, { .vector = 0x0, .timer_mode = lvt_timer_mode::ONESHOT, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::MASKED });
+        write_lvt_entry(lvt_entry::TIMER,
+                        lvt_entry_t::timer(
+                            0x0,
+                            lvt_mask::MASKED,
+                            lvt_timer_mode::ONESHOT));
 
         wait_till_next_second();
         write_to_register(LAPIC_INIT_COUNT, LAPIC_MAX_COUNT);
@@ -199,7 +209,12 @@ void lapic_test_tools::enable_periodic_timer(uint32_t interrupt_vector, uint32_t
     disable_interrupts();
 
     write_divide_conf(LAPIC_DIVISOR);
-    write_lvt_entry(lvt_entry::TIMER, { .vector = interrupt_vector, .timer_mode = lvt_timer_mode::PERIODIC, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::UNMASKED });
+    write_lvt_entry(
+        lvt_entry::TIMER,
+        lvt_entry_t::timer(
+            interrupt_vector,
+            lvt_mask::UNMASKED,
+            lvt_timer_mode::PERIODIC));
     uint32_t init_count = uint64_t(ticks_per_second(LAPIC_DIVISOR)) * period_in_ms / 1000ul;
     write_to_register(LAPIC_INIT_COUNT, init_count);
 
@@ -298,3 +313,48 @@ bool lapic_test_tools::supports_tsc_deadline_mode()
 {
     return cpuid(0x1).ecx & LVL_0000_0001_ECX_TSCD;
 }
+
+lapic_test_tools::lvt_entry_t
+lapic_test_tools::lvt_entry_t::timer(uint32_t vector_,
+                                     lapic_test_tools::lvt_mask mask_,
+                                     lapic_test_tools::lvt_timer_mode timer_mode_)
+{
+    return lapic_test_tools::lvt_entry_t{
+        vector_,
+        lapic_test_tools::lvt_dlv_mode::FIXED /* zero */,
+        lapic_test_tools::lvt_pin_polarity::ACTIVE_HIGH /* zero */,
+        lapic_test_tools::lvt_trigger_mode::EDGE /* zero */,
+        mask_,
+        timer_mode_
+    };
+}
+
+lapic_test_tools::lvt_entry_t
+lapic_test_tools::lvt_entry_t::lintX(uint32_t vec_,
+                                     lvt_mask mask_,
+                                     lvt_pin_polarity pin_polarity_,
+                                     lvt_trigger_mode trigger_mode,
+                                     lvt_dlv_mode dlv_mode_)
+{
+    return lapic_test_tools::lvt_entry_t{
+        vec_,
+        dlv_mode_,
+        pin_polarity_,
+        trigger_mode,
+        mask_,
+        lapic_test_tools::lvt_timer_mode::ONESHOT /* zero */
+    };
+}
+
+lapic_test_tools::lvt_entry_t::lvt_entry_t(uint32_t vector_,
+                                           lapic_test_tools::lvt_dlv_mode dlv_mode_,
+                                           lapic_test_tools::lvt_pin_polarity pin_polarity_,
+                                           lapic_test_tools::lvt_trigger_mode trigger_mode_,
+                                           lapic_test_tools::lvt_mask mask_,
+                                           lapic_test_tools::lvt_timer_mode timer_mode_)
+    : vector(vector_),
+      dlv_mode(dlv_mode_),
+      pin_polarity(pin_polarity_),
+      trigger_mode(trigger_mode_),
+      mask(mask_),
+      timer_mode(timer_mode_) {}
