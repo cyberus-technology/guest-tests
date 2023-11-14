@@ -4,11 +4,10 @@
 #pragma once
 
 #include <toyos/util/cast_helpers.hpp>
+#include <toyos/util/interval.hpp>
 #include <toyos/util/math.hpp>
 #include <toyos/util/trace.hpp>
 #include <toyos/x86/arch.hpp>
-
-#include <toyos/util/interval.hpp>
 
 /**
  * Simple I/O APIC abstraction.
@@ -78,23 +77,20 @@ class ioapic
     /**
      * Redirection entry abstraction.
      *
-     * This helper structure can be used to interpret
-     * redirection entries and manipulate it.
+     * This helper structure can be used to interpret redirection entries and
+     * manipulate it.
      *
-     * It can also be used to construct a new one for
-     * given values. Currently, the delivery mode is always
-     * FIXED, the polarity is always active low, and the entry
-     * is initially unmasked.
+     * It can also be used to construct a new one for given values.
      *
-     * Note that the entry is a copy. Modifications are not
-     * applied immediately. The intended use is to get
-     * or construct an entry, and then update the I/O APIC
-     * using the set_irt() method.
+     * Note that the entry is a standalone copy. Modifications are not
+     * applied immediately to the IoApic in hardware. The intended use is to get
+     * or construct an entry, and then update the I/O APIC using the set_irt()
+     * method.
      */
     struct redirection_entry
     {
         /// Trigger mode of the interrupt
-        enum class trigger : uint8_t
+        enum class trigger_mode : uint8_t
         {
             EDGE = 0,   ///< Trigger on edge
             LEVEL = 1,  ///< Trigger on level
@@ -108,21 +104,36 @@ class ioapic
             EXTINT = 7,  ///< Ext Int delivery mode (PIC)
         };
 
+        /// Pin polarity.
+        enum class pin_polarity : uint8_t
+        {
+            ACTIVE_HIGH = 0,  ///< Polarity high.
+            ACTIVE_LOW = 1,   ///< Polarity low.
+        };
+
+        /// Destination mode. This field determines the interpretation of the
+        /// Destination field.
+        enum class dst_mode : uint8_t
+        {
+            PHYSICAL = 0,  ///< Physical destination mode.
+            LOGICAL = 1,   ///< Logical destination mode.
+        };
+
         /// Definitions of the individual components of the bitfield
         enum bitmasks
         {
-            VECTOR_BITS = 8,   ///< Number of bits that form a vector
-            VECTOR_SHIFT = 0,  ///< Position of the vector
+            VECTOR_BITS = 8,   ///< Number of bits that form a set_vector
+            VECTOR_SHIFT = 0,  ///< Position of the set_vector
 
             DLV_MODE_BITS = 3,   ///< Number of bits that form a delivery mode
             DLV_MODE_SHIFT = 8,  ///< Position of the delivery mode
 
-            DEST_LOGICAL = 1u << 11,  ///< Logical destination bit
-            SEND_PENDING = 1u << 12,  ///< Send pending bit
-            POLARITY_LOW = 1u << 13,  ///< Active low bit
-            REMOTE_IRR = 1u << 14,    ///< Remote IRR bit
-            TRIGGER_MODE = 1u << 15,  ///< Trigger mode bit
-            MASKED = 1u << 16,        ///< Mask bit
+            DEST_MODE_SHIFT = 1u << 11,     ///< Position of the destination mode
+            SEND_PENDING = 1u << 12,        ///< Send pending bit
+            PIN_POLARITY_SHIFT = 1u << 13,  ///< Position of the pin polarity bit
+            REMOTE_IRR = 1u << 14,          ///< Remote IRR bit
+            TRIGGER_MODE = 1u << 15,        ///< Trigger mode bit
+            MASKED = 1u << 16,              ///< Mask bit
 
             DEST_BITS = 8,    ///< Number of bits that form a destination
             DEST_SHIFT = 56,  ///< Position of the destination
@@ -133,48 +144,40 @@ class ioapic
         redirection_entry(uint8_t pin, uint64_t value)
             : index(pin), raw(value) {}
 
-        /// Constructs a redirection entry for a given pin, vector, destination, and edge/level configuration.
-        /// The entry uses physical destination mode.
-        redirection_entry(uint8_t pin, uint8_t vec, uint8_t dst, trigger trg, dlv_mode mode)
+        /// Constructs a redirection entry and unmasks it.
+        ///
+        /// Default behaviour is that IRQ 0-15 (exceptions) are edge-high,
+        /// whereas IRQ 16..IOAPIC_MAX_PIN are level-low.
+        ///
+        /// This is also what the original NOVA hypervisor configured
+        /// (https://github.com/udosteinberg/NOVA/blob/master/src/gsi.cpp#L42).
+        ///
+        /// This is not always the case, the correct trigger mode and
+        /// polarity depends on the ACPI PCI Routing table (_PRT), but it
+        /// requires a full ACPICA stack to parse the DSDT. In addition,
+        /// there may be ACPI source overrides which can override the _PRT.
+        /// And then there's the MP Table (legacy) which also defines
+        /// polarity and trigger mode. You need to combine all these
+        /// information to find the effective interrupt routing information.
+        /// Complicated stuff...
+        ///
+        /// More reference: https://people.freebsd.org/~jhb/papers/bsdcan/2007/article/node5.html
+        redirection_entry(
+            uint8_t pin /* also the index of the entry */,
+            uint8_t vec,
+            uint8_t dst,
+            dlv_mode dlv_mode_,
+            trigger_mode trigger_mode_,
+            pin_polarity pin_polarity_ = pin_polarity::ACTIVE_HIGH,
+            dst_mode dst_mode_ = dst_mode::PHYSICAL)
             : index(pin)
         {
-            vector(vec);
-            delivery_mode(mode);
-            dest(dst);
-            trigger_mode(trg);
-
-            // Default behaviour is that IRQ 0-15 (exceptions) are edge-high,
-            // whereas IRQ 16..IOAPIC_MAX_PIN is level-low.
-            //
-            // This is also what the original NOVA hypervisor configured
-            // (https://github.com/udosteinberg/NOVA/blob/master/src/gsi.cpp#L42).
-            //
-            // This is not always the case, the correct trigger mode and
-            // polarity depends on the ACPI PCI Routing table (_PRT), but it
-            // requires a full ACPICA stack to parse the DSDT. In addition,
-            // there may be ACPI source overrides which can override the _PRT.
-            // And then there's the MP Table (legacy) which also defines
-            // polarity and trigger mode. You need to combine all these
-            // information to find the effective interrupt routing information.
-            // Complicated stuff...
-            //
-            // More reference: https://people.freebsd.org/~jhb/papers/bsdcan/2007/article/node5.html
-            if (mode != dlv_mode::EXTINT) {
-                // In the case of an ExtInt, the vector is specified by the
-                // external interrupt controller.
-                ASSERT(vec >= 16, "Vector must be >= 16. Low numbers are reserved for exceptions.");
-            }
-            else {
-                ASSERT(trg == trigger::EDGE, "According to the IOAPIC spec, EXTINT interrupts are edge-triggered.");
-            }
-            // simplification: fine for our test cases
-            if (trg == trigger::LEVEL) {
-                set_active_low();
-            }
-            else {
-                set_active_high();
-            }
-
+            set_vector(vec);
+            set_delivery_mode(dlv_mode_);
+            set_dest(dst);
+            set_trigger_mode(trigger_mode_);
+            set_dst_mode(dst_mode_);
+            set_pin_polarity(pin_polarity_);
             unmask();
         }
 
@@ -187,14 +190,10 @@ class ioapic
         uint8_t vector() const
         {
             return raw;
-        }  ///< Returns the interrupt vector.
-        bool logical_dest() const
-        {
-            return raw & DEST_LOGICAL;
-        }  ///< Returns whether the destination is logical.
+        }  ///< Returns the interrupt set_vector.
         bool active_low() const
         {
-            return raw & POLARITY_LOW;
+            return raw & PIN_POLARITY_SHIFT;
         }  ///< Returns whether the polarity is active low.
         bool remote_irr() const
         {
@@ -209,38 +208,46 @@ class ioapic
             return raw >> DEST_SHIFT;
         }  ///< Returns the destination.
 
-        /// Returns the trigger mode of this redirection entry.
-        trigger trigger_mode() const
-        {
-            return trigger(raw & TRIGGER_MODE);
-        }
-
-        /// Sets the vector to vec.
-        void vector(uint8_t vec)
+        /// Sets the vector.
+        void set_vector(uint8_t vec)
         {
             raw &= ~math::mask(VECTOR_BITS, VECTOR_SHIFT);
             raw |= vec << VECTOR_SHIFT;
         }
 
-        /// Sets the delivery mode to dlv.
-        void delivery_mode(dlv_mode dlv)
+        /// Sets the delivery mode.
+        void set_delivery_mode(dlv_mode dlv)
         {
             raw &= ~math::mask(DLV_MODE_BITS, DLV_MODE_SHIFT);
             raw |= (to_underlying(dlv) & math::mask(DLV_MODE_BITS)) << DLV_MODE_SHIFT;
         }
 
-        /// Sets the destination to dst.
-        void dest(uint8_t dst)
+        /// Sets the destination.
+        void set_dest(uint8_t dst)
         {
             raw &= ~math::mask(DEST_BITS, DEST_SHIFT);
             raw |= static_cast<uint64_t>(dst) << DEST_SHIFT;
         }
 
-        /// Sets the trigger mode to trg.
-        void trigger_mode(trigger trg)
+        /// Sets the trigger mode.
+        void set_trigger_mode(trigger_mode trg)
         {
             raw &= ~TRIGGER_MODE;
             raw |= to_underlying(trg) * TRIGGER_MODE;
+        }
+
+        /// Sets the destination mode bit.
+        void set_dst_mode(dst_mode mode)
+        {
+            raw &= ~bitmasks::DEST_MODE_SHIFT;
+            raw |= to_underlying(mode) * DEST_MODE_SHIFT;
+        }
+
+        /// Sets the destination mode bit.
+        void set_pin_polarity(pin_polarity polarity)
+        {
+            raw &= ~bitmasks::PIN_POLARITY_SHIFT;
+            raw |= to_underlying(polarity) * PIN_POLARITY_SHIFT;
         }
 
         void mask()
@@ -254,19 +261,19 @@ class ioapic
 
         void set_active_low()
         {
-            raw |= POLARITY_LOW;
+            raw |= PIN_POLARITY_SHIFT;
         }  ///< Sets the polarity to active low.
         void set_active_high()
         {
-            raw &= ~POLARITY_LOW;
+            raw &= ~PIN_POLARITY_SHIFT;
         }  ///< Sets the polarity to active high.
 
         uint8_t index{ 0 };  ///< The redirection entry index.
         uint64_t raw{ 0 };   ///< The raw 64-bit value of this entry.
     };
 
-    /// Returns a copy of the redirection entry idx.
-    redirection_entry get_irt(uint8_t idx) const
+    /// Returns a copy of the redirection entry at `idx`.
+    [[nodiscard]] redirection_entry get_irt(uint8_t idx) const
     {
         auto lo = read(reg(to_underlying(reg::IRT0) + idx * 2));
         auto hi = read(reg(to_underlying(reg::IRT0) + idx * 2 + 1));

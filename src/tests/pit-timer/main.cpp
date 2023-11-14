@@ -47,9 +47,7 @@
 #include <toyos/testhelper/pit.hpp>
 
 using redirection_entry = ioapic::redirection_entry;
-using dlv_mode = ioapic::redirection_entry::dlv_mode;
 using lvt_entry = lapic_test_tools::lvt_entry;
-using lvt_entry_t = lapic_test_tools::lvt_entry_t;
 using lvt_mask = lapic_test_tools::lvt_mask;
 using lvt_dlv_mode = lapic_test_tools::lvt_dlv_mode;
 
@@ -210,13 +208,13 @@ void prepare_pit_irq_env(PitInterruptDeliveryStrategy strategy)
     redirection_entry pit_entry(IOAPIC_PIT_TIMER_IRQ_PIN,
                                 IOAPIC_PIT_TIMER_IRQ_VECTOR,
                                 0 /* BSP: physical destination mode */,
-                                redirection_entry::trigger::EDGE,
-                                redirection_entry::dlv_mode::FIXED);
+                                redirection_entry::dlv_mode::FIXED,
+                                redirection_entry::trigger_mode::EDGE);
     redirection_entry pic_entry(IOAPIC_PIC_IRQ_PIN,
                                 0 /* EXTINT; no vector raised by IOAPIC */,
                                 0 /* BSP: physical destination mode */,
-                                redirection_entry::trigger::EDGE,
-                                redirection_entry::dlv_mode::EXTINT);
+                                redirection_entry::dlv_mode::EXTINT,
+                                redirection_entry::trigger_mode::EDGE);
 
     if (mask_ioapic_pic) {
         pic_entry.mask();
