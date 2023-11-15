@@ -21,7 +21,7 @@ class lvt_guard
 
     ~lvt_guard()
     {
-        write_lvt_mask(entry, 1);
+        write_lvt_mask(entry, lvt_mask::MASKED);
     }
 
  private:

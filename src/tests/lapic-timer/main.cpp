@@ -122,12 +122,12 @@ void wait_for_interrupts(irq_handler_t handler, uint32_t irqs_expected)
     irq_handler::guard _(handler);
 
     enable_interrupts();
-    write_lvt_mask(lvt_entry::TIMER, 0);
+    write_lvt_mask(lvt_entry::TIMER, lvt_mask::UNMASKED);
 
     while (irq_count < irqs_expected) {
     }
 
-    write_lvt_mask(lvt_entry::TIMER, 1);
+    write_lvt_mask(lvt_entry::TIMER, lvt_mask::MASKED);
     disable_interrupts();
 
     send_eoi();

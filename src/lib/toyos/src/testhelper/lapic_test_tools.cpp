@@ -76,9 +76,9 @@ void lapic_test_tools::write_lvt_vector(lvt_entry entry, uint32_t vector)
     write_lvt_generic(entry, LVT_VECTOR_MASK, 0, vector);
 }
 
-void lapic_test_tools::write_lvt_mask(lvt_entry entry, uint32_t mask)
+void lapic_test_tools::write_lvt_mask(lvt_entry entry, lvt_mask mask)
 {
-    write_lvt_generic(entry, LVT_MASK_MASK, LVT_MASK_SHIFT, mask);
+    write_lvt_generic(entry, LVT_MASK_MASK, LVT_MASK_SHIFT, to_underlying(mask));
 }
 
 void lapic_test_tools::write_lvt_timer_mode(lvt_entry entry, lvt_timer_mode mode)

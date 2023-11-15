@@ -184,7 +184,7 @@ namespace lapic_test_tools
 
     void write_lvt_vector(lvt_entry entry, uint32_t vector);
 
-    void write_lvt_mask(lvt_entry entry, uint32_t mask);
+    void write_lvt_mask(lvt_entry entry, lvt_mask mask);
 
     void write_lvt_timer_mode(lvt_entry entry, lvt_timer_mode mode);
 
