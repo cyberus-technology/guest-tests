@@ -1,8 +1,9 @@
 let
   pkgs = import ./cbspkgs.nix;
 
-  allTests = pkgs.cyberus.guest-tests.tests;
-  allTestNames = builtins.attrNames allTests.passthru;
+  # All guest tests.
+  tests = pkgs.cyberus.guest-tests.tests;
+  testNames = builtins.attrNames tests.passthru;
 
   # Creates a QEMU command.
   createQemuCommand =
@@ -17,16 +18,16 @@ let
     in
     if bootMultiboot then {
       setup = "";
-      main = "${base} -kernel ${allTests.${testname}.elf32}";
+      main = "${base} -kernel ${tests.${testname}.elf32}";
     }
     else if bootIso then {
       setup = "";
-      main = "${base} -cdrom ${allTests.${testname}.iso}";
+      main = "${base} -cdrom ${tests.${testname}.iso}";
     }
     else if bootEfi then {
       setup = ''
         mkdir -p uefi/EFI/BOOT
-        install -m 0644 ${allTests.${testname}.efi} uefi/EFI/BOOT/BOOTX64.EFI
+        install -m 0644 ${tests.${testname}.efi} uefi/EFI/BOOT/BOOTX64.EFI
       '';
       main = "${base} -bios ${pkgs.OVMF.fd}/FV/OVMF.fd -drive format=raw,file=fat:rw:./uefi";
     }
@@ -38,7 +39,7 @@ let
     { testname }:
     {
       setup = "";
-      main = "${pkgs.cloud-hypervisor}/bin/cloud-hypervisor --memory size=256M --serial tty --console off --kernel ${allTests.${testname}.elf64}";
+      main = "${pkgs.cloud-hypervisor}/bin/cloud-hypervisor --memory size=256M --serial tty --console off --kernel ${tests.${testname}.elf64}";
     };
 
 
@@ -78,10 +79,39 @@ let
         "${testname}" = createTestRun testname classifier (vmmCommandForTest testname);
       } // acc)
       { }
-      allTestNames;
+      testNames;
+
+  # Script that tests if the complex structure of the "tests" attribute is
+  # compliant to the promised structure in the README.
+  verifyTestsAttributeStructure = pkgs.runCommandLocal "verify-tests-structure"
+    {
+      nativeBuildInputs = [ pkgs.file ];
+    } ''
+    set -euo pipefail
+
+    file --brief --dereference ${tests}/lapic-timer.elf32 | grep -q "ELF 32"
+    file --brief --dereference ${tests}/lapic-timer.elf64 | grep -q "ELF 64"
+    file --brief --dereference ${tests}/lapic-timer.iso | grep -q "ISOIMAGE"
+    file --brief --dereference ${tests}/lapic-timer.efi | grep -q "EFI application"
+
+    # This structure is expected for every test. We just test one specific.
+    file --brief --dereference ${tests.lapic-timer}/lapic-timer.elf32 | grep -q "ELF 32"
+    file --brief --dereference ${tests.lapic-timer}/lapic-timer.elf64 | grep -q "ELF 64"
+    file --brief --dereference ${tests.lapic-timer}/lapic-timer.iso | grep -q "ISOIMAGE"
+    file --brief --dereference ${tests.lapic-timer}/lapic-timer.efi | grep -q "EFI application"
+
+    # This structure is expected for every test. We just test one specific.
+    file --brief --dereference ${tests.lapic-timer.elf32} | grep -q "ELF 32"
+    file --brief --dereference ${tests.lapic-timer.elf64} | grep -q "ELF 64"
+    file --brief --dereference ${tests.lapic-timer.iso} | grep -q "ISOIMAGE"
+    file --brief --dereference ${tests.lapic-timer.efi} | grep -q "EFI application"
+
+    touch $out
+  '';
 in
 rec {
-  inherit (pkgs.cyberus.guest-tests) tests;
+  inherit tests;
+  inherit verifyTestsAttributeStructure;
 
   # Attribute set containing various configurations to run the guest tests in
   # a virtual machine.
@@ -127,7 +157,10 @@ rec {
 
   # Might be helpful for script-generated invocations of different tests.
   testNames = pkgs.runCommand "print-guest-test-names" { } ''
-    echo "${builtins.concatStringsSep "\n" allTestNames}" > $out
+    echo "${builtins.concatStringsSep "\n" testNames}" > $out
   '';
+
+  # SoTest bundle.
+  sotest = pkgs.callPackage ./sotest.nix { };
 
 }

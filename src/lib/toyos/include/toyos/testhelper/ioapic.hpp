@@ -144,24 +144,27 @@ class ioapic
         redirection_entry(uint8_t pin, uint64_t value)
             : index(pin), raw(value) {}
 
-        /// Constructs a redirection entry and unmasks it.
+        /// Constructs a redirection entry and unmasks it but doesn't commit it
+        /// to the hardware. By default, the pin polarity is ACTIVE_HIGH and
+        /// the destination mode is set to PHYSICAL.
         ///
-        /// Default behaviour is that IRQ 0-15 (exceptions) are edge-high,
-        /// whereas IRQ 16..IOAPIC_MAX_PIN are level-low.
+        /// Guidelines on how to specify the parameters:
+        /// - Delivery method NMI: The vector field is ignored as this cannot be
+        ///   anything except for vector 2.
+        /// - Default behaviour on the hardware is that IRQ 0-15 (exceptions)
+        ///   are edge-high, whereas IRQ 16..IOAPIC_MAX_PIN are level-low.
+        ///   This is also what the original NOVA hypervisor configured
+        ///   (https://github.com/udosteinberg/NOVA/blob/master/src/gsi.cpp#L42).
         ///
-        /// This is also what the original NOVA hypervisor configured
-        /// (https://github.com/udosteinberg/NOVA/blob/master/src/gsi.cpp#L42).
+        ///   This is not always the case, the correct trigger mode and
+        ///   polarity depends on the ACPI PCI Routing table (_PRT), but it
+        ///   requires a full ACPICA stack to parse the DSDT. In addition,
+        ///   there may be ACPI source overrides which can override the _PRT.
+        ///   And then there's the MP Table (legacy) which also defines
+        ///   polarity and trigger mode. You need to combine all these
+        ///   information to find the effective interrupt routing information.
         ///
-        /// This is not always the case, the correct trigger mode and
-        /// polarity depends on the ACPI PCI Routing table (_PRT), but it
-        /// requires a full ACPICA stack to parse the DSDT. In addition,
-        /// there may be ACPI source overrides which can override the _PRT.
-        /// And then there's the MP Table (legacy) which also defines
-        /// polarity and trigger mode. You need to combine all these
-        /// information to find the effective interrupt routing information.
-        /// Complicated stuff...
-        ///
-        /// More reference: https://people.freebsd.org/~jhb/papers/bsdcan/2007/article/node5.html
+        ///   More reference: https://people.freebsd.org/~jhb/papers/bsdcan/2007/article/node5.html
         redirection_entry(
             uint8_t pin /* also the index of the entry */,
             uint8_t vec,

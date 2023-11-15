@@ -3,7 +3,6 @@ final: prev:
 let
   testNames = [
     "cpuid"
-    "debugport"
     "emulator"
     "emulator-syscall"
     "exceptions"

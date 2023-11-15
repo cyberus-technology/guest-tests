@@ -132,6 +132,18 @@ class pic
         }
     }
 
+    void mask_all()
+    {
+        outb(MASTER_DATA, 0xff);
+        outb(SLAVE_DATA, 0xff);
+    }
+
+    void unmask_all()
+    {
+        outb(MASTER_DATA, 0);
+        outb(SLAVE_DATA, 0);
+    }
+
     /**
      * Sends an EOI for the highest interrupt.
      */
