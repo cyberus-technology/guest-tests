@@ -120,33 +120,30 @@ void lapic_enable_safe()
 }
 
 /**
- * Drains all PIT interrupts in the PIC and asserts that no non-PIT interrupts
- * are pending. If anything other than a PIT interrupt is found, the test's
- * assumptions are broken.
+ * Drains the interrupts from the PIC.
  *
- * The hardware must be configured in a way, that the PIC can raise interrupts.
+ * The hardware must be configured in a way, that the PIC can deliver
+ * interrupts.
  */
-void drain_pic_pit_interrupts()
+void drain_pic_interrupts(bool assert_pit_interrupt_only)
 {
-    if (global_pic.get_irr() != 0) {
-        //
-        BARETEST_ASSERT(global_pic.get_irr() == (1 << PIC_PIT_IRQ_PIN));
+    while (global_pic.get_irr() != 0) {
         irq_info.reset();
-
-        global_pic.unmask(PIC_PIT_IRQ_VECTOR);
+        global_pic.unmask_all();
         enable_interrupts_for_single_instruction();
-        disable_interrupts();
-        global_pic.mask(PIC_PIT_IRQ_VECTOR);
-
         BARETEST_ASSERT(irq_info.valid);
-        BARETEST_ASSERT(global_pic.get_isr() != 0);
-
+        // When we are not in the prologue but the actual test, we assert that
+        // only IRQs that we expect are pending.
+        if (assert_pit_interrupt_only) {
+            BARETEST_ASSERT(irq_info.vec == PIC_PIT_IRQ_VECTOR);
+        }
         global_pic.eoi();
-        BARETEST_ASSERT(global_pic.get_isr() == 0);
-
-        // Ensure no further interrupt has fired yet.
-        BARETEST_ASSERT(global_pic.get_irr() == 0);
     }
+    global_pic.mask_all();
+
+    // Ensure all interrupts are drained.
+    BARETEST_ASSERT(global_pic.get_irr() == 0);
+    BARETEST_ASSERT(global_pic.get_isr() == 0);
 }
 
 /**
@@ -250,7 +247,7 @@ void prologue()
     // PIC interrupts.
     global_pit.set_counter(0);
     prepare_pit_irq_env(PitInterruptDeliveryStrategy::IoApicPicExtInt);
-    drain_pic_pit_interrupts();
+    drain_pic_interrupts(false);
 }
 
 void epilogue()
@@ -260,7 +257,7 @@ void epilogue()
 void before_test_case_cleanup()
 {
     prepare_pit_irq_env(PitInterruptDeliveryStrategy::IoApicPicExtInt);
-    drain_pic_pit_interrupts();
+    drain_pic_interrupts(true);
     irq_info.reset();
     irq_count = 0;
 }
