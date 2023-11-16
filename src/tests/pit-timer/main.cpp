@@ -382,18 +382,14 @@ TEST_CASE(pit_irq_via_ioapic_fixed)
     BARETEST_ASSERT(irq_count == 1);
 }
 
-// This test currently goes totally crazy in different ways on
-// - real hardware (hangs)
-// - QEMU+TCG (wrong vector delivered; like IOAPIC started INTA cycle for PIC)
-// - QEMU+KVM (HLT is exited but interrupt handler never runs, WTF!)
-//   --> I think, the HLT is exited but no interrupt is injected
-// - VBox/KVM (hangs)
-// - VBox/Vanilla (hangs)
-TEST_CASE_CONDITIONAL(receive_pit_interrupt_via_lapic_via_lint0, false /* TODO */)
+TEST_CASE(pit_irq_via_lapic_lint0_fixed)
 {
     before_test_case_cleanup();
 
     prepare_pit_irq_env(PitInterruptDeliveryStrategy::LapicLint0FixedInt);
+
+    BARETEST_ASSERT(not global_pic.vector_in_irr(PIC_PIT_IRQ_VECTOR));
+    BARETEST_ASSERT(global_pic.get_isr() == 0);
 
     global_pit.set_counter(100);
     enable_interrupts_and_halt();
