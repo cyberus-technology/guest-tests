@@ -124,29 +124,28 @@ void lapic_enable_safe()
 }
 
 /**
- * Drains the interrupts from the PIC.
+ * Drains the PIT interrupt from the PIC. We don't drain other interrupts as
+ * we don't use them or rely on them in the test. Experience showed that some
+ * machines raise for example the serial interrupt (pin 3) which breaks the
+ * irr==0 assertion we used to have after EOI'ing the PIT.
  *
  * The hardware must be configured in a way, that the PIC can deliver
  * interrupts.
  */
-void drain_pic_interrupts(bool assert_pit_interrupt_only)
+void drain_pic_pit_interrupt()
 {
-    while (global_pic.get_irr() != 0) {
-        irq_info.reset();
-        global_pic.unmask_all();
+    if (global_pic.vector_in_irr(PIC_PIT_IRQ_VECTOR)) {
+        global_pic.unmask(PIC_PIT_IRQ_VECTOR);
         enable_interrupts_for_single_instruction();
         BARETEST_ASSERT(irq_info.valid);
-        // When we are not in the prologue but the actual test, we assert that
-        // only IRQs that we expect are pending.
-        if (assert_pit_interrupt_only) {
-            BARETEST_ASSERT(irq_info.vec == PIC_PIT_IRQ_VECTOR);
-        }
+        BARETEST_ASSERT(irq_info.vec == PIC_PIT_IRQ_VECTOR);
+        BARETEST_ASSERT(global_pic.highest_pending_isr_vec() == std::make_optional(PIC_PIT_IRQ_VECTOR));
+        global_pic.mask(PIC_PIT_IRQ_VECTOR);
         global_pic.eoi();
     }
-    global_pic.mask_all();
 
-    // Ensure all interrupts are drained.
-    BARETEST_ASSERT(global_pic.get_irr() == 0);
+    // Ensure the PIT interrupt didn't fire again.
+    BARETEST_ASSERT(not global_pic.vector_in_irr(PIC_PIT_IRQ_VECTOR));
     BARETEST_ASSERT(global_pic.get_isr() == 0);
 }
 
@@ -265,7 +264,7 @@ void prologue()
     // Reset/disable counter for maximum safety.
     global_pit.set_counter(0);
     prepare_pit_irq_env(PitInterruptDeliveryStrategy::IoApicPicExtInt);
-    drain_pic_interrupts(false);
+    drain_pic_pit_interrupt();
 }
 
 void epilogue()
@@ -275,7 +274,7 @@ void epilogue()
 void before_test_case_cleanup()
 {
     prepare_pit_irq_env(PitInterruptDeliveryStrategy::IoApicPicExtInt);
-    drain_pic_interrupts(true);
+    drain_pic_pit_interrupt();
     irq_info.reset();
     irq_count = 0;
 }
@@ -293,7 +292,7 @@ void testcase_receive_pit_interrupt_via_pic(bool busyWaitForInterrupt)
     before_test_case_cleanup();
     prepare_pit_irq_env(PitInterruptDeliveryStrategy::IoApicPicExtInt);
 
-    BARETEST_ASSERT(global_pic.get_irr() == 0);
+    BARETEST_ASSERT(not global_pic.vector_in_irr(PIC_PIT_IRQ_VECTOR));
     BARETEST_ASSERT(global_pic.get_isr() == 0);
 
     global_pit.set_counter(100);
@@ -310,10 +309,10 @@ void testcase_receive_pit_interrupt_via_pic(bool busyWaitForInterrupt)
 
     BARETEST_ASSERT(irq_info.valid);
     BARETEST_ASSERT(irq_info.vec == PIC_PIT_IRQ_VECTOR);
-    BARETEST_ASSERT(global_pic.get_irr() == 0);
-    BARETEST_ASSERT(global_pic.get_isr() != 0);
+    BARETEST_ASSERT(global_pic.highest_pending_isr_vec() == std::make_optional(PIC_PIT_IRQ_VECTOR));
 
     global_pic.eoi();
+    BARETEST_ASSERT(not global_pic.vector_in_irr(PIC_PIT_IRQ_VECTOR));
     BARETEST_ASSERT(global_pic.get_isr() == 0);
 
     BARETEST_ASSERT(irq_count == 1);
