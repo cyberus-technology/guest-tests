@@ -61,6 +61,7 @@ uint8_t const PIC_PIT_IRQ_PIN = 0;
 uint8_t const PIC_PIT_IRQ_VECTOR = PIC_BASE_VECTOR + PIC_PIT_IRQ_PIN;
 uint8_t const IOAPIC_PIC_IRQ_PIN = 0;
 uint8_t const IOAPIC_PIT_TIMER_IRQ_PIN = 2;
+uint8_t const NMI_VECTOR = 2;
 /// Effective vector of PIT interrupt when delivered via IOAPIC as fixed.
 uint8_t const IOAPIC_PIT_TIMER_IRQ_VECTOR = PIC_BASE_VECTOR + pic::PINS + 1;
 /// Effective vector of PIT interrupt when delivered via lint0 as fixed.
@@ -85,6 +86,16 @@ enum class PitInterruptDeliveryStrategy
      * in the IOAPIC that is configured as ExtInt interrupt (IOAPIC pin 0).
      */
     IoApicPicExtInt,
+    /**
+     * The PIT interrupt is raised in the PIC and the PIC raises the interrupt
+     * in the LINT0 register of the LAPIC as ExtInt interrupt.
+     */
+    LapicLint0ExtInt,
+    /**
+     * The PIT interrupt is raised in the PIC and the PIC raises the interrupt
+     * in the LINT0 register of the LAPIC as NMI.
+     */
+    LapicLint0NMI,
     /**
      * The PIT interrupt is raised in the PIC and the PIC raises the interrupt
      * in the LINT0 register of the LAPIC as FIXED interrupt.
@@ -159,6 +170,10 @@ void configure_lapic(bool unmask_lint0, lvt_dlv_mode dlv_mode = lvt_dlv_mode::FI
     switch (dlv_mode) {
         case lvt_dlv_mode::FIXED: {
             vector = LAPIC_LINT0_PIC_IRQ_VECTOR;
+            break;
+        }
+        case lvt_dlv_mode::NMI: {
+            vector = NMI_VECTOR;
             break;
         }
         case lvt_dlv_mode::EXTINT: {
@@ -248,11 +263,26 @@ void prepare_pit_irq_env(PitInterruptDeliveryStrategy strategy)
             configure_ioapic(true, false);
             break;
         }
+
+        case PitInterruptDeliveryStrategy::LapicLint0ExtInt: {
+            lapic_enable_safe();
+            global_pic.unmask(PIC_PIT_IRQ_VECTOR);
+            configure_ioapic(false, false);
+            configure_lapic(true, lvt_dlv_mode::EXTINT);
+            break;
+        }
         case PitInterruptDeliveryStrategy::LapicLint0FixedInt: {
             lapic_enable_safe();
             global_pic.unmask(PIC_PIT_IRQ_VECTOR);
             configure_ioapic(false, false);
             configure_lapic(true, lvt_dlv_mode::FIXED);
+            break;
+        }
+        case PitInterruptDeliveryStrategy::LapicLint0NMI: {
+            lapic_enable_safe();
+            global_pic.unmask(PIC_PIT_IRQ_VECTOR);
+            configure_ioapic(false, false);
+            configure_lapic(true, lvt_dlv_mode::NMI);
             break;
         }
     }
@@ -265,6 +295,7 @@ static void store_and_count_irq_handler(intr_regs* regs)
 
     // Sanity checks to simplify debugging if something goes wrong.
     switch (regs->vector) {
+        case NMI_VECTOR:
         case LAPIC_LINT0_PIC_IRQ_VECTOR:
         case PIC_PIT_IRQ_VECTOR:
         case IOAPIC_PIT_TIMER_IRQ_VECTOR: {
@@ -304,20 +335,16 @@ void before_test_case_cleanup()
 }
 
 /**
- * Tests that a PIT interrupt can be delivered via the PIC to the guest. This
- * only works if configured as ExtInt interrupt, so that the hardware performs
- * an INTA cycle.
+ * Configures the PIT timer and tests that the interrupt is received via the
+ * PIC. The interrupt controllers must be configured beforehand appropriately.
  *
- * The interrupt is either expected by exiting from a HLT or by a busy loop.
- * In the latter case, the (virtualization) platform must deliver an interrupt
- * even if the guest doesn't perform a VM exit on its own. The guest must be
- * forced into an exit, i.e., being poked.
+ * The interrupt can either be received after exiting from a HLT or awaited in a
+ * busy loop. In the latter case, the (virtualization) platform must deliver an
+ * interrupt even if the guest doesn't perform a VM exit on its own. The guest
+ * must be forced into an exit, i.e., being poked.
  */
 void receive_pit_interrupt_via_pic(bool busyWaitForInterrupt)
 {
-    before_test_case_cleanup();
-    prepare_pit_irq_env(PitInterruptDeliveryStrategy::IoApicPicExtInt);
-
     BARETEST_ASSERT(not global_pic.vector_in_irr(PIC_PIT_IRQ_VECTOR));
     BARETEST_ASSERT(global_pic.get_isr() == 0);
 
@@ -344,8 +371,6 @@ void receive_pit_interrupt_via_pic(bool busyWaitForInterrupt)
     BARETEST_ASSERT(irq_count == 1);
 }
 
-// It's sufficient to have the HLT vs busy-loop approach only once or a few
-// times in this test but not for every test case.
 TEST_CASE(pit_irq_via_ioapic_pic_extint__hlt)
 {
     before_test_case_cleanup();
@@ -357,6 +382,20 @@ TEST_CASE(pit_irq_via_ioapic_pic_extint__without_vm_exit)
 {
     before_test_case_cleanup();
     prepare_pit_irq_env(PitInterruptDeliveryStrategy::IoApicPicExtInt);
+    receive_pit_interrupt_via_pic(true);
+}
+
+TEST_CASE(pit_irq_via_lapic_lint0_extint__hlt)
+{
+    before_test_case_cleanup();
+    prepare_pit_irq_env(PitInterruptDeliveryStrategy::LapicLint0ExtInt);
+    receive_pit_interrupt_via_pic(false);
+}
+
+TEST_CASE(pit_irq_via_lapic_lint0_extint__without_vm_exit)
+{
+    before_test_case_cleanup();
+    prepare_pit_irq_env(PitInterruptDeliveryStrategy::LapicLint0ExtInt);
     receive_pit_interrupt_via_pic(true);
 }
 
@@ -398,6 +437,26 @@ TEST_CASE(pit_irq_via_lapic_lint0_fixed)
     BARETEST_ASSERT(irq_info.valid);
     BARETEST_ASSERT(irq_info.vec == LAPIC_LINT0_PIC_IRQ_VECTOR);
     BARETEST_ASSERT(not lapic_test_tools::check_irr(LAPIC_LINT0_PIC_IRQ_VECTOR));
+    lapic_test_tools::send_eoi();
+
+    BARETEST_ASSERT(irq_count == 1);
+}
+
+TEST_CASE(pit_irq_via_lapic_lint0_nmi)
+{
+    before_test_case_cleanup();
+
+    prepare_pit_irq_env(PitInterruptDeliveryStrategy::LapicLint0NMI);
+
+    BARETEST_ASSERT(not global_pic.vector_in_irr(PIC_PIT_IRQ_VECTOR));
+    BARETEST_ASSERT(global_pic.get_isr() == 0);
+
+    global_pit.set_counter(100);
+    enable_interrupts_and_halt();
+    disable_interrupts();
+
+    BARETEST_ASSERT(irq_info.valid);
+    BARETEST_ASSERT(irq_info.vec == NMI_VECTOR);
     lapic_test_tools::send_eoi();
 
     BARETEST_ASSERT(irq_count == 1);
