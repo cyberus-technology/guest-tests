@@ -26,8 +26,6 @@ class pic
     static constexpr uint8_t ICW_IRR{ 0x0a };
     static constexpr uint8_t ICW_ISR{ 0x0b };
 
-    static constexpr uint8_t SPURIOUS_IRQ{ 7 };
-
     /**
      * Tells that the EOI belongs to the special vector and not the highest
      * vector.
@@ -45,6 +43,7 @@ class pic
     static constexpr uint16_t PINS_PER_PIC{ PINS / 2 };
 
     static constexpr uint8_t CASCADE_IRQ{ 2 };
+    static constexpr uint8_t SPURIOUS_IRQ{ 7 };
 
     explicit pic(uint8_t vector_base)
         : vector_base_(vector_base)

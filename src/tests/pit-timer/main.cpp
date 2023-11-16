@@ -239,7 +239,23 @@ static void store_and_count_irq_handler(intr_regs* regs)
 {
     irq_info.record(regs->vector, regs->error_code);
     irq_count++;
-    info("received interrupt {}", regs->vector);
+
+    // Sanity checks to simplify debugging if something goes wrong.
+    switch (regs->vector) {
+        case LAPIC_LINT0_PIC_IRQ_VECTOR:
+        case PIC_PIT_IRQ_VECTOR:
+        case IOAPIC_PIT_TIMER_IRQ_VECTOR: {
+            break;
+        }
+        case PIC_BASE_VECTOR + pic::SPURIOUS_IRQ: {
+            baretest::fail("Unexpected vector! Got PIC's spurious vector.\n");
+            break;
+        }
+        default: {
+            baretest::fail("Unexpected vector! Got %d\n", regs->vector);
+            break;
+        }
+    }
 }
 
 void prologue()
