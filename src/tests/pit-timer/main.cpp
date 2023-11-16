@@ -89,7 +89,7 @@ enum class PitInterruptDeliveryStrategy
      * The PIT interrupt is raised in the PIC and the PIC raises the interrupt
      * in the LINT0 register of the LAPIC as FIXED interrupt.
      */
-    LapicLint0FixedInt
+    LapicLint0FixedInt,
 };
 
 /**
@@ -150,56 +150,45 @@ void drain_pic_pit_interrupt()
 }
 
 /**
- * Sets the correct interrupt configurations at all destinations where the PIT
- * timer interrupt is effectively raised. This function programs the LAPIC
- * (LINT0), the PIC, and the IOAPIC (redirection entries) correspondingly.
- *
- * After that, the PIT interrupt will raise the correct and expected vector
- * via the desired delivery strategy.
+ * Helper for `prepare_pit_irq_env` that configures LAPIC#lint0.
  */
-void prepare_pit_irq_env(PitInterruptDeliveryStrategy strategy)
+void configure_lapic(bool unmask_lint0, lvt_dlv_mode dlv_mode = lvt_dlv_mode::FIXED)
 {
-    bool mask_lint0, mask_ioapic_pic, mask_ioapic_pit;
+    uint32_t vector;
 
-    switch (strategy) {
-        case PitInterruptDeliveryStrategy::IoApicPitFixedInt: {
-            lapic_enable_safe();
-            mask_lint0 = true;
-            mask_ioapic_pic = true;
-            mask_ioapic_pit = false;
-            global_pic.mask(PIC_PIT_IRQ_VECTOR);
+    switch (dlv_mode) {
+        case lvt_dlv_mode::FIXED: {
+            vector = LAPIC_LINT0_PIC_IRQ_VECTOR;
             break;
         }
-        case PitInterruptDeliveryStrategy::IoApicPicExtInt: {
-            lapic_disable_safe();
-            mask_lint0 = true;
-            mask_ioapic_pic = false;
-            mask_ioapic_pit = true;
-            global_pic.unmask(PIC_PIT_IRQ_VECTOR);
+        case lvt_dlv_mode::EXTINT: {
+            vector = 0 /* ignored */;
             break;
         }
-        case PitInterruptDeliveryStrategy::LapicLint0FixedInt: {
-            lapic_enable_safe();
-            mask_lint0 = false;
-            mask_ioapic_pic = true;
-            mask_ioapic_pit = true;
-            global_pic.unmask(PIC_PIT_IRQ_VECTOR);
-            break;
-        }
+        default:
+            baretest::fail("Invalid dlv_mode %d\n", dlv_mode);
     }
 
-    // Better be fail-safe. Only write if the MMIO region logically exists.
-    if (lapic_test_tools::global_apic_enabled()) {
-        lapic_test_tools::write_lvt_entry(
-            lvt_entry::LINT0,
-            lvt_entry_t::lintX(
-                LAPIC_LINT0_PIC_IRQ_VECTOR,
-                mask_lint0 ? lvt_mask::MASKED : lvt_mask::UNMASKED,
-                lvt_pin_polarity::ACTIVE_HIGH,
-                lvt_trigger_mode::EDGE,
-                lvt_dlv_mode::FIXED));
-    }
+    // The interrupt configuration that works on all our machines.
+    auto pin_polarity = lvt_pin_polarity::ACTIVE_HIGH;
+    auto trigger_mode = lvt_trigger_mode::EDGE;
 
+    lapic_test_tools::write_lvt_entry(
+        lvt_entry::LINT0,
+        lvt_entry_t::lintX(
+            vector,
+            unmask_lint0 ? lvt_mask::UNMASKED : lvt_mask::MASKED,
+            pin_polarity,
+            trigger_mode,
+            dlv_mode));
+}
+
+/**
+ * Helper for `prepare_pit_irq_env` that configures the IOAPIC's redirection
+ * entries.
+ */
+void configure_ioapic(bool unmask_pic_pin, bool unmask_pit_pin)
+{
     ioapic io_apic;
     redirection_entry pit_entry(IOAPIC_PIT_TIMER_IRQ_PIN,
                                 IOAPIC_PIT_TIMER_IRQ_VECTOR,
@@ -212,22 +201,61 @@ void prepare_pit_irq_env(PitInterruptDeliveryStrategy strategy)
                                 redirection_entry::dlv_mode::EXTINT,
                                 redirection_entry::trigger_mode::EDGE);
 
-    if (mask_ioapic_pic) {
-        pic_entry.mask();
-    }
-    else {
+    if (unmask_pic_pin) {
         pic_entry.unmask();
     }
+    else {
+        pic_entry.mask();
+    }
 
-    if (mask_ioapic_pit) {
-        pit_entry.mask();
+    if (unmask_pit_pin) {
+        pit_entry.unmask();
     }
     else {
-        pit_entry.unmask();
+        pit_entry.mask();
     }
 
     io_apic.set_irt(pit_entry);
     io_apic.set_irt(pic_entry);
+}
+
+/**
+ * Sets the correct interrupt configurations at all destinations where the PIT
+ * timer interrupt is effectively raised. This function programs the LAPIC
+ * (LINT0), the PIC, and the IOAPIC (redirection entries) correspondingly.
+ *
+ * After that, the PIT interrupt will raise the correct and expected vector
+ * via the desired delivery strategy.
+ */
+void prepare_pit_irq_env(PitInterruptDeliveryStrategy strategy)
+{
+    switch (strategy) {
+        case PitInterruptDeliveryStrategy::IoApicPitFixedInt: {
+            // LAPIC must be enabled as it receives and forwards the FIXED
+            // interrupt.
+            lapic_enable_safe();
+            global_pic.mask(PIC_PIT_IRQ_VECTOR);
+            configure_ioapic(false, true);
+            configure_lapic(false);
+            break;
+        }
+        case PitInterruptDeliveryStrategy::IoApicPicExtInt: {
+            // Some (non-spec compliant) platforms such as VirtualBox expect
+            // ExtInt interrupt via LINT0 instead of the IOAPIC. Hence, we
+            // disable the LAPIC for maximum safety in this test case.
+            lapic_disable_safe();
+            global_pic.unmask(PIC_PIT_IRQ_VECTOR);
+            configure_ioapic(true, false);
+            break;
+        }
+        case PitInterruptDeliveryStrategy::LapicLint0FixedInt: {
+            lapic_enable_safe();
+            global_pic.unmask(PIC_PIT_IRQ_VECTOR);
+            configure_ioapic(false, false);
+            configure_lapic(true, lvt_dlv_mode::FIXED);
+            break;
+        }
+    }
 }
 
 static void store_and_count_irq_handler(intr_regs* regs)
@@ -276,14 +304,16 @@ void before_test_case_cleanup()
 }
 
 /**
- * Tests that a PIT interrupt can be delivered via the PIC to the guest.
+ * Tests that a PIT interrupt can be delivered via the PIC to the guest. This
+ * only works if configured as ExtInt interrupt, so that the hardware performs
+ * an INTA cycle.
  *
  * The interrupt is either expected by exiting from a HLT or by a busy loop.
  * In the latter case, the (virtualization) platform must deliver an interrupt
  * even if the guest doesn't perform a VM exit on its own. The guest must be
  * forced into an exit, i.e., being poked.
  */
-void testcase_receive_pit_interrupt_via_pic(bool busyWaitForInterrupt)
+void receive_pit_interrupt_via_pic(bool busyWaitForInterrupt)
 {
     before_test_case_cleanup();
     prepare_pit_irq_env(PitInterruptDeliveryStrategy::IoApicPicExtInt);
@@ -314,23 +344,30 @@ void testcase_receive_pit_interrupt_via_pic(bool busyWaitForInterrupt)
     BARETEST_ASSERT(irq_count == 1);
 }
 
-TEST_CASE(receive_pit_interrupt_via_pic_via_hlt)
+// It's sufficient to have the HLT vs busy-loop approach only once or a few
+// times in this test but not for every test case.
+TEST_CASE(pit_irq_via_ioapic_pic_extint__hlt)
 {
-    testcase_receive_pit_interrupt_via_pic(false);
+    before_test_case_cleanup();
+    prepare_pit_irq_env(PitInterruptDeliveryStrategy::IoApicPicExtInt);
+    receive_pit_interrupt_via_pic(false);
 }
 
-// It's sufficient to have the HLT vs busy-loop approach once in this test.
-// For the other tests, we just test one variant.
-TEST_CASE(receive_pit_interrupt_via_pic_without_vm_exit)
+TEST_CASE(pit_irq_via_ioapic_pic_extint__without_vm_exit)
 {
-    testcase_receive_pit_interrupt_via_pic(true);
+    before_test_case_cleanup();
+    prepare_pit_irq_env(PitInterruptDeliveryStrategy::IoApicPicExtInt);
+    receive_pit_interrupt_via_pic(true);
 }
 
-TEST_CASE(receive_pit_interrupt_via_lapic_via_ioapic)
+TEST_CASE(pit_irq_via_ioapic_fixed)
 {
     before_test_case_cleanup();
 
     prepare_pit_irq_env(PitInterruptDeliveryStrategy::IoApicPitFixedInt);
+
+    BARETEST_ASSERT(not global_pic.vector_in_irr(PIC_PIT_IRQ_VECTOR));
+    BARETEST_ASSERT(global_pic.get_isr() == 0);
 
     global_pit.set_counter(100);
     enable_interrupts_and_halt();

@@ -92,7 +92,7 @@ void lapic_test_tools::write_lvt_entry(lvt_entry entry, lvt_entry_t data)
     uint32_t lvt_data = read_from_register(lvt_address);
     // put vector into data
     lvt_data &= ~LVT_VECTOR_MASK;
-    lvt_data |= data.vector;
+    lvt_data |= data.vector & LVT_VECTOR_MASK;
     // put timer mode into data
     lvt_data &= ~(LVT_TIMER_MODE_MASK << LVT_TIMER_MODE_SHIFT);
     lvt_data |= (((static_cast<uint32_t>(data.timer_mode)) & LVT_TIMER_MODE_MASK) << LVT_TIMER_MODE_SHIFT);
