@@ -51,16 +51,20 @@ using lvt_entry = lapic_test_tools::lvt_entry;
 using lvt_mask = lapic_test_tools::lvt_mask;
 using lvt_dlv_mode = lapic_test_tools::lvt_dlv_mode;
 
-volatile uint32_t irq_count{ 0 };
+volatile uint32_t irq_count = 0;
 static irqinfo irq_info;
 
 uint8_t const PIC_BASE_VECTOR = 32;
 uint8_t const PIC_PIT_IRQ_PIN = 0;
+
+/// Effective vector of PIT interrupt when delivered from PIC as ExtInt.
 uint8_t const PIC_PIT_IRQ_VECTOR = PIC_BASE_VECTOR + PIC_PIT_IRQ_PIN;
 uint8_t const IOAPIC_PIC_IRQ_PIN = 0;
 uint8_t const IOAPIC_PIT_TIMER_IRQ_PIN = 2;
-uint8_t const IOAPIC_PIT_TIMER_IRQ_VECTOR = 33;
-uint8_t const LAPIC_LINT0_PIC_IRQ_VECTOR = 34;
+/// Effective vector of PIT interrupt when delivered via IOAPIC as fixed.
+uint8_t const IOAPIC_PIT_TIMER_IRQ_VECTOR = PIC_BASE_VECTOR + pic::PINS + 1;
+/// Effective vector of PIT interrupt when delivered via lint0 as fixed.
+uint8_t const LAPIC_LINT0_PIC_IRQ_VECTOR = IOAPIC_PIT_TIMER_IRQ_VECTOR + 1;
 
 static pic global_pic{ PIC_BASE_VECTOR };
 static pit global_pit{ pit::operating_mode::INTERRUPT_ON_TERMINAL_COUNT };
@@ -242,9 +246,7 @@ void prologue()
 {
     irq_handler::set(store_and_count_irq_handler);
 
-    // In QEMU+TCG, there is sometimes a value in the PIC's IRR when there
-    // shouldn't. For safety and maximum platform compatibility, we drain the
-    // PIC interrupts.
+    // Reset/disable counter for maximum safety.
     global_pit.set_counter(0);
     prepare_pit_irq_env(PitInterruptDeliveryStrategy::IoApicPicExtInt);
     drain_pic_interrupts(false);
