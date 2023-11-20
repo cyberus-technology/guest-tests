@@ -8,6 +8,9 @@
 using lvt_entry = lapic_test_tools::lvt_entry;
 using lvt_timer_mode = lapic_test_tools::lvt_timer_mode;
 using lvt_dlv_mode = lapic_test_tools::lvt_dlv_mode;
+using lvt_entry_t = lapic_test_tools::lvt_entry_t;
+using lvt_trigger_mode = lapic_test_tools::lvt_trigger_mode;
+using lvt_pin_polarity = lapic_test_tools::lvt_pin_polarity;
 using lvt_mask = lapic_test_tools::lvt_mask;
 
 class lvt_guard
@@ -16,12 +19,19 @@ class lvt_guard
     lvt_guard(lvt_entry entry_, uint32_t vector, lvt_timer_mode mode)
         : entry(entry_)
     {
-        write_lvt_entry(entry, { .vector = vector, .timer_mode = mode, .dlv_mode = lvt_dlv_mode::FIXED, .mask = lvt_mask::UNMASKED });
+        write_lvt_entry(
+            entry,
+            lvt_entry_t::timer(
+                vector,
+                lvt_mask::UNMASKED,
+                mode)
+
+        );
     }
 
     ~lvt_guard()
     {
-        write_lvt_mask(entry, 1);
+        write_lvt_mask(entry, lvt_mask::MASKED);
     }
 
  private:

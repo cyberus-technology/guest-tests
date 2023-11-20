@@ -116,7 +116,7 @@ void prologue()
         auto xsave_size{ cpuid(CPUID_LEAF_EXTENDED_STATE, CPUID_EXTENDED_STATE_MAIN).ecx };
         if (xsave_size > sizeof(xsave_area)) {
             baretest::hello(1);
-            baretest::fail("Size of XSAVE area greater than allocated space!");
+            baretest::fail("Size of XSAVE area greater than allocated space!\n");
             baretest::goodbye();
             disable_interrupts_and_halt();
         }
