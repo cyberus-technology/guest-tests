@@ -23,6 +23,22 @@ let
   # All tests from the CMake build in all variants (elf32, elf64, iso).
   allTests = final.cyberus.guest-tests.tests;
 
+  # Extracts a single binary variant of a test from the CMake build of all tests.
+  # Here, the result is directly a simlink to the boot item.
+  extractTestVariant = suffix: name: final.runCommand "guest-test-${name}${suffix}" { } ''
+    ln -s ${allTests}/${name}${suffix} $out
+  '';
+
+  # Creates an attribute set that maps the binary variants of a test to a
+  # derivation that only exports that single variant.
+  #
+  # Here, the result is directly a simlink to the boot item.
+  testByVariant = name: {
+    elf32 = extractTestVariant ".elf32" name;
+    elf64 = extractTestVariant ".elf64" name;
+    iso = extractTestVariant ".iso" name;
+    efi = extractTestVariant ".efi" name;
+  };
 
   # Attribute set that maps the name of each test to a derivation that contains
   # all binary variants of that test. Each inner attribute provides the
@@ -35,6 +51,8 @@ let
     testNames;
 
   # Extracts all binary variants of a test from the CMake build of all tests.
+  # The result corresponds to "one guest test" with convenient passthru
+  # attributes.
   extractTestAllVariants =
     name:
 
@@ -49,23 +67,6 @@ let
       mkdir -p $out
       fd ${name} ${toString allTests} | xargs -I {} ln -s {} $out
     '';
-
-  # Creates an attribute set that maps the binary variants of a test to a
-  # derivation that only exports that single variant.
-  #
-  # Here, the result is directly a simlink to the boot item.
-  testByVariant = name: {
-    elf32 = extractTestVariant ".elf32" name;
-    elf64 = extractTestVariant ".elf64" name;
-    iso = extractTestVariant ".iso" name;
-    efi = extractTestVariant ".efi" name;
-  };
-
-  # Extracts a single binary variant of a test from the CMake build of all tests.
-  # Here, the result is directly a simlink to the boot item.
-  extractTestVariant = suffix: name: final.runCommand "guest-test-${name}${suffix}" { } ''
-    ln -s ${allTests}/${name}${suffix} $out
-  '';
 
 in
 {
