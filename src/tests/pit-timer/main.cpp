@@ -322,10 +322,6 @@ void prologue()
     drain_pic_pit_interrupt();
 }
 
-void epilogue()
-{
-}
-
 void before_test_case_cleanup()
 {
     prepare_pit_irq_env(PitInterruptDeliveryStrategy::IoApicPicExtInt);
