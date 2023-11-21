@@ -658,8 +658,9 @@ static void handle_multiple(intr_regs* regs)
     }
 }
 
+// This test is broken on VirtualBox, so we skip it if we find the HV bit
 TEST_CASE_CONDITIONAL(receiving_extint_and_fixed_interrupt_simultaneously_should_deliver_both,
-                      hpet_available())
+                      not hv_bit_present() and hpet_available())
 {
     drain_interrupts();
     disable_interrupts();
