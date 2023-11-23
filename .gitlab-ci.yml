@@ -157,7 +157,7 @@ test:sotest:submit:
   stage: test
   # No real dependency but doesn't make sense to run without the basic tests.
   needs:
-    - test:vm:hello-world-boots:iso
+    - test:vm:hello-world-boots:multiboot1
     - test:vm:hello-world-boots:efi
   script:
     - nix-build nix/release.nix -A sotest
