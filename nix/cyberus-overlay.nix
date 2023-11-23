@@ -25,8 +25,8 @@ let
 
   # Extracts a single binary variant of a test from the CMake build of all tests.
   # Here, the result is directly a simlink to the boot item.
-  extractTestVariant = suffix: name: final.runCommand "guest-test-${name}${suffix}" { } ''
-    ln -s ${allTests}/${name}${suffix} $out
+  extractTestVariant = name: suffix: final.runCommand "guest-test-${name}-${suffix}" { } ''
+    ln -s ${allTests}/${name}.${suffix} $out
   '';
 
   # Creates an attribute set that maps the binary variants of a test to a
@@ -34,10 +34,10 @@ let
   #
   # Here, the result is directly a simlink to the boot item.
   testByVariant = name: {
-    elf32 = extractTestVariant ".elf32" name;
-    elf64 = extractTestVariant ".elf64" name;
-    iso = extractTestVariant ".iso" name;
-    efi = extractTestVariant ".efi" name;
+    elf32 = extractTestVariant name "elf32";
+    elf64 = extractTestVariant name "elf64";
+    iso = extractTestVariant name "iso";
+    efi = extractTestVariant name "efi";
   };
 
   # Attribute set that maps the name of each test to a derivation that contains
