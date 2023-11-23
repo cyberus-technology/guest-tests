@@ -6,6 +6,7 @@ stages:
   - check
   - build
   - test
+  - optional_test
 
 .build_regular_template:
   stage: build
@@ -102,12 +103,15 @@ test:vm:hello-world-boots:xen-pvh:
   script:
     - nix-build nix/release.nix -A testRuns.chv.kvm.xen-pvh.hello-world
 
-# We run all guest tests but allow them to fail. They are made for real
-# hardware and our own virtualization solutions, which aren't tested here.
-test:vm:kvm:
+# Optional manual step.
+#
+# We run all guest tests but allow them to fail. These runs are purely
+# informative.
+vmm_run:
   extends:
     - .nix_build_template
-  stage: test
+  stage: optional_test
+  when: manual
   # No real dependency but doesn't make sense to run without the basic tests.
   needs:
     - test:vm:hello-world-boots:multiboot1
