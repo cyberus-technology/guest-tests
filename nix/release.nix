@@ -62,8 +62,10 @@ let
 
       ${vmmCommand.setup}
 
+      # We rely on that test runs perform a proper shut down under our supported
+      # VMMs.
       echo -e "$(ansi bold)Running guest test '${testname}' via ${classifier}$(ansi reset)"
-      (timeout --preserve-status -k 4s 3s ${vmmCommand.main}) |& sotest-protocol-parser --stdin --echo
+      (timeout --preserve-status --signal KILL 4s ${vmmCommand.main}) |& sotest-protocol-parser --stdin --echo
 
       touch $out
     '';

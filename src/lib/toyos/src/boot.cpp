@@ -30,6 +30,7 @@
 #include "locale"
 #include "string"
 #include "vector"
+#include <toyos/util/cpuid.hpp>
 
 extern int main();
 
@@ -178,6 +179,39 @@ static void initialize_dma_pool()
     buddy_reclaim_range(addr2pn(dma_ival), dma_pool);
 }
 
+// Doing a proper ACPI shutdown is not easy as one needs full ACPICA
+// stack to parse the DSDT to find the proper ports. Hence, we just call
+// some common shutdown ports.
+// References:
+// - https://wiki.osdev.org/Shutdown
+// - https://github.com/qemu/qemu/blob/af9264da80073435fd78944bc5a46e695897d7e5/include/hw/xen/interface/hvm/params.h#L229
+// - https://github.com/qemu/qemu/blob/af9264da80073435fd78944bc5a46e695897d7e5/tests/tcg/x86_64/system/boot.S#L133
+// - Cloud Hypervisor: AcpiShutdownDevice
+void __attribute__((noreturn)) shutdown()
+{
+    constexpr uint16_t CLOUD_HYPERVISOR_SHUTDOWN_PORT = 0x600;
+    constexpr uint16_t CLOUD_HYPERVISOR_SHUTDOWN_VALUE = 0x34;
+    constexpr uint16_t QEMU_SHUTDOWN_PORT = 0x604;
+    constexpr uint16_t QEMU_SHUTDOWN_VALUE = 0x2000;
+    constexpr uint16_t VIRTUALBOX_SHUTDOWN_PORT = 0x4004;
+    constexpr uint16_t VIRTUALBOX_SHUTDOWN_VALUE = 0x3400;
+
+    if (hv_bit_present()) {
+        // Order is not important.
+        // Unknown PIO writes are ignored by VMMs in general.
+        outw(CLOUD_HYPERVISOR_SHUTDOWN_PORT, CLOUD_HYPERVISOR_SHUTDOWN_VALUE);
+        outw(QEMU_SHUTDOWN_PORT, QEMU_SHUTDOWN_VALUE);
+        outw(VIRTUALBOX_SHUTDOWN_PORT, VIRTUALBOX_SHUTDOWN_VALUE);
+    }
+
+    // If we can't shut down, at least HLT. This way, the guest tests won't
+    // consume CPU time when one accidentally keeps a test running in a VMM
+    // in background. On real hardware, the CPU stops spinning as well.
+    disable_interrupts_and_halt();
+
+    __UNREACHED__
+}
+
 EXTERN_C void init_interrupt_controllers()
 {
     constexpr uint8_t PIC_BASE{ 32 };
@@ -251,6 +285,8 @@ EXTERN_C void entry64(uint32_t magic, uintptr_t boot_info)
     initialize_cmdline(cmdline, mcfg);
 
     main();
+
+    shutdown();
 }
 
 void* operator new(size_t size)

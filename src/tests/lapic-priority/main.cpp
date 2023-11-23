@@ -11,8 +11,8 @@
 #include <toyos/testhelper/irqinfo.hpp>
 #include <toyos/testhelper/lapic_test_tools.hpp>
 #include <toyos/testhelper/pic.hpp>
+#include <toyos/util/cpuid.hpp>
 #include <toyos/util/trace.hpp>
-#include <toyos/x86/cpuid.hpp>
 #include <toyos/x86/x86asm.hpp>
 
 using namespace lapic_test_tools;
@@ -132,11 +132,6 @@ void wait_for_interrupts(uint32_t expected_irq_count)
             }
         }
     }
-}
-
-static inline bool hv_bit_present()
-{
-    return cpuid(CPUID_LEAF_FAMILY_FEATURES).ecx & LVL_0000_0001_ECX_HV;
 }
 
 void test_lapic_priority(dest_sh sh)
