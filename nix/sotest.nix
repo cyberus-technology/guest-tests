@@ -3,40 +3,38 @@
 { pkgs }:
 
 let
-  testDir = ./../src/tests;
+  libsotest = pkgs.cyberus.cbspkgs.lib.sotest;
 
-  tomlHelpers = pkgs.callPackage ./toml-helpers.nix { inherit testDir; };
+  testList = builtins.attrValues pkgs.cyberus.guest-tests.tests.passthru;
+
+  defaultSotestTags = [ "log:serial" "project:guest-tests" ];
 
   # Creates a boot item description for SoTest. Each guest test can be booted
   # on bios or uefi machines.
-  toBootItemDesc = testName: {
-    name = "${testName}";
-    # Will be handled as a "bifi" boot item (bios + uefi) as no further tags
-    # are specified.
-    tags = [ "log:serial" "project:guest-tests" ]
-      ++ (tomlHelpers.specificSettings testName).extraTags or [ ]
-    ;
-    cacheable = tomlHelpers.checkIsCacheable testName;
+  toBootItemDesc = test: {
+    name = "${test.meta.sotest.name}";
+    tags = defaultSotestTags ++ test.meta.sotest.extraTags;
+    cacheable = test.meta.sotest.cacheable;
     boot_item_timeout = 300; # 5 minutes; some machines boot very slowly
     boot_item_type =
-      if (tomlHelpers.checkIsHardwareIndependent testName)
+      if test.meta.sotest.isHardwareIndependent
       then "any" else "all";
     boot_source = {
       bios = {
         # iPXE chainloads the Multiboot binary.
-        exec = pkgs.cyberus.guest-tests.tests.${testName}.elf32 + " --serial";
+        exec = test.elf32 + " --serial";
         load = [ ];
       };
       uefi = {
         # iPXE chainloads the EFI binary.
-        exec = pkgs.cyberus.guest-tests.tests.${testName}.efi + " --serial";
+        exec = test.efi + " --serial";
         load = [ ];
       };
     };
   };
-
-  allTestNames = builtins.attrNames pkgs.cyberus.guest-tests.tests.passthru;
 in
-pkgs.cyberus.cbspkgs.lib.sotest.mkProjectBundle {
-  boot_items = map (testname: toBootItemDesc testname) allTestNames;
+libsotest.mkProjectBundle {
+  boot_items = map
+    (testName: toBootItemDesc testName)
+    testList;
 }
