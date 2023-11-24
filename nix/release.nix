@@ -14,20 +14,23 @@ let
     ,
     }:
     let
-      base = "${pkgs.qemu}/bin/qemu-system-x86_64 --machine q35,accel=kvm -no-reboot -display none -cpu host -serial stdio -nodefaults";
+      qemu = "${pkgs.qemu}/bin/qemu-system-x86_64";
+      base = "${qemu} --machine q35,accel=kvm -no-reboot -display none -cpu host -serial stdio -nodefaults";
     in
     if bootMultiboot then {
-      setup = "";
+      setup = "${qemu} --version";
       main = "${base} -kernel ${tests.${testname}.elf32}";
     }
     else if bootIso then {
-      setup = "";
+      setup = "${qemu} --version";
       main = "${base} -cdrom ${tests.${testname}.iso}";
     }
     else if bootEfi then {
       setup = ''
         mkdir -p uefi/EFI/BOOT
         install -m 0644 ${tests.${testname}.efi} uefi/EFI/BOOT/BOOTX64.EFI
+
+        ${qemu} --version
       '';
       main = "${base} -bios ${pkgs.OVMF.fd}/FV/OVMF.fd -drive format=raw,file=fat:rw:./uefi";
     }
@@ -38,7 +41,7 @@ let
   createChvCommand =
     { testname }:
     {
-      setup = "";
+      setup = "${pkgs.cloud-hypervisor}/bin/cloud-hypervisor --version";
       main = "${pkgs.cloud-hypervisor}/bin/cloud-hypervisor --memory size=256M --serial tty --console off --kernel ${tests.${testname}.elf64}";
     };
 
