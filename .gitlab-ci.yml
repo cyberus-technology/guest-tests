@@ -58,14 +58,13 @@ build:regular_release:
   variables:
     CMAKE_BUILD_TYPE: "Release"
 
-# Tests the Nix build and that the promised attribute structure is valid.
-build:nix:
+test:nix-unit-tests:
   extends:
     - .nix_build_template
-  stage: build
+  stage: test
   script:
-    - nix-build nix/release.nix -A verifyTestsAttributeStructure
-
+    - nix-build nix/release.nix -A unitTests.verifyTestsAttributeStructure
+    - nix-build nix/release.nix -A unitTests.kernelCmdlineOfBootItemsCanBeOverridden
 
 # All test use the same base to boot. Hence, we test here that the hello-world
 # test comes up.
