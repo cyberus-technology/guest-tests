@@ -73,7 +73,7 @@ let
       touch $out
     '';
 
-  # Creates an attribut set with test runs for every single test run.
+  # Creates an attribut set with test runs for every single test.
   createTestRuns =
     # Classifier of the test for better log output.
     classifier:
@@ -114,7 +114,7 @@ let
     touch $out
   '';
 in
-rec {
+{
   inherit tests;
   inherit verifyTestsAttributeStructure;
 
@@ -159,11 +159,6 @@ rec {
       };
     };
   };
-
-  # Might be helpful for script-generated invocations of different tests.
-  testNames = pkgs.runCommand "print-guest-test-names" { } ''
-    echo "${builtins.concatStringsSep "\n" testNames}" > $out
-  '';
 
   # SoTest bundle.
   sotest = pkgs.callPackage ./sotest.nix { };
