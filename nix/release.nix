@@ -3,7 +3,7 @@ let
 
   # All guest tests.
   tests = pkgs.cyberus.guest-tests.tests;
-  testNames = builtins.attrNames tests.passthru;
+  testNames = builtins.attrNames tests;
 
   # Creates a QEMU command.
   createQemuCommand =
@@ -86,24 +86,13 @@ let
       { }
       testNames;
 
-  # Script that tests if the complex structure of the "tests" attribute is
-  # compliant to the promised structure in the README.
+  # Script that tests if the structure of the "tests" attribute is compliant to
+  # the promised structure in the README.
   verifyTestsAttributeStructure = pkgs.runCommandLocal "verify-tests-structure"
     {
       nativeBuildInputs = [ pkgs.file ];
     } ''
     set -euo pipefail
-
-    file --brief --dereference ${tests}/lapic-timer.elf32 | grep -q "ELF 32"
-    file --brief --dereference ${tests}/lapic-timer.elf64 | grep -q "ELF 64"
-    file --brief --dereference ${tests}/lapic-timer.iso | grep -q "ISOIMAGE"
-    file --brief --dereference ${tests}/lapic-timer.efi | grep -q "EFI application"
-
-    # This structure is expected for every test. We just test one specific.
-    file --brief --dereference ${tests.lapic-timer}/lapic-timer.elf32 | grep -q "ELF 32"
-    file --brief --dereference ${tests.lapic-timer}/lapic-timer.elf64 | grep -q "ELF 64"
-    file --brief --dereference ${tests.lapic-timer}/lapic-timer.iso | grep -q "ISOIMAGE"
-    file --brief --dereference ${tests.lapic-timer}/lapic-timer.efi | grep -q "EFI application"
 
     # This structure is expected for every test. We just test one specific.
     file --brief --dereference ${tests.lapic-timer.elf32} | grep -q "ELF 32"

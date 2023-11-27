@@ -1,15 +1,39 @@
+# Builds the CMake project and makes each test accessible in multiple binary
+# variants: ELF32, ELF64, ISO, ELF. Further, via nested passthru attributes,
+# we export each individual test variant via one single common and combined
+# top-level `tests` attribute:
+# - `tests`:                      All tests in all variants
+# - `tests.<testname>`:           Test in all variants
+# - `tests.<testname>.<variant>`: Test in given variant
+
 { stdenv
-, nix-gitignore
-, cmake
-, grub2_efi
-, symlinkJoin
+, callPackage
 , cyberus
+, cmake
+, nix-gitignore
 , runCommand
-, testNames
-, writeText
 }:
 
 let
+  testNames = [
+    "cpuid"
+    "emulator"
+    "emulator-syscall"
+    "exceptions"
+    "fpu"
+    "hello-world"
+    "lapic-modes"
+    "lapic-priority"
+    "lapic-timer"
+    "msr"
+    "pagefaults"
+    "pit-timer"
+    "sgx"
+    "sgx-launch-control"
+    "tsc"
+    "vmx"
+  ];
+
   cmakeProj =
     stdenv.mkDerivation {
       pname = "guest-tests";
@@ -27,64 +51,33 @@ let
       dontFixup = true;
     };
 
-  testAsEFI =
-    name:
-    let
-      grubCfg = writeText "grub.cfg" ''
-        set timeout=0
-        menuentry 'Test' {
-          # We need multiboot2 to get the ACPI RSDP.
-          multiboot2 /boot/kernel --serial
-        }
-      '';
-    in
-    runCommand "guest-test-${name}-efi"
-      {
-        nativeBuildInputs = [ grub2_efi ];
-      } ''
-      mkdir -p $out
 
-      # make a memdisk-based GRUB image
-      grub-mkstandalone \
-        --format x86_64-efi \
-        --output $out/${name}.efi \
-        --directory ${grub2_efi}/lib/grub/x86_64-efi \
-        "/boot/grub/grub.cfg=${grubCfg}" \
-        "/boot/kernel=${cmakeProj}/${name}.elf64"
-        # ^ This is poorly documented, but the tool allows to specify key-value
-        # pairs where the value on the right, a file, will be embedded into the
-        # "(memdisk)" volume inside the grub image. -> "Graft point syntax"
-    '';
+  # Extracts a single binary variant of a test.
+  # The result is a direct symlink to the boot item.
+  extractBinaryFromCmakeBuild = name: suffix: runCommand "cmake-build-variant-${name}-${suffix}" { } ''
+    ln -s ${cmakeProj}/${name}.${suffix} $out
+  '';
 
-  # Packages a test from the CMake project as bootable iso. The output follows
-  # the scheme of the CMake artifacts.
-  testAsBootableIso =
-    name:
-    let
-      isoLink =
-        cyberus.cbspkgs.lib.images.createIsoMultiboot {
-          name = "guest-test-${name}-iso-link";
-          kernel = "${toString cmakeProj}/${name}.elf32";
-          kernelCmdline = "--serial";
-        };
-    in
-    runCommand "guest-test-${name}-iso" { } ''
-      mkdir -p $out
-      cp ${toString isoLink} $out/${name}.iso
-    '';
+  defaultCmdline = "";
 
-  isos = builtins.map (name: testAsBootableIso name) testNames;
-  efis = builtins.map (name: testAsEFI name) testNames;
+  # Creates an attribute set that holds all binary variants of a test.
+  toVariantsAttrs = testName: {
+    elf32 = extractBinaryFromCmakeBuild testName "elf32";
+    elf64 = extractBinaryFromCmakeBuild testName "elf64";
+    iso = cyberus.cbspkgs.lib.images.createIsoMultiboot {
+      name = "guest-test-${testName}-iso";
+      kernel = "${toString cmakeProj}/${testName}.elf32";
+      kernelCmdline = defaultCmdline;
+    };
+    efi = callPackage ./create-efi-image.nix {
+      name = "guest-test-${testName}-efi";
+      kernel = "${cmakeProj}/${testName}.elf64";
+      kernelCmdline = defaultCmdline;
+    };
+  };
+
+  # List of (name, value) pairs.
+  testList = map (name: { inherit name; value = toVariantsAttrs name; }) testNames;
 in
-symlinkJoin {
-  name = "guest-tests";
-  # CMake currently only builds the variants ".elf32" and ".elf64". The bootable
-  # ".iso" variant is only created by Nix.
-  paths = [ cmakeProj ]
-    # CMake currently only builds the variants ".elf32" and ".elf64". The bootable
-    # ".iso" variant is only created by Nix.
-    ++ isos
-    # 64-bit EFIs by using GRUB as Multiboot chainloader.
-    ++ efis
-  ;
-}
+builtins.listToAttrs testList
+

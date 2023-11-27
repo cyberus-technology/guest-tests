@@ -17,18 +17,25 @@ The tests prefer to use a PCI serial device, if one is found. Otherwise, they
 fall back to the legacy way of finding the serial port by looking into the BDA.
 If this doesn't work either, they fall back to the default `0x3f8` port.
 
-## Supported Boot Flows & Limitations
+## Binary Format, Supported Boot Flows, Limitations, and Restrictions
 
-Each test binary is bootable via/as
-[Multiboot1](https://www.gnu.org/software/grub/manual/multiboot/multiboot.html),
-[Multiboot2](https://www.gnu.org/software/grub/manual/multiboot2/multiboot.html),
-[EFI](https://uefi.org/specs/UEFI/2.10/) and
-[Xen PVH](https://xenbits.xen.org/docs/unstable/misc/pvh.html). (When consumed
-from Nix), they are built as ELF64, ELF32 (same content but different ELF header
-for Multiboot1 bootloaders), EFI, and bootable ISO files. The ISO and the EFI
-files use a standalone GRUB where the guest-test is embedded. Each guest test is
-a statically linked binary at 8M. They are not relocatable in physical or
-virtual memory.
+Each guest test is a statically linked ELF binary at 8M. They are not
+relocatable in physical or virtual memory.
+
+Each guest test is bootable via
+
+- [Multiboot1](https://www.gnu.org/software/grub/manual/multiboot/multiboot.html),
+- [Multiboot2](https://www.gnu.org/software/grub/manual/multiboot2/multiboot.html),
+  and
+- [Xen PVH](https://xenbits.xen.org/docs/unstable/misc/pvh.html).
+
+The CMake-build builds the tests as `.elf32` and `.elf64` (same content but
+different ELF header for Multiboot1 bootloaders). Additionally, the Nix build
+allows ready-to-boot `.efi` and `.iso` variants (see below for more
+information) for boot in legacy as well as UEFI environments.
+<!--
+TODO add that .iso can also be used in EFI boot, once that is implemented
+-->
 
 ## Supported Text Output Channels
 
@@ -55,15 +62,28 @@ ninja
 
 ### Nix
 
-- All tests with all binary variants: \
-  `nix-build -A tests`
-  - `./result` is a directory with all corresponding boot items
-- Specific test with all binary variants: \
-  `nix-build -A tests.<name>` (such as `lapic-timer`)
-  - `./result` is a directory with all corresponding boot items
-- Specific test with specific binary variants: \
-  `nix-build -A tests.<name>.{elf32|elf64|iso|efi}`
-  - `./result` is a symlink to the boot item
+To build a test, run:
+
+```shell
+nix-build -A tests.<name>.{elf32|elf64|iso|efi}
+```
+
+`./result` is a symlink to the boot item.
+
+The `iso` and `efi` attributes are high-level variants including a bootloader
+chainloading the test via Multiboot with a corresponding `cmdline`. It is
+possible to override the cmdline of those attributes using `override`. For
+example:
+
+```shell
+nix-build -E '(import ./nix/release.nix).tests.hello-world.{iso|efi}.override({kernelCmdline = "foobar";})'
+```
+
+The effective cmdline can also be verified by looking at the final GRUB config:
+
+```shell
+cat $(nix-build -E '((import ./nix/release.nix).tests.hello-world.{iso|efi}.override({kernelCmdline = "foobar";})).grubCfg')
+```
 
 ## Testing
 
@@ -74,10 +94,10 @@ solutions. Hence, here we only test that they run successfully on real hardware.
 We run the following mandatory steps in CI:
 
 - `hello-world` test boots succeeds
-  - via Multiboot (in QEMU/kvm)
-  - as ISO image (in QEMU/kvm)
-  - as EFI image (in QEMU/kvm)
-  - via XEN PVH (in Cloud Hypervisor/kvm)
+    - via Multiboot (in QEMU/kvm)
+    - as ISO image (in QEMU/kvm)
+    - as EFI image (in QEMU/kvm)
+    - via XEN PVH (in Cloud Hypervisor/kvm)
 - all tests succeed on real hardware (in SoTest)
 
 Our own virtualization solutions are supposed to schedule their own guest tests
