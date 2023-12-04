@@ -58,7 +58,7 @@ let
       {
         nativeBuildInputs = [
           pkgs.ansi
-          pkgs.cyberus.cidoka.apps.sotest-protocol-parser
+          pkgs.cyberus.sotest.apps.sotest-protocol-parser
         ];
       } ''
       set -euo pipefail
