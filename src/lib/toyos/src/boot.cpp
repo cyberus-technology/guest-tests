@@ -11,6 +11,7 @@
 
 #include <toyos/acpi.hpp>
 #include <toyos/boot_cmdline.hpp>
+#include <toyos/console/console_debugcon.hpp>
 #include <toyos/console/console_serial.hpp>
 #include <toyos/console/xhci_console.hpp>
 #include <toyos/first-fit-heap/heap.hpp>
@@ -231,6 +232,11 @@ EXTERN_C void init_interrupt_controllers()
 
 EXTERN_C void entry64(uint32_t magic, uintptr_t boot_info)
 {
+    // Init debugcon console as early as possible.
+    if (hv_bit_present()) {
+        console_debugcon::init();
+    }
+
     initialize_dma_pool();
 
     std::string cmdline;
