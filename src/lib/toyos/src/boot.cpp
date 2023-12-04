@@ -21,7 +21,6 @@
 #include <toyos/multiboot2/multiboot2.hpp>
 #include <toyos/optionparser.hpp>
 #include <toyos/pci/bus.hpp>
-#include <toyos/printf/backend.hpp>
 #include <toyos/testhelper/lapic_test_tools.hpp>
 #include <toyos/testhelper/pic.hpp>
 #include <toyos/util/cpuid.hpp>
@@ -127,7 +126,6 @@ static void initialize_cmdline(const std::string& cmdline, acpi_mcfg* mcfg)
     if (serial_option.has_value()) {
         uint16_t port = serial_option.value().empty() ? discover_serial_port(mcfg) : std::stoull(serial_option.value(), nullptr, 16);
         serial_init(port);
-        add_printf_backend(console_serial::putchar);
     }
     else if (xhci_option) {
         // If we don't have an MCFG pointer here, there's not much we can do
@@ -162,7 +160,6 @@ static void initialize_cmdline(const std::string& cmdline, acpi_mcfg* mcfg)
     }
     else {
         serial_init(discover_serial_port(mcfg));
-        add_printf_backend(console_serial::putchar);
     }
 
     // Some mainboards have a flaky serial, i.e. there is some noise on the line during bootup.
