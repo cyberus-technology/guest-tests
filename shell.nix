@@ -3,6 +3,8 @@ let
 in
 pkgs.mkShell rec {
   packages = with pkgs; [
+    cmake
+
     fd
     argc
     niv
@@ -12,9 +14,5 @@ pkgs.mkShell rec {
 
     clang-tools
     cmake-format
-  ];
-
-  inputsFrom = [
-    pkgs.cyberus.guest-tests.tests
   ];
 }
