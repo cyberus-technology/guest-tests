@@ -1,8 +1,3 @@
-<!--
-Available GitLab variables:
-https://docs.gitlab.com/ee/user/project/description_templates.html
--->
-
 # Overview
 
 <!--
@@ -45,3 +40,8 @@ direct reviewers to the interesting parts of your MR are helpful.
       happens.
 - [ ] Changed functionality will not affect existing consumers (nix expressions
       public API).
+
+
+/assign_reviewer @jstecklina
+/assign_reviewer @mmesser
+/assign_reviewer @pschuster
