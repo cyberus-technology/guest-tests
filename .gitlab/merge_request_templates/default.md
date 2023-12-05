@@ -14,8 +14,6 @@ Provide a concise list of concrete changes. Ideally, these map to the commits
 you are trying to merge.
 -->
 
-%{all_commits}
-
 ## Steps to un-draft (if Draft)
 
 <!--
