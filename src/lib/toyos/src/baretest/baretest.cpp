@@ -21,6 +21,7 @@
  */
 
 #include <toyos/baretest/baretest.hpp>
+#include <toyos/boot.hpp>
 #include <toyos/boot_cmdline.hpp>
 
 void __attribute__((weak)) prologue()
@@ -30,8 +31,10 @@ void __attribute__((weak)) epilogue()
 
 void print_environment_info()
 {
-    printf("Running Guest Test");
+    printf("Running Guest Test\n");
+    printf("  boot   : %s\n", boot_method_name(current_boot_method.value()));
     printf("  cmdline: %s\n", get_boot_cmdline().c_str());
+    printf("\n");
 };
 
 namespace baretest

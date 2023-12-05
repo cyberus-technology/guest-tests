@@ -10,6 +10,7 @@
 #include <vector>
 
 #include <toyos/acpi.hpp>
+#include <toyos/boot.hpp>
 #include <toyos/boot_cmdline.hpp>
 #include <toyos/console/console_debugcon.hpp>
 #include <toyos/console/console_serial.hpp>
@@ -42,6 +43,21 @@ static constexpr size_t DMA_POOL_SIZE{ 0x100000 };
 alignas(PAGE_SIZE) static char dma_pool_data[DMA_POOL_SIZE];
 alignas(PAGE_SIZE) static x86::tss tss;  // alignment only used to avoid avoid crossing page boundaries
 static buddy dma_pool{ 32 };
+
+std::optional<boot_method> current_boot_method = std::nullopt;
+
+std::string_view boot_method_name(boot_method method)
+{
+    switch (method) {
+        case boot_method::MULTIBOOT1:
+            return "Multiboot 1";
+        case boot_method::MULTIBOOT2:
+            return "Multiboot 2";
+        case boot_method::XEN_PVH:
+            return "Xen PVH";
+    }
+    __UNREACHED__
+}
 
 cbl::interval allocate_dma_mem(size_t ord)
 {
@@ -240,6 +256,7 @@ EXTERN_C void entry64(uint32_t magic, uintptr_t boot_info)
     acpi_mcfg* mcfg{ nullptr };
 
     if (magic == xen_pvh::MAGIC) {
+        current_boot_method = boot_method::XEN_PVH;
         const auto* info = reinterpret_cast<xen_pvh::hvm_start_info*>(boot_info);
         cmdline = reinterpret_cast<const char*>(info->cmdline_paddr);
 
@@ -247,6 +264,7 @@ EXTERN_C void entry64(uint32_t magic, uintptr_t boot_info)
         mcfg = find_mcfg(rsdp);
     }
     else if (magic == multiboot::multiboot_module::MAGIC_LDR) {
+        current_boot_method = boot_method::MULTIBOOT1;
         cmdline = reinterpret_cast<multiboot::multiboot_info*>(boot_info)->get_cmdline().value_or("");
 
         // On legacy systems (where we use Multiboot1), the ACPI tables can be
@@ -254,6 +272,7 @@ EXTERN_C void entry64(uint32_t magic, uintptr_t boot_info)
         mcfg = find_mcfg();
     }
     else if (magic == multiboot2::MB2_MAGIC) {
+        current_boot_method = boot_method::MULTIBOOT2;
         auto reader{ multiboot2::mbi2_reader(reinterpret_cast<const uint8_t*>(boot_info)) };
         const auto cmdline_tag{ reader.find_tag(multiboot2::mbi2_cmdline::TYPE) };
 
