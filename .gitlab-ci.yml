@@ -12,7 +12,7 @@ stages:
   stage: build
   image: gcc:12
   before_script:
-    - apt-get update && apt-get install -y cmake ninja-build xorriso
+    - apt-get update && apt-get install -y cmake ninja-build
   script:
     - mkdir build
     - cd build
