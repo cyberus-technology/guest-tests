@@ -18,15 +18,19 @@ stages:
     - cd build
     - cmake .. -G Ninja -DCMAKE_INSTALL_PREFIX=./install -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE && ninja
 
-# Gitlab CI environment template that enables Nix on the command line,
-# including nix-build and nix-shell.
-.nix_build_template:
+.common:
   interruptible: true
-  tags:
-    - native-nix-v2
   before_script:
     - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "git@${CI_SERVER_HOST}:"
     - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "ssh://git@${CI_SERVER_HOST}/"
+
+# Gitlab CI environment template that enables Nix on the command line,
+# including nix-build and nix-shell.
+.nix_build_template:
+  extends:
+    - .common
+  tags:
+    - native-nix-v2
 
 check:format:
   extends:
@@ -177,7 +181,9 @@ test:sotest:submit:
 
 test:sotest:poll:
   extends:
-    - .nix_build_template
+    - .common
+  tags:
+    - sotest
   stage: test
   needs:
     - test:sotest:submit
