@@ -6,7 +6,7 @@ rec {
   */
   specificSettings = testName:
     let
-      cfgFileName = testDir + "/${testName}/sotest.toml";
+      cfgFileName = testDir + "/${testName}/properties.toml";
       cfgContents = if builtins.pathExists cfgFileName then builtins.readFile cfgFileName else "";
     in
     builtins.fromTOML cfgContents;

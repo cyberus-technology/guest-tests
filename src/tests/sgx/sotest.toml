@@ -1,2 +1,0 @@
-extraTags = [ "feature:sgx" ]
-cacheable = true

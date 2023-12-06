@@ -60,21 +60,48 @@ let
 
   defaultCmdline = "";
 
+  # Returns the properties of a test as attribute set.
+  getTestProperties =
+    let
+      tomlHelpers = import ./toml-helpers.nix {
+        testDir = ./../src/tests;
+      };
+    in
+    testName:
+    {
+      cacheable = tomlHelpers.checkIsCacheable testName;
+      hardwareIndependent = tomlHelpers.checkIsHardwareIndependent testName;
+      sotest = (tomlHelpers.specificSettings testName).sotest or { };
+    }
+  ;
+
   # Creates an attribute set that holds all binary variants of a test.
-  toVariantsAttrs = testName: {
-    elf32 = extractBinaryFromCmakeBuild testName "elf32";
-    elf64 = extractBinaryFromCmakeBuild testName "elf64";
-    iso = cyberus.cbspkgs.lib.images.createIsoMultiboot {
-      name = "guest-test-${testName}-iso";
-      kernel = "${toString cmakeProj}/${testName}.elf32";
-      kernelCmdline = defaultCmdline;
-    };
-    efi = callPackage ./create-efi-image.nix {
-      name = "guest-test-${testName}-efi";
-      kernel = "${cmakeProj}/${testName}.elf64";
-      kernelCmdline = defaultCmdline;
-    };
-  };
+  toVariantsAttrs = testName:
+    let
+      base = {
+        elf32 = extractBinaryFromCmakeBuild testName "elf32";
+        elf64 = extractBinaryFromCmakeBuild testName "elf64";
+        iso = cyberus.cbspkgs.lib.images.createIsoMultiboot {
+          name = "guest-test-${testName}-iso";
+          kernel = "${toString cmakeProj}/${testName}.elf32";
+          kernelCmdline = defaultCmdline;
+        };
+        efi = callPackage ./create-efi-image.nix {
+          name = "guest-test-${testName}-efi";
+          kernel = "${cmakeProj}/${testName}.elf64";
+          kernelCmdline = defaultCmdline;
+        };
+      };
+    in
+    # Add meta data to each variant.
+    builtins.mapAttrs
+      (name: variant:
+        let
+          testProperties = getTestProperties testName;
+        in
+        variant // { meta = (variant.meta or { }) // { inherit testProperties; }; }
+      )
+      base;
 
   # List of (name, value) pairs.
   testList = map (name: { inherit name; value = toVariantsAttrs name; }) testNames;

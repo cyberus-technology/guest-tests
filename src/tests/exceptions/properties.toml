@@ -1,4 +1,4 @@
+cacheable = true
 # This test checks behavior that depends on APICv features,
 # which is not present in all hardware platforms.
-hardware_independent = false
-cacheable = true
+hardwareIndependent = false

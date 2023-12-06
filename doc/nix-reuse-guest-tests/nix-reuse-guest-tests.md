@@ -1,5 +1,4 @@
-# Design Document: Reuse Guest Tests (with Nix)
-<!-- ^ TODO: Remove prefix once all of this is implemented. -->
+# Reuse Guest Tests (with Nix)
 
 ## About
 
@@ -36,50 +35,9 @@ test run might start the VMM that is configured to boot guest test X.
 
 ## Binary Variants, Metadata, and Attribute Overriding
 
-Each test exports multiple binary variants
-(`tests.<test-name>.<elf32|elf64|iso|efi>`). Please find more details in the
+Each test exports multiple binary variants with associated metadata
+(`tests.<name>.{elf32|elf64|iso|efi}`). Please find more details in the
 [README.md](/README.md).
-
-Each test comes with associated metadata
-(`tests.<test-name>.<elf32|elf64|iso|efi>.meta`):
-
-```nix
-{
-  meta = {
-    test-properties = {
-      # Test results should be cached when no test input changed.
-      #
-      # This is usually false if the test contains timing-specific behavior
-      # or benchmarks.
-      cacheable = <bool>;
-      # Test has no variability on different hardware.
-      #
-      # This is usually false if the test contains timing-specific behavior.
-      hardwareIndependent = <bool>;
-      # SoTest-specific metadata.
-      sotest = {
-        # Additional machine tags required for bare-metal execution.
-        #
-        # This might be interesting for VMMs too, as this can tell about
-        # desired hardware or firmware functionality.
-        extraTags = <string>[];
-      };
-    };
-  };
-}
-```
-
-<!--
-It is important that we don't export these settings as meta.sotest = {} as
-otherwise, the cbspkgs pipeline might think that these are sotest runs, which
-they are not.
--->
-
-The `iso` and `efi` are high-level variants including a bootloader chainloading
-the test via Multiboot with a corresponding `cmdline`. The `iso` and `efi`
-derivations are overridable to change the command line, such as
-`iso.override({kernelCmdline = "--serial";})`.
-<!-- ^ TODO. This will also be tested in CI. -->
 
 ## Creating Test Runs
 

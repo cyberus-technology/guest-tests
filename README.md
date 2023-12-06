@@ -85,6 +85,46 @@ The effective cmdline can also be verified by looking at the final GRUB config:
 cat $(nix-build -E '((import ./nix/release.nix).tests.hello-world.{iso|efi}.override({kernelCmdline = "foobar";})).grubCfg')
 ```
 
+## Test Metadata (Nix)
+
+When consumed with Nix, each test carries metadata that you can use to create
+test runs:
+
+```nix
+{
+  meta = {
+    testProperties = {
+      # Test results should be cached when no test input changed.
+      #
+      # This is usually false if the test contains timing-specific behavior
+      # or benchmarks.
+      cacheable = <bool>;
+      # Test has no expected variability on different hardware.
+      #
+      # This is usually false if the test contains timing-specific behavior.
+      hardwareIndependent = <bool>;
+      # SoTest-specific metadata.
+      sotest = {
+        # Additional machine tags required for bare-metal execution.
+        #
+        # This might be interesting for VMMs too, as this can tell about
+        # desired hardware or firmware functionality.
+        extraTags = <string>[];
+      };
+    };
+  };
+}
+```
+<!--
+It is important that we don't export these settings as meta.sotest = {} as
+otherwise, the cbspkgs pipeline might think that these are sotest runs, which
+they are not.
+-->
+
+It is accessible via `nix-build -A tests.<name>.<variant>`. Please find more
+info in
+[Reuse Guest Tests (with Nix)](/doc/nix-reuse-guest-tests/nix-reuse-guest-tests.md).
+
 ## Testing
 
 ### What we Test

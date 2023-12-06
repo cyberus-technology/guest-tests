@@ -1,3 +1,6 @@
+cacheable = false
+hardwareIndependent = false
+
+[sotest]
 # Some machines have a broken PIT. The PIT doesn't raise interrupts there.
 extraTags = [ "feature:working-pit" ]
-cacheable = false
