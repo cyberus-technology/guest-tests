@@ -7,6 +7,10 @@ properly emulates cpuid or the LAPIC. They report successes or failures of their
 test cases by printing text to the serial device. The output follows the SoTest
 protocol.
 
+## Guidelines and other Documents
+
+Please have a look at the [`.doc`](/doc/README.md) directory.
+
 ## Serial Output
 
 The tests prefer to use a PCI serial device, if one is found. Otherwise, they
