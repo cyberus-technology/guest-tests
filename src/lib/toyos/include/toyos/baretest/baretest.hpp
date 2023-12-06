@@ -99,6 +99,11 @@ namespace baretest
 
 #define TEST_CASE(test_name) TEST_CASE_CONDITIONAL(test_name, true)
 
+/**
+ * Print information about environment, such as the command line of the test.
+ */
+void print_environment_info();
+
 void __attribute__((weak)) prologue();
 void __attribute__((weak)) epilogue();
 
@@ -107,6 +112,7 @@ void __attribute__((weak)) epilogue();
 #define BARETEST_RUN                 \
     int main()                       \
     {                                \
+        print_environment_info();    \
         prologue();                  \
         baretest::get_suite().run(); \
         epilogue();                  \

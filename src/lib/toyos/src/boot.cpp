@@ -1,36 +1,35 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include "toyos/console/console_serial.hpp"
-#include "toyos/x86/segmentation.hpp"
-#include "toyos/xhci/debug_device.hpp"
-#include <toyos/printf/backend.hpp>
-
-#include "toyos/first-fit-heap/heap.hpp"
-
-#include "toyos/memory/buddy.hpp"
-#include "toyos/memory/simple_buddy.hpp"
-#include "toyos/optionparser.hpp"
-#include "toyos/pci/bus.hpp"
-#include "toyos/util/interval.hpp"
-#include "toyos/x86/arch.hpp"
-#include "toyos/xen-pvh.hpp"
 #include <compiler.hpp>
 #include <config.hpp>
+
+#include <codecvt>
+#include <locale>
+#include <string>
+#include <vector>
+
+#include <toyos/acpi.hpp>
+#include <toyos/boot.hpp>
+#include <toyos/boot_cmdline.hpp>
+#include <toyos/console/console_debugcon.hpp>
+#include <toyos/console/console_serial.hpp>
+#include <toyos/console/xhci_console.hpp>
+#include <toyos/first-fit-heap/heap.hpp>
+#include <toyos/memory/buddy.hpp>
+#include <toyos/memory/simple_buddy.hpp>
 #include <toyos/multiboot/multiboot.hpp>
 #include <toyos/multiboot2/multiboot2.hpp>
-
-#include "toyos/acpi.hpp"
-#include "toyos/boot_cmdline.hpp"
-#include "toyos/console/xhci_console.hpp"
-#include "toyos/testhelper/lapic_test_tools.hpp"
-#include "toyos/testhelper/pic.hpp"
-
-#include "codecvt"
-#include "locale"
-#include "string"
-#include "vector"
+#include <toyos/optionparser.hpp>
+#include <toyos/pci/bus.hpp>
+#include <toyos/testhelper/lapic_test_tools.hpp>
+#include <toyos/testhelper/pic.hpp>
 #include <toyos/util/cpuid.hpp>
+#include <toyos/util/interval.hpp>
+#include <toyos/x86/arch.hpp>
+#include <toyos/x86/segmentation.hpp>
+#include <toyos/xen-pvh.hpp>
+#include <toyos/xhci/debug_device.hpp>
 
 extern int main();
 
@@ -44,6 +43,21 @@ static constexpr size_t DMA_POOL_SIZE{ 0x100000 };
 alignas(PAGE_SIZE) static char dma_pool_data[DMA_POOL_SIZE];
 alignas(PAGE_SIZE) static x86::tss tss;  // alignment only used to avoid avoid crossing page boundaries
 static buddy dma_pool{ 32 };
+
+std::optional<boot_method> current_boot_method = std::nullopt;
+
+std::string_view boot_method_name(boot_method method)
+{
+    switch (method) {
+        case boot_method::MULTIBOOT1:
+            return "Multiboot 1";
+        case boot_method::MULTIBOOT2:
+            return "Multiboot 2";
+        case boot_method::XEN_PVH:
+            return "Xen PVH";
+    }
+    __UNREACHED__
+}
 
 cbl::interval allocate_dma_mem(size_t ord)
 {
@@ -128,7 +142,6 @@ static void initialize_cmdline(const std::string& cmdline, acpi_mcfg* mcfg)
     if (serial_option.has_value()) {
         uint16_t port = serial_option.value().empty() ? discover_serial_port(mcfg) : std::stoull(serial_option.value(), nullptr, 16);
         serial_init(port);
-        add_printf_backend(console_serial::putchar);
     }
     else if (xhci_option) {
         // If we don't have an MCFG pointer here, there's not much we can do
@@ -163,7 +176,6 @@ static void initialize_cmdline(const std::string& cmdline, acpi_mcfg* mcfg)
     }
     else {
         serial_init(discover_serial_port(mcfg));
-        add_printf_backend(console_serial::putchar);
     }
 
     // Some mainboards have a flaky serial, i.e. there is some noise on the line during bootup.
@@ -233,12 +245,18 @@ EXTERN_C void init_interrupt_controllers()
 
 EXTERN_C void entry64(uint32_t magic, uintptr_t boot_info)
 {
+    // Init debugcon console as early as possible.
+    if (hv_bit_present()) {
+        console_debugcon::init();
+    }
+
     initialize_dma_pool();
 
     std::string cmdline;
     acpi_mcfg* mcfg{ nullptr };
 
     if (magic == xen_pvh::MAGIC) {
+        current_boot_method = boot_method::XEN_PVH;
         const auto* info = reinterpret_cast<xen_pvh::hvm_start_info*>(boot_info);
         cmdline = reinterpret_cast<const char*>(info->cmdline_paddr);
 
@@ -246,6 +264,7 @@ EXTERN_C void entry64(uint32_t magic, uintptr_t boot_info)
         mcfg = find_mcfg(rsdp);
     }
     else if (magic == multiboot::multiboot_module::MAGIC_LDR) {
+        current_boot_method = boot_method::MULTIBOOT1;
         cmdline = reinterpret_cast<multiboot::multiboot_info*>(boot_info)->get_cmdline().value_or("");
 
         // On legacy systems (where we use Multiboot1), the ACPI tables can be
@@ -253,6 +272,7 @@ EXTERN_C void entry64(uint32_t magic, uintptr_t boot_info)
         mcfg = find_mcfg();
     }
     else if (magic == multiboot2::MB2_MAGIC) {
+        current_boot_method = boot_method::MULTIBOOT2;
         auto reader{ multiboot2::mbi2_reader(reinterpret_cast<const uint8_t*>(boot_info)) };
         const auto cmdline_tag{ reader.find_tag(multiboot2::mbi2_cmdline::TYPE) };
 

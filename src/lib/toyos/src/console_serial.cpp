@@ -1,8 +1,9 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include "toyos/console/console_serial.hpp"
-#include "toyos/x86/x86asm.hpp"
+#include <toyos/console/console_serial.hpp>
+#include <toyos/printf/backend.hpp>
+#include <toyos/x86/x86asm.hpp>
 
 static console* active_console{ nullptr };
 
@@ -54,4 +55,5 @@ void serial_init(uint16_t port_begin)
 {
     static console_serial cons(port_begin, SERIAL_BAUD);
     active_console = &cons;
+    add_printf_backend(console_serial::putchar);
 }
