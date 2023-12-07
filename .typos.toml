@@ -1,0 +1,23 @@
+# Configuration for the typos spell checker utility.
+# See <https://github.com/crate-ci/typos>.
+
+[files]
+extend-exclude = [
+  "src/lib/libc-tiny", # Not our code
+  "src/lib/libcxx", # Not our code
+  "src/lib/toyos/include/toyos/optionparser.h", # Not our code
+]
+
+[default]
+extend-ignore-identifiers-re = [
+  "BARs",
+  "set_ist\\(*",
+]
+
+[default.extend-identifiers]
+ANDD = "ANDD" # acpi_tables.hpp
+
+[default.extend-words]
+extint = "extint"
+ist = "ist"
+

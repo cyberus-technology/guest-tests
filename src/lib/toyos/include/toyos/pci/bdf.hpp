@@ -48,7 +48,7 @@ namespace pci
             : bus((offset >> (MMCFG_OFFSET + BUS_SHIFT)) & math::mask(BUS_WIDTH)), device((offset >> (MMCFG_OFFSET + DEVICE_SHIFT)) & math::mask(DEVICE_WIDTH)), function((offset >> (MMCFG_OFFSET + FUNCTION_SHIFT)) & math::mask(FUNCTION_WIDTH))
         {}
 
-        /// Returns a requestor ID (16-bit value encoding the BDF).
+        /// Returns a requester ID (16-bit value encoding the BDF).
         uint16_t rid() const
         {
             return uint16_t(bus) << BUS_SHIFT | ((device & math::mask(DEVICE_WIDTH)) << DEVICE_SHIFT)

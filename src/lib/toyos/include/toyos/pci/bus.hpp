@@ -92,7 +92,7 @@ class pci_bus
      * Translates an I/O port access (with address/data) into
      * an MMCFG address.
      *
-     * \param rid    The requestor ID identifying the PCI device.
+     * \param rid    The requester ID identifying the PCI device.
      * \param offset The offset configured using the address register.
      * \param port   The data I/O port that is being accessed (indicating which and how many bytes to access).
      * \return The physical address corresponding to the desired access.
