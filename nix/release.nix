@@ -3,7 +3,9 @@ let
 
   # All guest tests.
   tests = pkgs.cyberus.guest-tests.tests;
-  testNames = builtins.attrNames tests.passthru;
+  testNames = builtins.attrNames tests;
+
+  # trace = pkgs.cyberus.cbspkgs.lib.tracing.prettyVal;
 
   # Creates a QEMU command.
   createQemuCommand =
@@ -73,7 +75,7 @@ let
       touch $out
     '';
 
-  # Creates an attribut set with test runs for every single test run.
+  # Creates an attribute set with test runs for every single test.
   createTestRuns =
     # Classifier of the test for better log output.
     classifier:
@@ -86,24 +88,13 @@ let
       { }
       testNames;
 
-  # Script that tests if the complex structure of the "tests" attribute is
-  # compliant to the promised structure in the README.
+  # Script that tests if the structure of the "tests" attribute is compliant to
+  # the promised structure in the README.
   verifyTestsAttributeStructure = pkgs.runCommandLocal "verify-tests-structure"
     {
       nativeBuildInputs = [ pkgs.file ];
     } ''
     set -euo pipefail
-
-    file --brief --dereference ${tests}/lapic-timer.elf32 | grep -q "ELF 32"
-    file --brief --dereference ${tests}/lapic-timer.elf64 | grep -q "ELF 64"
-    file --brief --dereference ${tests}/lapic-timer.iso | grep -q "ISOIMAGE"
-    file --brief --dereference ${tests}/lapic-timer.efi | grep -q "EFI application"
-
-    # This structure is expected for every test. We just test one specific.
-    file --brief --dereference ${tests.lapic-timer}/lapic-timer.elf32 | grep -q "ELF 32"
-    file --brief --dereference ${tests.lapic-timer}/lapic-timer.elf64 | grep -q "ELF 64"
-    file --brief --dereference ${tests.lapic-timer}/lapic-timer.iso | grep -q "ISOIMAGE"
-    file --brief --dereference ${tests.lapic-timer}/lapic-timer.efi | grep -q "EFI application"
 
     # This structure is expected for every test. We just test one specific.
     file --brief --dereference ${tests.lapic-timer.elf32} | grep -q "ELF 32"
@@ -113,10 +104,30 @@ let
 
     touch $out
   '';
+
+  # Helper that creates a succeeding derivation based on a condition.
+  testResultToDrv = name: cond:
+    if (!cond) then abort "Failed test: ${name}" else
+    pkgs.runCommandLocal "${name}-test-result-to-drv-" { } ''
+      mkdir $out
+    '';
+
+  # Tests that the kernel command line can be overridden for the given
+  # derivation. The verification happens by looking at the effective GRUB
+  # config which is provided as passthru attribute.
+  cmdlineCanBeOverridden = oldDrv:
+    let
+      newCmdline = "--foobar-lorem-ipsum-best-cmdline-ever";
+      readGrubCfg = drv: builtins.readFile drv.passthru.grubCfg;
+      overriddenDrv = oldDrv.override ({ kernelCmdline = newCmdline; });
+      hasCmdline = drv: pkgs.lib.hasInfix newCmdline (readGrubCfg drv);
+      oldDrvHasNotNewCmdline = !(hasCmdline oldDrv);
+      newDrvHasNewCmdline = hasCmdline overriddenDrv;
+    in
+    oldDrvHasNotNewCmdline && newDrvHasNewCmdline;
 in
-rec {
+{
   inherit tests;
-  inherit verifyTestsAttributeStructure;
 
   # Attribute set containing various configurations to run the guest tests in
   # a virtual machine.
@@ -160,12 +171,21 @@ rec {
     };
   };
 
-  # Might be helpful for script-generated invocations of different tests.
-  testNames = pkgs.runCommand "print-guest-test-names" { } ''
-    echo "${builtins.concatStringsSep "\n" testNames}" > $out
-  '';
-
   # SoTest bundle.
   sotest = pkgs.callPackage ./sotest.nix { };
 
+  # Each unit test is a derivation that either fails or succeeds. The output of
+  # these derivations is usually empty.
+  unitTests = {
+    inherit verifyTestsAttributeStructure;
+    # Tests that the kernel cmdline of the ISO and EFI images can be overridden
+    # so that downstream projects can change the way these tests run easily.
+    kernelCmdlineOfBootItemsCanBeOverridden = pkgs.symlinkJoin {
+      name = "Kernel Command Line of Boot Items can be Overridden";
+      paths = [
+        (testResultToDrv "cmdline of iso drv can be overridden" (cmdlineCanBeOverridden tests.hello-world.iso))
+        (testResultToDrv "cmdline of efi drv can be overridden" (cmdlineCanBeOverridden tests.hello-world.efi))
+      ];
+    };
+  };
 }
