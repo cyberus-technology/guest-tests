@@ -6,12 +6,16 @@
 #       behavior.
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
+cmake_minimum_required(VERSION 3.20)
+
 # The cmake documentation says: Call the project() command near the top of the
 # top-level CMakeLists.txt, but after calling cmake_minimum_required(). It is
 # important to establish version and policy settings before invoking other
 # commands whose behavior they may affect. Do not place any settings above this
 # point unless absolutely necessary and justified.
-project(guest-integration-tests CXX C ASM)
+project(guest-tests CXX C ASM)
+
+set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -39,7 +43,6 @@ endif()
 set(CMAKE_CXX_FLAGS_DEVELOP "${CMAKE_CXX_FLAGS_DEVELOP} -O2 -g")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DRELEASE -O2")
 
-set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(cmake/nostd-build.cmake)
