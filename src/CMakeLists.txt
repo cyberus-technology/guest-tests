@@ -18,6 +18,7 @@ project(guest-tests CXX C ASM)
 set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 
 set(default_build_type "Develop")
 
