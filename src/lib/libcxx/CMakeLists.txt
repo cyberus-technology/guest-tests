@@ -1,3 +1,5 @@
+include(nostd-build)
+
 add_library(
   libcxx STATIC
   src/c_string.cpp
@@ -15,6 +17,6 @@ target_include_directories(
                 $<INSTALL_INTERFACE:include>
   )
 
-target_compile_options(libcxx PRIVATE -Wall -Wextra)
-
+# Not our code, so we should also not be annoyed by its compiler warnings.
+target_compile_options(libcxx PRIVATE -Wno-all -Wno-error -Wno-useless-cast)
 target_link_libraries(libcxx PUBLIC libc-tiny)

@@ -1,3 +1,5 @@
+include(nostd-build)
+
 add_library(libc-tiny INTERFACE)
 
 target_include_directories(

@@ -1,3 +1,6 @@
+include(code-quality)
+include(nostd-build)
+
 add_library(
   toyos STATIC
   src/boot.cpp

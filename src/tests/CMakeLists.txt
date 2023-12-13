@@ -1,3 +1,7 @@
+include(code-quality)
+include(nostd-build)
+include(prep_and_use_linker_script)
+
 function(guesttest_linkage target-name)
   set(target-name PARENT_SCOPE)
 
