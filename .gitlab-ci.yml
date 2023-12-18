@@ -192,7 +192,7 @@ test:sotest:poll:
     - $POLL_SOTEST http://sotest:3000
       --id "$(cat sotest_testrun_id.txt)"
       --junit-xml sotest-report.xml
-      --extract-records-to https://elastic.vpn.cyberus-technology.de
+      --extract-records-to https://elastic.vpn.cyberus-technology.de:443/
   artifacts:
     paths:
       - sotest-report.xml

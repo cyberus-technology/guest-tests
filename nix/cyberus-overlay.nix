@@ -9,6 +9,7 @@ final: _prev:
       callPackage
       cyberus
       cmake
+      gcc11
       nix-gitignore
       runCommand;
   };

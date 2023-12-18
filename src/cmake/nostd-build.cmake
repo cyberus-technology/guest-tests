@@ -1,13 +1,7 @@
+# Options affecting the compiler output. Removing all references to the default
+# standard libraries and enabling/disabling relevant CPU features.
+
 add_compile_options(
-  # TODO activate again
-  #-Wall
-  #-Werror
-  #-Wextra
-  -Wfatal-errors
-  "$<$<C_COMPILER_ID:GNU>:-Wlogical-op>"
-  "$<$<C_COMPILER_ID:GNU>:-Wno-address-of-packed-member>"
-  -Wno-unused-function
-  -Wshadow
   -fcheck-new
   -fdata-sections
   -ffunction-sections
@@ -15,7 +9,6 @@ add_compile_options(
   -fno-common
   -fno-plt
   -fpie
-  "$<$<C_COMPILER_ID:GNU>:-fno-stack-protector>"
   -fvisibility=hidden
   -m64
   -march=westmere
@@ -28,13 +21,10 @@ add_compile_options(
   -nodefaultlibs
   -nostdinc
   -nostdlib
-  "$<$<COMPILE_LANG_AND_ID:CXX,GNU>:-Wno-deprecated-copy>"
-  "$<$<COMPILE_LANGUAGE:CXX>:-Wnon-virtual-dtor>"
-  "$<$<COMPILE_LANG_AND_ID:CXX,GNU>:-Wuseless-cast>"
+  "$<$<C_COMPILER_ID:GNU>:-fno-stack-protector>"
   "$<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>"
-  "$<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>"
   "$<$<COMPILE_LANGUAGE:CXX>:-fno-threadsafe-statics>"
-  "$<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden>"
+  "$<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>"
   )
 
 add_link_options(

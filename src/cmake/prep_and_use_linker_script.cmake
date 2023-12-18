@@ -1,11 +1,8 @@
 function(prep_and_use_linker_script target-name source-file)
   set(resulting-ld-script ${CMAKE_CURRENT_BINARY_DIR}/${target-name}.ld)
 
-  # config.h from libconfig is required for e.g. LOAD_ADDR
-  # arch.h from libx86 is required for e.g. PAGE_BITS and PAGE_SIZE
-  set(ld-includes -I ${PROJECT_SOURCE_DIR}/lib/libc-tiny/include -I
-                  ${PROJECT_SOURCE_DIR}/lib/x86/include
-    )
+  # linker script includes <config.h>
+  set(ld-includes -I ${LIB_DIR}/libc-tiny/include)
 
   # In order to let the build system reason about the dependencies (header
   # files) of preprocessed linker scripts, cmake needs to determine those

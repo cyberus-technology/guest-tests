@@ -1343,14 +1343,16 @@ namespace option
  */
     struct Parser::Action
     {
+        virtual ~Action() {}
+
         /**
-     * @brief Called by Parser::workhorse() for each Option that has been successfully
-     * parsed (including unknown
-     * options if they have a Descriptor whose Descriptor::check_arg does not return
-     * @ref ARG_ILLEGAL.
-     *
-     * Returns @c false iff a fatal error has occured and the parse should be aborted.
-     */
+         * @brief Called by Parser::workhorse() for each Option that has been successfully
+         * parsed (including unknown
+         * options if they have a Descriptor whose Descriptor::check_arg does not return
+         * @ref ARG_ILLEGAL.
+         *
+         * Returns @c false iff a fatal error has occured and the parse should be aborted.
+         */
         virtual bool perform(Option&)
         {
             return true;
@@ -1663,9 +1665,10 @@ namespace option
      */
         struct IStringWriter
         {
+            virtual ~IStringWriter() {}
             /**
-         * @brief Writes the given number of chars beginning at the given pointer somewhere.
-         */
+             * @brief Writes the given number of chars beginning at the given pointer somewhere.
+             */
             virtual void operator()(const char*, int) {}
         };
 
