@@ -56,7 +56,11 @@ let
 
   # Extracts a single binary variant of a test.
   # The result is a direct symlink to the boot item.
-  extractBinaryFromCmakeBuild = name: suffix: runCommand "cmake-build-variant-${name}-${suffix}" { } ''
+  extractBinaryFromCmakeBuild = name: suffix: runCommand "cmake-build-variant-${name}-${suffix}" {
+    passthru = {
+      inherit cmakeProj;
+    };
+   } ''
     ln -s ${cmakeProj}/${name}.${suffix} $out
   '';
 
