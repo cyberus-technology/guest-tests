@@ -9,6 +9,8 @@ pkgs.mkShell rec {
     argc
     niv
 
+    gcc11
+
     # Not strictly needed, but some developers prefer it to make.
     ninja
 

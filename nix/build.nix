@@ -10,6 +10,7 @@
 , callPackage
 , cyberus
 , cmake
+, gcc11
 , nix-gitignore
 , runCommand
 }:
@@ -43,6 +44,7 @@ let
 
       nativeBuildInputs = [
         cmake
+        gcc11
       ];
 
       # The ELFs are standalone kernels and don't need to go through these. This
