@@ -11,12 +11,6 @@ protocol.
 
 Please have a look at the [`.doc`](/doc/README.md) directory.
 
-## Serial Output
-
-The tests prefer to use a PCI serial device, if one is found. Otherwise, they
-fall back to the legacy way of finding the serial port by looking into the BDA.
-If this doesn't work either, they fall back to the default `0x3f8` port.
-
 ## Binary Format, Supported Boot Flows, Limitations, and Restrictions
 
 Each guest test is a statically linked ELF binary at 8M. They are not
@@ -39,15 +33,36 @@ TODO add that .iso can also be used in EFI boot, once that is implemented
 
 ## Supported Text Output Channels
 
-- Serial Console (COM port)
-- XHCI Console
+A guest test has multiple ways to transfer its output to the outer world. The
+options listed below mostly can be configured via the command line.
+
+- **Serial Console** (COM port):
+  - Active as default or when specified.
+  - PCI serial cards as well the builtin COM ports are supported.
+- **xHCI Console**:
+  - Active when specified.
+  - Needs an XHCI controller with the debug capability.
+  - Reference: _eXtensible Host Controller Interface for Universal Serial Bus_
+               Section 7.6 _Debug Capability_
+- **QEMU Debugcon**:
+  - Active, when virtualized.
+  - This output channel is useful to debug cmdline parsing and other logic that
+    is executed before a serial or xHCI console is initialized.
 
 ## Command Line Configuration
 
 The following command line configurations are accepted by the test binaries:
-- `--serial [<port>]` Enable serial console, with an optional port <port> in hex without prefix (`0x`).
-- `--xhci [<number>]` Enable xHCI debug console, with optional custom serial number.
-- `--xhci_power 0|1` Set the USB power cycle method (0=nothing, 1=powercycle).
+
+⚠️ _Only `--flag` and `--option=value` syntax is supported._
+
+- `--serial` or `--serial=<port: number>`:
+  Enable serial console. You can explicitly specify the x86 I/O `port`, such as
+  `42` or `0x3f8`. "It is **recommended to use this as a flag** so that the
+  program can automatically discover the port.
+- `--xhci` or `--xhci=<identifier: string>`:
+  Enable xHCI debug console. If no identifier is provided, a default is used.
+- `--xhci-power=0|1`:
+  Set the USB power cycle method (`0` = nothing, `1` = powercycle).
 
 ## Build
 
@@ -151,12 +166,23 @@ informative.
 
 ### Running Guest Tests
 
-#### Regular
+#### Regular (in QEMU)
 
-- (build as shown above)
-- `qemu-system-x86_64 -machine q35,accel=kvm -kernel
-  ./src/tests/hello-world.elf32 -m 24M -no-reboot --cpu host -chardev
-  stdio,id=hostserial -device pci-serial,chardev=hostserial`
+- Build as shown above
+- Run with recommended settings and output via serial device:
+  ```console
+  qemu-system-x86_64 \
+    -machine q35,accel=kvm \
+    -cpu host
+    -kernel ./src/tests/hello-world.elf32 \
+    -m 24M \
+    -no-reboot \
+    -serial stdio
+  ```
+    - Output via a `pci-serial` device: drop `-serial stdio` and add
+      `-chardev stdio,id=hostserial -device pci-serial,chardev=hostserial`
+    - Output via the debugcon device: add
+      `-debugcon file:debugcon_console.txt` (can be combined with a serial device)
 
 #### Nix
 

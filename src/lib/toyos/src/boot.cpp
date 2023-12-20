@@ -12,6 +12,7 @@
 #include <toyos/acpi.hpp>
 #include <toyos/boot.hpp>
 #include <toyos/boot_cmdline.hpp>
+#include <toyos/cmdline.hpp>
 #include <toyos/console/console_debugcon.hpp>
 #include <toyos/console/console_serial.hpp>
 #include <toyos/console/xhci_console.hpp>
@@ -20,7 +21,6 @@
 #include <toyos/memory/simple_buddy.hpp>
 #include <toyos/multiboot/multiboot.hpp>
 #include <toyos/multiboot2/multiboot2.hpp>
-#include <toyos/optionparser.hpp>
 #include <toyos/pci/bus.hpp>
 #include <toyos/testhelper/lapic_test_tools.hpp>
 #include <toyos/testhelper/pic.hpp>
@@ -99,25 +99,6 @@ EXTERN_C void init_tss()
     asm volatile("ltr %0" ::"r"(tss_selector.value()));
 }
 
-namespace
-{
-    enum option_index
-    {
-        SERIAL,
-        XHCI,
-        XHCI_POWER
-    };
-
-    static constexpr const option::Descriptor usage[] = {
-        // index, type, shorthand, name, checkarg, help
-        { SERIAL, 0, "", "serial", option::Arg::Optional, "Enable serial console, with an optional port <port> in hex." },
-        { XHCI, 0, "", "xhci", option::Arg::Optional, "Enable xHCI debug console, with optional custom serial number." },
-        { XHCI_POWER, 0, "", "xhci_power", option::Arg::Optional, "Set the USB power cycle method (0=nothing, 1=powercycle)." },
-
-        { 0, 0, 0, 0, 0, 0 }
-    };
-};  // namespace
-
 static std::u16string get_xhci_identifier(const std::string& arg)
 {
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
@@ -130,17 +111,51 @@ std::string get_boot_cmdline()
     return boot_cmdline;
 }
 
-static void initialize_cmdline(const std::string& cmdline, acpi_mcfg* mcfg)
+/**
+ * Returns the effective serial port by parsing the corresponding cmdline
+ * option.
+ */
+uint16_t get_effective_serial_port(const std::string& serial_option, acpi_mcfg* mcfg)
+{
+    constexpr std::string_view HEX_PREFIX = "0x";
+
+    if (serial_option.empty()) {
+        return discover_serial_port(mcfg);
+    }
+
+    /**
+     * Checks if the serial option has a prefix following a number. This doesn't
+     * verify the number.
+     */
+    auto has_prefix = [serial_option](const std::string_view& needle) {
+        auto len_prefix_plus_number = serial_option.length() > needle.length() + 1;
+        auto starts_with = serial_option.compare(0, needle.length(), needle) == 0;
+        return len_prefix_plus_number && starts_with;
+    };
+
+    // TODO once we switch to a more modern libcxx, std::stoull should do this
+    //  automatically. The current version just aborts when a prefix is found.
+    if (has_prefix(HEX_PREFIX)) {
+        auto number_str = serial_option.substr(HEX_PREFIX.length());
+        return std::stoull(number_str, nullptr, 16);
+    }
+    else {
+        return std::stoull(serial_option, nullptr, 10);
+    }
+}
+
+static void initialize_console(const std::string& cmdline, acpi_mcfg* mcfg)
 {
     boot_cmdline = cmdline;
 
-    optionparser p(cmdline, usage);
+    cmdline::cmdline_parser p(cmdline, cmdline::optionparser::usage);
 
-    auto serial_option = p.option_value(option_index::SERIAL);
-    auto xhci_option = p.option_value(option_index::XHCI);
+    auto serial_option = p.serial_option();
+    auto xhci_option = p.xhci_option();
 
     if (serial_option.has_value()) {
-        uint16_t port = serial_option.value().empty() ? discover_serial_port(mcfg) : std::stoull(serial_option.value(), nullptr, 16);
+        uint16_t port = get_effective_serial_port(serial_option.value(), mcfg);
+        printf("Using serial port: %#x\n", port);
         serial_init(port);
     }
     else if (xhci_option) {
@@ -168,8 +183,7 @@ static void initialize_cmdline(const std::string& cmdline, acpi_mcfg* mcfg)
                 PANIC("No debug capability present!");
             }
 
-            auto xhci_power_option = p.option_value(option_index::XHCI_POWER);
-            auto power_method = xhci_power_option == "1" ? xhci_debug_device::power_cycle_method::POWERCYCLE : xhci_debug_device::power_cycle_method::NONE;
+            auto power_method = p.xhci_power_option() == "1" ? xhci_debug_device::power_cycle_method::POWERCYCLE : xhci_debug_device::power_cycle_method::NONE;
             static xhci_console_baremetal xhci_cons(get_xhci_identifier(*xhci_option), mmio_region, dma_region, power_method);
             xhci_console_init(xhci_cons);
         }
@@ -302,7 +316,7 @@ EXTERN_C void entry64(uint32_t magic, uintptr_t boot_info)
         __builtin_trap();
     }
 
-    initialize_cmdline(cmdline, mcfg);
+    initialize_console(cmdline, mcfg);
 
     main();
 
