@@ -130,7 +130,7 @@ std::string get_boot_cmdline()
     return boot_cmdline;
 }
 
-static void initialize_cmdline(const std::string& cmdline, acpi_mcfg* mcfg)
+static void initialize_console(const std::string& cmdline, acpi_mcfg* mcfg)
 {
     boot_cmdline = cmdline;
 
@@ -302,7 +302,7 @@ EXTERN_C void entry64(uint32_t magic, uintptr_t boot_info)
         __builtin_trap();
     }
 
-    initialize_cmdline(cmdline, mcfg);
+    initialize_console(cmdline, mcfg);
 
     main();
 
