@@ -112,7 +112,7 @@ namespace
         // index, type, shorthand, name, checkarg, help
         { SERIAL, 0, "", "serial", option::Arg::Optional, "Enable serial console, with an optional port <port> in hex." },
         { XHCI, 0, "", "xhci", option::Arg::Optional, "Enable xHCI debug console, with optional custom serial number." },
-        { XHCI_POWER, 0, "", "xhci_power", option::Arg::Optional, "Set the USB power cycle method (0=nothing, 1=powercycle)." },
+        { XHCI_POWER, 0, "", "xhci-power", option::Arg::Optional, "Set the USB power cycle method (0=nothing, 1=powercycle)." },
 
         { 0, 0, 0, 0, 0, 0 }
     };
