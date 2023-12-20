@@ -12,6 +12,7 @@
 #include <toyos/acpi.hpp>
 #include <toyos/boot.hpp>
 #include <toyos/boot_cmdline.hpp>
+#include <toyos/cmdline.hpp>
 #include <toyos/console/console_debugcon.hpp>
 #include <toyos/console/console_serial.hpp>
 #include <toyos/console/xhci_console.hpp>
@@ -20,7 +21,6 @@
 #include <toyos/memory/simple_buddy.hpp>
 #include <toyos/multiboot/multiboot.hpp>
 #include <toyos/multiboot2/multiboot2.hpp>
-#include <toyos/optionparser.hpp>
 #include <toyos/pci/bus.hpp>
 #include <toyos/testhelper/lapic_test_tools.hpp>
 #include <toyos/testhelper/pic.hpp>
@@ -99,25 +99,6 @@ EXTERN_C void init_tss()
     asm volatile("ltr %0" ::"r"(tss_selector.value()));
 }
 
-namespace
-{
-    enum option_index
-    {
-        SERIAL,
-        XHCI,
-        XHCI_POWER
-    };
-
-    static constexpr const option::Descriptor usage[] = {
-        // index, type, shorthand, name, checkarg, help
-        { SERIAL, 0, "", "serial", option::Arg::Optional, "Enable serial console, with an optional port <port> in hex." },
-        { XHCI, 0, "", "xhci", option::Arg::Optional, "Enable xHCI debug console, with optional custom serial number." },
-        { XHCI_POWER, 0, "", "xhci-power", option::Arg::Optional, "Set the USB power cycle method (0=nothing, 1=powercycle)." },
-
-        { 0, 0, 0, 0, 0, 0 }
-    };
-};  // namespace
-
 static std::u16string get_xhci_identifier(const std::string& arg)
 {
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
@@ -167,10 +148,10 @@ static void initialize_console(const std::string& cmdline, acpi_mcfg* mcfg)
 {
     boot_cmdline = cmdline;
 
-    optionparser p(cmdline, usage);
+    cmdline::cmdline_parser p(cmdline, cmdline::optionparser::usage);
 
-    auto serial_option = p.option_value(option_index::SERIAL);
-    auto xhci_option = p.option_value(option_index::XHCI);
+    auto serial_option = p.option_value(cmdline::optionparser::option_index::SERIAL);
+    auto xhci_option = p.option_value(cmdline::optionparser::option_index::XHCI);
 
     if (serial_option.has_value()) {
         uint16_t port = get_effective_serial_port(serial_option.value(), mcfg);
@@ -202,7 +183,7 @@ static void initialize_console(const std::string& cmdline, acpi_mcfg* mcfg)
                 PANIC("No debug capability present!");
             }
 
-            auto xhci_power_option = p.option_value(option_index::XHCI_POWER);
+            auto xhci_power_option = p.option_value(cmdline::optionparser::option_index::XHCI_POWER);
             auto power_method = xhci_power_option == "1" ? xhci_debug_device::power_cycle_method::POWERCYCLE : xhci_debug_device::power_cycle_method::NONE;
             static xhci_console_baremetal xhci_cons(get_xhci_identifier(*xhci_option), mmio_region, dma_region, power_method);
             xhci_console_init(xhci_cons);
