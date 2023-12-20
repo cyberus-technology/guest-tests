@@ -150,8 +150,8 @@ static void initialize_console(const std::string& cmdline, acpi_mcfg* mcfg)
 
     cmdline::cmdline_parser p(cmdline, cmdline::optionparser::usage);
 
-    auto serial_option = p.option_value(cmdline::optionparser::option_index::SERIAL);
-    auto xhci_option = p.option_value(cmdline::optionparser::option_index::XHCI);
+    auto serial_option = p.serial_option();
+    auto xhci_option = p.xhci_option();
 
     if (serial_option.has_value()) {
         uint16_t port = get_effective_serial_port(serial_option.value(), mcfg);
@@ -183,8 +183,7 @@ static void initialize_console(const std::string& cmdline, acpi_mcfg* mcfg)
                 PANIC("No debug capability present!");
             }
 
-            auto xhci_power_option = p.option_value(cmdline::optionparser::option_index::XHCI_POWER);
-            auto power_method = xhci_power_option == "1" ? xhci_debug_device::power_cycle_method::POWERCYCLE : xhci_debug_device::power_cycle_method::NONE;
+            auto power_method = p.xhci_power_option() == "1" ? xhci_debug_device::power_cycle_method::POWERCYCLE : xhci_debug_device::power_cycle_method::NONE;
             static xhci_console_baremetal xhci_cons(get_xhci_identifier(*xhci_option), mmio_region, dma_region, power_method);
             xhci_console_init(xhci_cons);
         }
