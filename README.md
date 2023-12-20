@@ -55,10 +55,10 @@ The following command line configurations are accepted by the test binaries:
 
 ⚠️ _Only `--flag` and `--option=value` syntax is supported._
 
-- `--serial` or `--serial=<port: u16>`:
+- `--serial` or `--serial=<port: number>`:
   Enable serial console. You can explicitly specify the x86 I/O `port`, such as
-  `3f8`. However, it is recommended to just use this as flag so that the
-  test can automatically discover the port.
+  `42` or `0x3f8`. "It is **recommended to use this as a flag** so that the
+  program can automatically discover the port.
 - `--xhci` or `--xhci=<identifier: string>`:
   Enable xHCI debug console. If no identifier is provided, a default is used.
 - `--xhci-power=0|1`:
