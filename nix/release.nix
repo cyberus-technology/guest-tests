@@ -13,7 +13,7 @@ let
     , bootMultiboot ? false
     , bootIso ? false
     , bootEfi ? false
-    ,
+    , cmdline
     }:
     let
       qemu = "${pkgs.qemu}/bin/qemu-system-x86_64";
@@ -21,7 +21,7 @@ let
     in
     if bootMultiboot then {
       setup = "${qemu} --version";
-      main = "${base} -kernel ${tests.${testname}.elf32}";
+      main = "${base} -kernel ${tests.${testname}.elf32} -append '${cmdline}'";
     }
     else if bootIso then {
       setup = "${qemu} --version";
@@ -41,10 +41,12 @@ let
 
   # Creates a Cloud Hypervisor command.
   createChvCommand =
-    { testname }:
+    { testname
+    , cmdline
+    }:
     {
       setup = "${pkgs.cloud-hypervisor}/bin/cloud-hypervisor --version";
-      main = "${pkgs.cloud-hypervisor}/bin/cloud-hypervisor --memory size=256M --serial tty --console off --kernel ${tests.${testname}.elf64}";
+      main = "${pkgs.cloud-hypervisor}/bin/cloud-hypervisor --memory size=256M --serial tty --console off --kernel ${tests.${testname}.elf64} --cmdline '${cmdline}'";
     };
 
 
@@ -137,39 +139,49 @@ in
   #
   # Some tests might not succeed (in every configuration) as they are primarily
   # build for real hardware and our own virtualization solutions.
-  testRuns = {
-    qemu = {
-      kvm = rec {
-        default = multiboot;
-        # Direct kernel boot of Multiboot1 kernel.
-        multiboot = createTestRuns
-          "qemu-kvm_multiboot"
-          (testname: createQemuCommand {
-            inherit testname;
-            bootMultiboot = true;
-          });
-        # Legacy boot with ISO.
-        iso = createTestRuns "qemu-kvm_iso"
-          (testname: createQemuCommand {
-            inherit testname; bootIso = true;
-          });
-        # UEFI environment.
-        efi = createTestRuns "qemu-kvm_efi"
-          (testname: createQemuCommand {
-            inherit testname; bootEfi = true;
-          });
+  testRuns =
+    let
+      getDefaultCmdline = testname: tests."${testname}".elf32.meta.testProperties.defaultCmdline;
+    in
+    {
+      qemu = {
+        kvm = rec {
+          default = multiboot;
+          # Direct kernel boot of Multiboot1 kernel.
+          multiboot = createTestRuns
+            "qemu-kvm_multiboot"
+            (testname: createQemuCommand {
+              inherit testname;
+              bootMultiboot = true;
+              cmdline = getDefaultCmdline testname;
+            });
+          # Legacy boot with ISO.
+          iso = createTestRuns "qemu-kvm_iso"
+            (testname: createQemuCommand {
+              inherit testname;
+              bootIso = true;
+              cmdline = getDefaultCmdline testname;
+            });
+          # UEFI environment.
+          efi = createTestRuns "qemu-kvm_efi"
+            (testname: createQemuCommand {
+              inherit testname;
+              bootEfi = true;
+              cmdline = getDefaultCmdline testname;
+            });
+        };
+      };
+      chv = {
+        kvm = rec {
+          default = xen-pvh;
+          xen-pvh = createTestRuns "chv-kvm_xen-pvh"
+            (testname: createChvCommand {
+              inherit testname;
+              cmdline = getDefaultCmdline testname;
+            });
+        };
       };
     };
-    chv = {
-      kvm = rec {
-        default = xen-pvh;
-        xen-pvh = createTestRuns "qemu-kvm_efi"
-          (testname: createChvCommand {
-            inherit testname;
-          });
-      };
-    };
-  };
 
   # SoTest bundle.
   sotest = pkgs.callPackage ./sotest.nix { };

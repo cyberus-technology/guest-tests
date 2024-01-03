@@ -10,8 +10,6 @@ let
 
   defaultSotestTags = [ "log:serial" "project:guest-tests" ];
 
-  defaultCmdline = "";
-
   # Creates a boot item description for SoTest. Each guest test can be booted
   # on bios or uefi machines.
   toBootItemDesc = testName:
@@ -31,12 +29,13 @@ let
       boot_source = {
         bios = {
           # iPXE chainloads the Multiboot binary.
-          exec = testAttrs.elf32 + " " + defaultCmdline;
+          exec = testAttrs.elf32 + " " + testMeta.defaultCmdline;
           load = [ ];
         };
         uefi = {
-          # iPXE chainloads the EFI binary.
-          exec = testAttrs.efi + " " + defaultCmdline;
+          # iPXE chainloads the EFI binary. Here, the cmdline is embedded in the
+          # GRUB standalone image.
+          exec = testAttrs.efi;
           load = [ ];
         };
       };

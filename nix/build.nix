@@ -56,15 +56,23 @@ let
 
   # Extracts a single binary variant of a test.
   # The result is a direct symlink to the boot item.
-  extractBinaryFromCmakeBuild = name: suffix: runCommand "cmake-build-variant-${name}-${suffix}" {
-    passthru = {
-      inherit cmakeProj;
-    };
-   } ''
-    ln -s ${cmakeProj}/${name}.${suffix} $out
+  extractBinaryFromCmakeBuild = testName: suffix: runCommand "cmake-build-variant-${testName}-${suffix}"
+    {
+      passthru = {
+        inherit cmakeProj;
+      };
+    } ''
+    ln -s ${cmakeProj}/${testName}.${suffix} $out
   '';
 
-  defaultCmdline = "";
+  # Returns the default command line for each test.
+  getDefaultCmdline = testName:
+    let
+      dict = {
+        hello-world = "--disable-testcases=test_case_is_skipped_by_cmdline";
+      };
+    in
+    dict.${testName} or "";
 
   # Returns the properties of a test as attribute set.
   getTestProperties =
@@ -76,6 +84,7 @@ let
     testName:
     {
       cacheable = tomlHelpers.checkIsCacheable testName;
+      defaultCmdline = getDefaultCmdline testName;
       hardwareIndependent = tomlHelpers.checkIsHardwareIndependent testName;
       sotest = (tomlHelpers.specificSettings testName).sotest or { };
     }
@@ -90,12 +99,12 @@ let
         iso = cyberus.cbspkgs.lib.images.createIsoMultiboot {
           name = "guest-test-${testName}-iso";
           kernel = "${toString cmakeProj}/${testName}.elf32";
-          kernelCmdline = defaultCmdline;
+          kernelCmdline = getDefaultCmdline testName;
         };
         efi = callPackage ./create-efi-image.nix {
           name = "guest-test-${testName}-efi";
           kernel = "${cmakeProj}/${testName}.elf64";
-          kernelCmdline = defaultCmdline;
+          kernelCmdline = getDefaultCmdline testName;
         };
       };
     in

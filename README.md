@@ -118,6 +118,8 @@ test runs:
       # This is usually false if the test contains timing-specific behavior
       # or benchmarks.
       cacheable = <bool>;
+      # The default cmdline of that test.
+      defaultCmdline = <string>;
       # Test has no expected variability on different hardware.
       #
       # This is usually false if the test contains timing-specific behavior.
