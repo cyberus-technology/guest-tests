@@ -23,6 +23,7 @@
 #include <toyos/baretest/baretest.hpp>
 #include <toyos/boot.hpp>
 #include <toyos/boot_cmdline.hpp>
+#include <toyos/cmdline.hpp>
 
 void __attribute__((weak)) prologue()
 {}
@@ -91,6 +92,16 @@ namespace baretest
         vprintf(msg, args);
         va_end(args);
         longjmp(baretest::get_env(), baretest::ASSERT_FAILED);
+    }
+
+    bool testcase_disabled_by_cmdline(const std::string_view& name)
+    {
+        auto cmdline = get_boot_cmdline().value_or("");
+        auto parser = cmdline::cmdline_parser(cmdline);
+        auto disabled = parser.disable_testcases_option();
+        auto name_found = std::find(disabled.begin(), disabled.end(), name) != disabled.end();
+        auto name_with_test_prefix_found = std::find(disabled.begin(), disabled.end(), std::string("test_") + std::string(name)) != disabled.end();
+        return name_found || name_with_test_prefix_found;
     }
 
 }  // namespace baretest

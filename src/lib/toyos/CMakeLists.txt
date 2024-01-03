@@ -11,6 +11,7 @@ add_library(
   src/pdpt.cpp
   src/pml4.cpp
   src/pt.cpp
+  src/string_util.cpp
   src/baretest/baretest.cpp
   src/baretest/baretest_config.cpp
   src/baretest/print.cpp

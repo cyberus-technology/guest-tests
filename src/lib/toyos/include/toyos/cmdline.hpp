@@ -3,12 +3,14 @@
 
 #pragma once
 
+#include <cassert>
 #include <optional>
 #include <string>
 #include <vector>
 
 #include <toyos/optionparser.h>
 #include <toyos/util/algorithm.hpp>
+#include <toyos/util/string.hpp>
 
 namespace cmdline
 {
@@ -18,6 +20,8 @@ namespace cmdline
      */
     namespace optionparser
     {
+        constexpr char DISABLED_TESTCASES_DELIMITER = ',';
+
         /**
          * Index into the `usage` array.
          */
@@ -25,14 +29,21 @@ namespace cmdline
         {
             SERIAL,
             XHCI,
-            XHCI_POWER
+            XHCI_POWER,
+            DISABLED_TESTCASES,
         };
 
+        /**
+         * Cmdline parameter description for the option parser library.
+         * The reference description is in the README. The help texts here are
+         * ignored.
+         */
         static constexpr const option::Descriptor usage[] = {
             // index, type, shorthand, name, checkarg, help
-            { SERIAL, 0, "", "serial", option::Arg::Optional, "Enable serial console, with an optional port <port> in hex." },
-            { XHCI, 0, "", "xhci", option::Arg::Optional, "Enable xHCI debug console, with optional custom serial number." },
-            { XHCI_POWER, 0, "", "xhci-power", option::Arg::Optional, "Set the USB power cycle method (0=nothing, 1=powercycle)." },
+            { SERIAL, 0, "", "serial", option::Arg::Optional, "" },
+            { XHCI, 0, "", "xhci", option::Arg::Optional, "" },
+            { XHCI_POWER, 0, "", "xhci-power", option::Arg::Optional, "" },
+            { DISABLED_TESTCASES, 0, "", "disable-testcases", option::Arg::Optional, "" },
 
             { 0, 0, nullptr, nullptr, nullptr, nullptr }
         };
@@ -97,14 +108,20 @@ namespace cmdline
         }
 
         /**
-         * Returns the xhci-power cmdline modifier. Even if it is not specified,
-         * there always is a default value.
-         *
-         * If the modifier was provided as flag, the inner string is empty.
+         * Returns the specified xhci-power cmdline modifier or the default.
          */
         std::string xhci_power_option()
         {
             return this->option_value(optionparser::option_index::XHCI_POWER).value_or("0");
+        }
+
+        /**
+         * Returns the disable-testcases cmdline modifier or the default.
+         */
+        std::vector<std::string> disable_testcases_option()
+        {
+            auto disabled_testcases_str = this->option_value(optionparser::option_index::DISABLED_TESTCASES).value_or("");
+            return util::string::split(disabled_testcases_str, cmdline::optionparser::DISABLED_TESTCASES_DELIMITER);
         }
 
      private:

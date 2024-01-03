@@ -63,6 +63,10 @@ The following command line configurations are accepted by the test binaries:
   Enable xHCI debug console. If no identifier is provided, a default is used.
 - `--xhci-power=0|1`:
   Set the USB power cycle method (`0` = nothing, `1` = powercycle).
+- `--disable-testcases=testA,testB,testC`:
+  Comma-separated list of test cases that you want to disable. They will be
+  skipped. For example:
+  To disable `TEST_CASE(foo) {}` you can pass `--disable-testcases=foo`.
 
 ## Build
 
