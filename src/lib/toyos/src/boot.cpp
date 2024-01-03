@@ -105,8 +105,12 @@ static std::u16string get_xhci_identifier(const std::string& arg)
     return converter.from_bytes(arg == "" ? "CBS0001" : arg);
 }
 
-static std::string boot_cmdline;
-std::string get_boot_cmdline()
+/**
+ * A global static holding the boot cmdline. This field is not intended for
+ * modifications once set.
+ */
+static std::optional<std::string> boot_cmdline;
+std::optional<std::string> get_boot_cmdline()
 {
     return boot_cmdline;
 }

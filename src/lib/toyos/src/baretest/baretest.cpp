@@ -33,7 +33,7 @@ void print_environment_info()
 {
     printf("Running Guest Test\n");
     printf("  boot   : %s\n", boot_method_name(current_boot_method.value()));
-    printf("  cmdline: %s\n", get_boot_cmdline().c_str());
+    printf("  cmdline: %s\n", get_boot_cmdline().value_or("").c_str());
     printf("\n");
 };
 
