@@ -8,6 +8,7 @@
 
 { stdenv
 , callPackage
+, catch2_3
 , cyberus
 , cmake
 , gcc11
@@ -46,6 +47,9 @@ let
         # project needs a rebuild.
         # "tests/**/properties.toml"
       ] ../src;
+
+      doCheck = true;
+      checkInputs = [ catch2_3 ];
 
       nativeBuildInputs = [
         cmake

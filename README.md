@@ -70,24 +70,37 @@ The following command line configurations are accepted by the test binaries:
 
 ## Build
 
-### Regular
+### Regular (Guest Tests + Unit Tests)
 
-- build all tests:
+Build all Guest Tests:
+
 ```shell
 mkdir build && cd build
 cmake .. -G Ninja -DCMAKE_INSTALL_PREFIX=./install
 ninja
 ```
 
-### Nix
+Build all Guest Tests and run unit tests:
 
-To build a test, run:
+```shell
+mkdir build && cd build
+cmake .. -G Ninja -DCMAKE_INSTALL_PREFIX=./install -DBUILD_TESTING=On
+ninja
+ninja test
+```
+
+You can also use `make` instead of `ninja`.
+
+### Nix (Guest Tests + Unit Tests)
+
+To build a Guest Test, run:
 
 ```shell
 nix-build -A tests.<name>.{elf32|elf64|iso|efi}
 ```
 
-`./result` is a symlink to the boot item.
+This also builds and runs the unit tests. `./result` is a symlink to the
+corresponding boot item.
 
 The `iso` and `efi` attributes are high-level variants including a bootloader
 chainloading the test via Multiboot with a corresponding `cmdline`. It is
@@ -165,15 +178,22 @@ they are not.
 }
 ```
 
-## Testing
+## Unit Tests and Integration Tests
 
-### What we Test
+### libtoyos Unit Tests
+
+We have unit tests for libtoyos, the base of our Guest Tests. Please head to the
+build section above to see how to build and run them.
+
+### Guest Tests
+
+#### What we Test
 
 Our guest tests are developed for real hardware and our own virtualization
-solutions. Hence, here we only test that they run successfully on real hardware.
+solutions. But, here we only test that they run successfully on real hardware.
 We run the following mandatory steps in CI:
 
-- `hello-world` test boots succeeds
+- `hello-world` test boots successfully:
     - via Multiboot (in QEMU/kvm)
     - as ISO image (in QEMU/kvm)
     - as EFI image (in QEMU/kvm)
@@ -181,17 +201,17 @@ We run the following mandatory steps in CI:
 - all tests succeed on real hardware (in SoTest)
 
 Our own virtualization solutions are supposed to schedule their own guest test
-runs as part of their CI infrastructure. We don't test any VMMs here, except
-for the `hello-world` test.
+runs as part of their CI infrastructure. We don't test any VMMs here as
+mandatory steps of the pipeline, except for the `hello-world` test.
 
 There are also optional and manual CI steps, that are allowed to fail. They run
 each test in existing stock VMMs. This helps us to easily detect where we are
 and also to fix upstream bugs, if we ever want to. These runs are purely
 informative.
 
-### Running Guest Tests
+#### Running Guest Tests
 
-#### Regular (in QEMU)
+##### Regular (in QEMU)
 
 - Build as shown above
 - Run with recommended settings and output via serial device:
@@ -209,7 +229,7 @@ informative.
     - Output via the debugcon device: add
       `-debugcon file:debugcon_console.txt` (can be combined with a serial device)
 
-#### Nix
+##### Nix
 
 The `release.nix` file exports a rich `testRuns` attribute that runs tests
 in virtual machines with various VMMs and different boot strategies. Example

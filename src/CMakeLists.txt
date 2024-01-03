@@ -15,11 +15,15 @@ cmake_minimum_required(VERSION 3.20)
 # point unless absolutely necessary and justified.
 project(guest-tests CXX C ASM)
 
+# Must be set before including CTest so that these arguments are applied when
+# running `$ ninja test` or `$ make test`.
+set(CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+include(CTest)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED "On")
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-
 set(default_build_type "Develop")
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -51,3 +55,7 @@ include(nostd-build)
 
 add_subdirectory(lib)
 add_subdirectory(tests)
+
+if(BUILD_TESTING)
+  add_subdirectory(unittests)
+endif()

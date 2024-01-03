@@ -3,7 +3,10 @@
 
 #pragma once
 
+#ifndef HOSTED
+// not part of standard libc
 #include <compiler.h>
+#endif
 #include <cstdint>
 #include <pprintpp/pprintpp.hpp>
 #include <stdio.h>
@@ -76,6 +79,15 @@ inline constexpr const char* strip_file_path(const char* file_name)
 #define INTERNAL_TRAP(...) __builtin_trap();
 #endif
 
+#ifdef HOSTED
+#define ASSERT(cond, fmtstr, ...)                                    \
+    do {                                                             \
+        if (!(cond)) {                                               \
+            printf("[%s:%d]  ", __FILE__, __LINE__);                 \
+            printf("Assertion failed: " fmtstr "\n", ##__VA_ARGS__); \
+        }                                                            \
+    } while (0);
+#else
 #define ASSERT(cond, fmtstr, ...)                                     \
     do {                                                              \
         if (UNLIKELY(!(cond))) {                                      \
@@ -84,6 +96,7 @@ inline constexpr const char* strip_file_path(const char* file_name)
             INTERNAL_TRAP();                                          \
         }                                                             \
     } while (0);
+#endif
 
 #define PANIC_ON(cond, ...) ASSERT(!(cond), ##__VA_ARGS__)
 #define PANIC_UNLESS(cond, ...) ASSERT(cond, ##__VA_ARGS__)

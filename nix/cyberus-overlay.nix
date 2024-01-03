@@ -7,6 +7,7 @@ final: _prev:
   tests = import ./build.nix {
     inherit (final) stdenv
       callPackage
+      catch2_3
       cyberus
       cmake
       gcc11
