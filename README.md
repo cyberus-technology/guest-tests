@@ -49,7 +49,7 @@ options listed below mostly can be configured via the command line.
   - This output channel is useful to debug cmdline parsing and other logic that
     is executed before a serial or xHCI console is initialized.
 
-## Command Line Configuration
+## Command Line Configuration & Console Output
 
 The following command line configurations are accepted by the test binaries:
 
