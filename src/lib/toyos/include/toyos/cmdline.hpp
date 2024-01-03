@@ -51,12 +51,12 @@ namespace cmdline
          * an argument vector (argc/argv pair).
          *
          * \param cmdline The command line as string.
-         * \param usage   An array of option descriptors.
          */
-        cmdline_parser(const std::string& cmdline,
-                       const option::Descriptor usage[])
+        explicit cmdline_parser(const std::string& cmdline)
             : arguments(tokenize(cmdline, ' '))
         {
+            auto usage = cmdline::optionparser::usage;
+
             // Copy the tokenized arguments into the member variable,
             // because the raw string pointers will be used by the parser
             for (const auto& s : arguments) {

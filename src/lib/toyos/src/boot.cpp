@@ -41,7 +41,7 @@ simple_buddy* aligned_heap{ nullptr };
 
 static constexpr size_t DMA_POOL_SIZE{ 0x100000 };
 alignas(PAGE_SIZE) static char dma_pool_data[DMA_POOL_SIZE];
-alignas(PAGE_SIZE) static x86::tss tss;  // alignment only used to avoid avoid crossing page boundaries
+alignas(PAGE_SIZE) static x86::tss tss;  // alignment only used to avoid crossing page boundaries
 static buddy dma_pool{ 32 };
 
 std::optional<boot_method> current_boot_method = std::nullopt;
@@ -146,9 +146,7 @@ uint16_t get_effective_serial_port(const std::string& serial_option, acpi_mcfg* 
 
 static void initialize_console(const std::string& cmdline, acpi_mcfg* mcfg)
 {
-    boot_cmdline = cmdline;
-
-    cmdline::cmdline_parser p(cmdline, cmdline::optionparser::usage);
+    cmdline::cmdline_parser p(cmdline);
 
     auto serial_option = p.serial_option();
     auto xhci_option = p.xhci_option();
@@ -316,6 +314,7 @@ EXTERN_C void entry64(uint32_t magic, uintptr_t boot_info)
         __builtin_trap();
     }
 
+    boot_cmdline = cmdline;
     initialize_console(cmdline, mcfg);
 
     main();
