@@ -465,8 +465,7 @@ TEST_CASE(sending_an_nmi_while_handling_another_should_work)
     wait_until_irq_count_equals(2);
 }
 
-// This test is broken on VirtualBox, so we skip it if we find the HV bit
-TEST_CASE_CONDITIONAL(sending_self_nmi_with_shorthand_shouldnt_work, not hv_bit_present())
+TEST_CASE(sending_self_nmi_with_shorthand_shouldnt_work)
 {
     drain_interrupts();
 
@@ -653,9 +652,8 @@ static void handle_multiple(intr_regs* regs)
     }
 }
 
-// This test is broken on VirtualBox, so we skip it if we find the HV bit
 TEST_CASE_CONDITIONAL(receiving_extint_and_fixed_interrupt_simultaneously_should_deliver_both,
-                      not hv_bit_present() and hpet_available())
+                      hpet_available())
 {
     drain_interrupts();
     disable_interrupts();
