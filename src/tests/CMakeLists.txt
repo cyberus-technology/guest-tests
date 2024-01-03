@@ -1,5 +1,4 @@
 include(code-quality)
-include(nostd-build)
 include(prep_and_use_linker_script)
 
 function(guesttest_linkage target-name)
@@ -41,9 +40,14 @@ function(add_guesttest test_name)
 
   add_executable(${test_name} ${test_name}/main.cpp)
 
+  add_nostd_compile_options(${test_name} PRIVATE)
+  add_nostd_link_options(${test_name} PRIVATE)
+
   set_target_properties(${test_name} PROPERTIES SUFFIX ".elf64")
 
-  target_link_libraries(${test_name} PRIVATE toyos ${GUESTTEST_ARGS_EXTRA_LIBS})
+  target_link_libraries(
+    ${test_name} PRIVATE libcxx toyos ${GUESTTEST_ARGS_EXTRA_LIBS}
+    )
 
   target_sources(${test_name} PRIVATE ${GUESTTEST_ARGS_EXTRA_SOURCES})
 

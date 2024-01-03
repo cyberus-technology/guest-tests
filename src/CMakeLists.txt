@@ -46,5 +46,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DRELEASE -O2")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Make function available. Doesn't change anything so far.
+include(nostd-build)
+
 add_subdirectory(lib)
 add_subdirectory(tests)

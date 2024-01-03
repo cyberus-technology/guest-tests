@@ -1,5 +1,4 @@
 include(code-quality)
-include(nostd-build)
 
 add_library(
   toyos STATIC
@@ -27,6 +26,9 @@ add_library(
   src/x86/segmentation.cpp
   )
 
+
+add_nostd_build_options(toyos PRIVATE)
+
 target_include_directories(
   toyos PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                $<INSTALL_INTERFACE:include>
@@ -41,4 +43,4 @@ target_compile_options(
 # for first-fit-heap
 target_compile_definitions(toyos PUBLIC HEAP_FREESTANDING HEAP_ASSERT)
 
-target_link_libraries(toyos PUBLIC libcxx)
+target_link_libraries(toyos PRIVATE libcxx)

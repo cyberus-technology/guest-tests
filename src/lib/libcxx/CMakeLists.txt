@@ -1,5 +1,3 @@
-include(nostd-build)
-
 add_library(
   libcxx STATIC
   src/c_string.cpp
@@ -11,6 +9,9 @@ add_library(
   src/string.cpp
   src/vector.cpp
   )
+
+add_nostd_compile_options(libcxx PRIVATE)
+add_nostd_link_options(libcxx PRIVATE)
 
 target_include_directories(
   libcxx PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
