@@ -57,7 +57,7 @@ The following command line configurations are accepted by the test binaries:
 
 - `--serial` or `--serial=<port: number>`:
   Enable serial console. You can explicitly specify the x86 I/O `port`, such as
-  `42` or `0x3f8`. "It is **recommended to use this as a flag** so that the
+  `42` or `0x3f8`. It is **recommended to use this as a flag** so that the
   program can automatically discover the port.
 - `--xhci` or `--xhci=<identifier: string>`:
   Enable xHCI debug console. If no identifier is provided, a default is used.
