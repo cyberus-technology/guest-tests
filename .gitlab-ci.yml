@@ -10,7 +10,7 @@ stages:
 
 .build_regular_template:
   stage: build
-  image: gcc:12
+  image: gcc:11 # keep in Sync with Nix
   before_script:
     - apt-get update && apt-get install -y cmake ninja-build
   script:

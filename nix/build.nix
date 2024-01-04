@@ -49,7 +49,7 @@ let
 
       nativeBuildInputs = [
         cmake
-        gcc11
+        gcc11 # keep in sync with CI file
       ];
 
       # The ELFs are standalone kernels and don't need to go through these. This
