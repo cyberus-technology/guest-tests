@@ -6,7 +6,7 @@
 #       behavior.
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.21)
 
 # The cmake documentation says: Call the project() command near the top of the
 # top-level CMakeLists.txt, but after calling cmake_minimum_required(). It is
@@ -17,7 +17,7 @@ project(guest-tests CXX C ASM)
 
 # Must be set before including CTest so that these arguments are applied when
 # running `$ ninja test` or `$ make test`.
-set(CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+set(CMAKE_CTEST_ARGUMENTS "--output-on-failure" "--output-junit" "junit.xml")
 include(CTest)
 
 set(CMAKE_CXX_STANDARD 17)

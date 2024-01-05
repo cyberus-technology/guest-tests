@@ -107,6 +107,12 @@ build:cmake:regular_release:
     - .build_regular_template
   variables:
     CMAKE_DO_TESTING: "On"
+  artifacts:
+    when: always
+    paths:
+      - build/junit.xml
+    reports:
+      junit: build/junit.xml
 
 test:unit:cmake_debug:
   extends:
