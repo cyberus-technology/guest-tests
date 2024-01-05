@@ -93,7 +93,7 @@ namespace cmdline
          */
         std::optional<std::string> serial_option()
         {
-            return this->option_value(optionparser::option_index::SERIAL);
+            return option_value(optionparser::option_index::SERIAL);
         }
 
         /**
@@ -104,7 +104,7 @@ namespace cmdline
          */
         std::optional<std::string> xhci_option()
         {
-            return this->option_value(optionparser::option_index::XHCI);
+            return option_value(optionparser::option_index::XHCI);
         }
 
         /**
@@ -112,7 +112,7 @@ namespace cmdline
          */
         std::string xhci_power_option()
         {
-            return this->option_value(optionparser::option_index::XHCI_POWER).value_or("0");
+            return option_value(optionparser::option_index::XHCI_POWER).value_or("0");
         }
 
         /**
@@ -120,7 +120,7 @@ namespace cmdline
          */
         std::vector<std::string> disable_testcases_option()
         {
-            auto disabled_testcases_str = this->option_value(optionparser::option_index::DISABLED_TESTCASES).value_or("");
+            auto disabled_testcases_str = option_value(optionparser::option_index::DISABLED_TESTCASES).value_or("");
             return util::string::split(disabled_testcases_str, cmdline::optionparser::DISABLED_TESTCASES_DELIMITER);
         }
 
