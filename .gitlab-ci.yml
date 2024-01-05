@@ -48,6 +48,13 @@ check:nix-shell:
   script:
     - nix-shell --pure --run "echo nix-shell works"
 
+build:cmake:nix:
+  stage: build
+  extends:
+    - .nix_build_template
+  script:
+    - nix-build nix/release.nix -A tests.hello-world.elf32
+
 build:regular_debug:
   extends:
     - .build_regular_template
