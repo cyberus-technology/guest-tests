@@ -29,6 +29,7 @@
 #include "assert.hpp"
 #include "config.hpp"
 #include "expect.hpp"
+#include "string_view"
 
 namespace baretest
 {
@@ -72,6 +73,12 @@ namespace baretest
     jmp_buf& get_env();
     test_suite& get_suite();
 
+    /**
+     * Checks if a test cases is disabled. The implicit "test_" prefix that is
+     * added to every test is ignored in that check.
+     */
+    bool testcase_disabled_by_cmdline(const std::string_view& name);
+
 }  // namespace baretest
 
 #define TEST_CASE_CONDITIONAL(test_name, condition)                           \
@@ -86,6 +93,10 @@ namespace baretest
         printf("test case: %s\n", __func__);                                  \
         if (not(condition)) {                                                 \
             printf("- skipping as condition is NOT met: `" #condition "`\n"); \
+            return baretest::test_case::result_t::SKIPPED;                    \
+        }                                                                     \
+        if (baretest::testcase_disabled_by_cmdline(#test_name)) {             \
+            printf("- skipping as test case is disabled via cmdline\n");      \
             return baretest::test_case::result_t::SKIPPED;                    \
         }                                                                     \
         int val = setjmp(baretest::get_env());                                \

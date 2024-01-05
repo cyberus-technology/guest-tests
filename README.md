@@ -49,7 +49,7 @@ options listed below mostly can be configured via the command line.
   - This output channel is useful to debug cmdline parsing and other logic that
     is executed before a serial or xHCI console is initialized.
 
-## Command Line Configuration
+## Command Line Configuration & Console Output
 
 The following command line configurations are accepted by the test binaries:
 
@@ -57,12 +57,16 @@ The following command line configurations are accepted by the test binaries:
 
 - `--serial` or `--serial=<port: number>`:
   Enable serial console. You can explicitly specify the x86 I/O `port`, such as
-  `42` or `0x3f8`. "It is **recommended to use this as a flag** so that the
+  `42` or `0x3f8`. It is **recommended to use this as a flag** so that the
   program can automatically discover the port.
 - `--xhci` or `--xhci=<identifier: string>`:
   Enable xHCI debug console. If no identifier is provided, a default is used.
 - `--xhci-power=0|1`:
   Set the USB power cycle method (`0` = nothing, `1` = powercycle).
+- `--disable-testcases=testA,testB,testC`:
+  Comma-separated list of test cases that you want to disable. They will be
+  skipped. For example:
+  To disable `TEST_CASE(foo) {}` you can pass `--disable-testcases=foo`.
 
 ## Build
 
@@ -114,6 +118,8 @@ test runs:
       # This is usually false if the test contains timing-specific behavior
       # or benchmarks.
       cacheable = <bool>;
+      # The default cmdline of that test.
+      defaultCmdline = <string>;
       # Test has no expected variability on different hardware.
       #
       # This is usually false if the test contains timing-specific behavior.
