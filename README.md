@@ -106,8 +106,16 @@ cat $(nix-build -E '((import ./nix/release.nix).tests.hello-world.{iso|efi}.over
 
 ## Test Metadata (Nix)
 
-When consumed with Nix, each test carries metadata that you can use to create
-test runs:
+When consumed with Nix, each test variant carries metadata that you can use to
+create test runs. The metadata is the same for all variants of a test.
+It is accessible via `nix-build -A tests.<name>.<variant>`. Please find more
+info in [Reuse Guest Tests (with Nix)](/doc/nix-reuse-guest-tests/nix-reuse-guest-tests.md).
+
+<!--
+It is important that we don't export these settings as meta.sotest = {} as
+otherwise, the cbspkgs pipeline might think that these are sotest runs, which
+they are not.
+-->
 
 ```nix
 {
@@ -136,15 +144,6 @@ test runs:
   };
 }
 ```
-<!--
-It is important that we don't export these settings as meta.sotest = {} as
-otherwise, the cbspkgs pipeline might think that these are sotest runs, which
-they are not.
--->
-
-It is accessible via `nix-build -A tests.<name>.<variant>`. Please find more
-info in
-[Reuse Guest Tests (with Nix)](/doc/nix-reuse-guest-tests/nix-reuse-guest-tests.md).
 
 ## Testing
 
