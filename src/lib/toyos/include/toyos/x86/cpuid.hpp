@@ -10,6 +10,11 @@ enum
     CPUID_LEAF_EXTENDED_FEATURES = 0x00000007,
     CPUID_LEAF_EXTENDED_STATE = 0x0000000D,
     CPUID_LEAF_SGX_CAPABILITY = 0x00000012,
+    /**
+     * Base leaf for the extended CPU brand string. The full name is in this
+     * leaf and the two subsequent leafs.
+     */
+    CPUID_LEAF_EXTENDED_BRAND_STRING_BASE = 0x80000002,
 
     CPUID_EXTENDED_STATE_MAIN = 0,
     CPUID_EXTENDED_STATE_SUB = 1,

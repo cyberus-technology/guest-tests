@@ -192,7 +192,7 @@ void __attribute__((noreturn)) shutdown()
     constexpr uint16_t VIRTUALBOX_SHUTDOWN_PORT = 0x4004;
     constexpr uint16_t VIRTUALBOX_SHUTDOWN_VALUE = 0x3400;
 
-    if (hv_bit_present()) {
+    if (util::cpuid::hv_bit_present()) {
         // Order is not important.
         // Unknown PIO writes are ignored by VMMs in general.
         outw(CLOUD_HYPERVISOR_SHUTDOWN_PORT, CLOUD_HYPERVISOR_SHUTDOWN_VALUE);
@@ -230,7 +230,7 @@ EXTERN_C void init_interrupt_controllers()
 EXTERN_C void entry64(uint32_t magic, uintptr_t boot_info)
 {
     // Init debugcon console as early as possible.
-    if (hv_bit_present()) {
+    if (util::cpuid::hv_bit_present()) {
         console_debugcon::init();
     }
 
