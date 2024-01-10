@@ -1,13 +1,8 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <initializer_list>
-#include <tuple>
-
-#include <toyos/testhelper/debugport_interface.h>
-
-#include <compiler.hpp>
 #include <toyos/baretest/baretest.hpp>
+#include <toyos/testhelper/debugport_interface.h>
 
 TEST_CASE(push_register)
 {

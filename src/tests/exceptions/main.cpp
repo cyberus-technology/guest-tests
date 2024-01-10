@@ -2,7 +2,6 @@
  *        All rights reserved        */
 
 #include <toyos/baretest/baretest.hpp>
-#include <toyos/testhelper/debugport_interface.h>
 #include <toyos/testhelper/idt.hpp>
 #include <toyos/testhelper/irq_handler.hpp>
 #include <toyos/testhelper/irqinfo.hpp>

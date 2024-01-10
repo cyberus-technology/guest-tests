@@ -5,14 +5,11 @@
 
 #include <compiler.hpp>
 #include <toyos/baretest/baretest.hpp>
-#include <toyos/testhelper/debugport_interface.h>
 #include <toyos/testhelper/idt.hpp>
 #include <toyos/testhelper/irq_handler.hpp>
 #include <toyos/testhelper/irqinfo.hpp>
 #include <toyos/testhelper/usermode.hpp>
 #include <toyos/util/trace.hpp>
-
-#include <tuple>
 
 static irqinfo irq_info;
 static void irq_handler_fn(intr_regs* regs)

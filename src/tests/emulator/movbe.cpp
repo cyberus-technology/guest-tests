@@ -1,15 +1,8 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <initializer_list>
-#include <tuple>
-
-#include <toyos/testhelper/debugport_interface.h>
-
-#include <compiler.hpp>
 #include <toyos/baretest/baretest.hpp>
-#include <toyos/x86/cpuid.hpp>
-
+#include <toyos/testhelper/debugport_interface.h>
 #include <toyos/x86/x86asm.hpp>
 
 template<typename SIZE_TYPE>
