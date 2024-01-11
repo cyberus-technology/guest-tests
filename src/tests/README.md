@@ -1,10 +1,10 @@
 # Guest Tests
 
-Every subfolder is a small test kernel that tests a specific property
-of our system.
+Every sub-folder contains the files for a small test kernel that tests a specific
+and isolated aspect of the hardware, just like an operating system would use it.
 
-Guest test execution can be configured using `sotest.toml` files. Available
-settings are:
-- `cacheable`: Test results should be cached when no test input changed
-- `extraTags`: A list of required SoTest machine tags to add for this test
-- `hardware_independent`: Test has no variability on different hardware (default is false)
+## `properties.toml` files
+
+The `properties.toml` file next to each test contains a subset of the meta
+attributes of that test. Please refer to the [top-level README](/README.md) for
+further explanation.
