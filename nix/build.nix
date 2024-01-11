@@ -113,8 +113,9 @@ let
       (name: variant:
         let
           testProperties = getTestProperties testName;
+          meta = (variant.meta or { }) // { inherit testProperties; };
         in
-        variant // { meta = (variant.meta or { }) // { inherit testProperties; }; }
+        variant // { inherit meta; }
       )
       base;
 
