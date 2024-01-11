@@ -13,7 +13,7 @@ rec {
 
   /* Return whether a test is hardware independent.
   */
-  checkIsHardwareIndependent = testName: (specificSettings testName).hardware_independent or false;
+  checkIsHardwareIndependent = testName: (specificSettings testName).hardwareIndependent or false;
 
   /* Return whether a test is cacheable.
   */
