@@ -1,6 +1,7 @@
 let
   pkgs = import ./nix/cbspkgs.nix;
   cmakeDrv = pkgs.cyberus.guest-tests.tests.hello-world.elf32.cmakeProj;
+  release = import ./nix/release.nix { inherit pkgs; };
 in
 pkgs.mkShell rec {
   inputsFrom = [
@@ -19,4 +20,9 @@ pkgs.mkShell rec {
     clang-tools
     cmake-format
   ];
+
+  # Automatically install pre-commit hooks for style issues.
+  shellHook = ''
+    ${release.pre-commit-check.shellHook}
+  '';
 }

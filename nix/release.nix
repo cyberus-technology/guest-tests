@@ -1,6 +1,6 @@
-let
-  pkgs = import ./cbspkgs.nix;
+{ pkgs ? import ./cbspkgs.nix }:
 
+let
   # All guest tests.
   tests = pkgs.cyberus.guest-tests.tests;
   testNames = builtins.attrNames tests;
@@ -127,8 +127,11 @@ let
       newDrvHasNewCmdline = hasCmdline overriddenDrv;
     in
     oldDrvHasNotNewCmdline && newDrvHasNewCmdline;
+
+  pre-commit-check = import ./pre-commit-check.nix { inherit pkgs; };
 in
 {
+  inherit pre-commit-check;
   inherit tests;
 
   # Attribute set containing various configurations to run the guest tests in

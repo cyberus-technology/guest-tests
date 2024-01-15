@@ -77,7 +77,7 @@ let
         hello-world = "--disable-testcases=test_case_is_skipped_by_cmdline";
       };
     in
-    dict.${testName} or "";
+      dict.${testName} or "";
 
   # Returns the properties of a test as attribute set.
   getTestProperties =
@@ -115,7 +115,7 @@ let
     in
     # Add meta data to each variant.
     builtins.mapAttrs
-      (name: variant:
+      (_name: variant:
         let
           testProperties = getTestProperties testName;
           meta = (variant.meta or { }) // { inherit testProperties; };

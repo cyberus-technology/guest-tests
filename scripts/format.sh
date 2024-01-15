@@ -5,12 +5,7 @@
 # - clang-format
 # - cmake-format
 #
-# Changes are applied in-place except if the `--check` parameter is provided.
-#
-# @flag    -c --check
-
-eval "$(argc --argc-eval "$0" "$@")"
-JUST_CHECK=${argc_check=0} # "0" or "1"
+# Changes are applied in-place.
 
 set -euo pipefail
 IFS=$'\n\t'
@@ -32,22 +27,14 @@ function fn_format_sources() {
 
     for FOLDER in "${FOLDERS[@]}"; do
         echo "  Processing folder: $FOLDER"
-        if [ "$JUST_CHECK" = "1" ]; then
-            fd --type file "${EXTENSIONS_ARG_STR[@]}" . "$FOLDER" | xargs -I {} clang-format --Werror --dry-run {}
-        else
-            fd --type file "${EXTENSIONS_ARG_STR[@]}" . "$FOLDER" | xargs -I {} clang-format --Werror --i {}
-        fi
+        fd --type file "${EXTENSIONS_ARG_STR[@]}" . "$FOLDER" | xargs -I {} clang-format --Werror --i {}
     done
 }
 
 function fn_format_cmake() {
     echo "Formatting CMake files"
 
-    if [ "$JUST_CHECK" = "1" ]; then
-        fd ".*\.cmake|CMakeLists.txt" | xargs -I {} cmake-format --check {}
-    else
-        fd ".*\.cmake|CMakeLists.txt" | xargs -I {} cmake-format --in-place {}
-    fi
+    fd ".*\.cmake|CMakeLists.txt" | xargs -I {} cmake-format --in-place {}
 }
 function fn_main() {
     fn_format_cmake
