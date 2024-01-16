@@ -10,13 +10,43 @@ stages:
 
 .build_regular_template:
   stage: build
-  image: gcc:11 # keep in Sync with Nix
+  image: ubuntu:23.10
   before_script:
-    - apt-get update && apt-get install -y cmake ninja-build
+    - apt-get update && apt-get install -y git gcc-11 g++-11 cmake ninja-build
   script:
-    - mkdir build
-    - cd build
-    - cmake .. -G Ninja -DCMAKE_INSTALL_PREFIX=./install -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE && ninja
+    - |
+      # Set CXX version for CMake.
+      export CC=gcc-11 # Keep in sync with Nix file.
+      export CXX=g++-11
+      echo -n "gcc version: "
+      $CC --version | head -n 1
+      echo -n "g++ version: "
+      $CXX --version | head -n 1
+      echo -n "cmake version: "
+      cmake --version | head -n 1
+    # Catch2 in version 3 is not available in the Ubuntu repository. So we
+    # fetch and build it from source. This is luckily easy and cheap.
+    - |
+      echo '$CMAKE_BUILD_TYPE=' "$CMAKE_BUILD_TYPE"
+      echo '$CMAKE_DO_TESTING=' "$CMAKE_DO_TESTING"
+      if [[ $CMAKE_DO_TESTING == "On" ]]; then
+          git clone https://github.com/catchorg/Catch2.git
+          mkdir Catch2/build && cd Catch2/build
+          cmake .. -G Ninja -DBUILD_TESTING=Off
+          ninja
+          ninja install
+          cd - # exit Catch2/build
+      fi
+    - mkdir build && cd build
+    - |
+      cmake .. -G Ninja \
+        -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+        -DBUILD_TESTING=$CMAKE_DO_TESTING
+    - |
+      ninja
+      if [[ $CMAKE_DO_TESTING == "On" ]]; then
+          ninja test
+      fi
 
 .common:
   interruptible: true
@@ -55,19 +85,42 @@ build:cmake:nix:
   script:
     - nix-build nix/release.nix -A tests.hello-world.elf32
 
-build:regular_debug:
+build:cmake:regular_debug:
+  stage: build
   extends:
     - .build_regular_template
+  variables:
+    CMAKE_DO_TESTING: "Off"
+    CMAKE_BUILD_TYPE: "Debug"
+
+build:cmake:regular_release:
+  stage: build
+  extends:
+    - .build_regular_template
+  variables:
+    CMAKE_DO_TESTING: "Off"
+    CMAKE_BUILD_TYPE: "Release"
+
+.test:unit:cmake_template:
+  stage: test
+  extends:
+    - .build_regular_template
+  variables:
+    CMAKE_DO_TESTING: "On"
+
+test:unit:cmake_debug:
+  extends:
+    - .test:unit:cmake_template
   variables:
     CMAKE_BUILD_TYPE: "Debug"
 
-build:regular_release:
+test:unit:cmake_release:
   extends:
-    - .build_regular_template
+    - .test:unit:cmake_template
   variables:
     CMAKE_BUILD_TYPE: "Release"
 
-test:nix-unit-tests:
+test:unit:nix:
   extends:
     - .nix_build_template
   stage: test
@@ -167,10 +220,13 @@ test:sotest:submit:
   extends:
     - .nix_build_template
   stage: test
-  # No real dependency but doesn't make sense to run without the basic tests.
+  # No real dependency but doesn't make sense to run when the basic tests don't
+  # succeed.
   needs:
     - test:vm:hello-world-boots:multiboot1
     - test:vm:hello-world-boots:efi
+    - test:unit:cmake_debug
+    - test:unit:cmake_release
   script:
     - nix-build nix/release.nix -A sotest
     - RUN_SOTEST=$(nix-build nix/cbspkgs.nix -A cyberus.cbspkgs.run-sotest --no-out-link)/bin/run_sotest
