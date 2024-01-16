@@ -27,23 +27,6 @@ class console_serial_base : public console
         uint16_t port{ SERIAL_PORT_DEFAULT };
         unsigned baud{ SERIAL_BAUD };
         unsigned irq{ SERIAL_IRQ_DEFAULT };
-
-        explicit console_info(const std::string& arg)
-        {
-            const auto args{ tokenize(arg, ',') };
-
-            switch (args.size()) {
-                case 2:
-                    irq = std::stoul(args[1]);
-                    FALL_THROUGH;
-                case 1:
-                    port = std::stoul(args[0], nullptr, 16);
-                    FALL_THROUGH;
-                case 0:
-                    break;
-                    DEFAULT_TO_PANIC("Wrong number of arguments supplied for serial console.");
-            }
-        }
     };
 
     enum
