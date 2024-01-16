@@ -58,17 +58,17 @@ class usermode_helper
     void enter_iret(bool emulated = false, uint64_t set_flags = 0, uint64_t clear_flags = 0)
     {
         asm volatile("mov %%rsp, %%rbx;"
-                     "push $0x23;"  // Push usermode SS
-                     "push %%rbx;"  // Push future SP
+                     "pushq $0x23;"  // Push usermode SS
+                     "pushq %%rbx;"  // Push future SP
 
                      "pushf;"  // Push and modify FLAGS
                      "pop %%rcx;"
                      "or %[set_flags], %%rcx;"
                      "and %[clear_mask], %%rcx;"
-                     "push %%rcx;"
+                     "pushq %%rcx;"
 
-                     "push $0x2b;"  // Push 64-bit usermode CS
-                     "push $1f;"    // Push continuation IP
+                     "pushq $0x2b;"  // Push 64-bit usermode CS
+                     "pushq $1f;"    // Push continuation IP
                      "cmp $0, %[emul];"
                      "je 2f;"
                      "outb %[dbgport];"
