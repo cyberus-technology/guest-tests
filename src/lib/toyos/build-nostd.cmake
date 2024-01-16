@@ -4,6 +4,7 @@ add_library(
   toyos STATIC
   src/boot.cpp
   src/console_serial.cpp
+  src/console_serial_util.cpp
   src/init.S
   src/mm.cpp
   src/pd.cpp
