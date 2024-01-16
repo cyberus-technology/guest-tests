@@ -32,12 +32,14 @@ stages:
   tags:
     - native-nix-v2
 
-check:format:
+check:style:
+  stage: check
   extends:
     - .nix_build_template
-  stage: check
+  needs: []
+  dependencies: []
   script:
-    - nix-shell --run "./scripts/format.sh --check"
+    - nix-build nix/release.nix -A pre-commit-check
 
 check:nix-shell:
   extends:

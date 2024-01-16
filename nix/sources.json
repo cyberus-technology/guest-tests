@@ -4,5 +4,17 @@
         "repo": "git@gitlab.vpn.cyberus-technology.de:cyberus/engineering/cbspkgs.git",
         "rev": "fc899120b03855a48cea7feaad43863dd52ba781",
         "type": "git"
+    },
+    "pre-commit-hooks.nix": {
+        "branch": "master",
+        "description": "Seamless integration of https://pre-commit.com git hooks with Nix.",
+        "homepage": "",
+        "owner": "cachix",
+        "repo": "pre-commit-hooks.nix",
+        "rev": "274ae3979a0eacae422e1bbcf63b8b7a335e1114",
+        "sha256": "1gwhbdjkf4wglm5q396wqjm1j9xm1rh9z8s5s1gwvvw63d2l8izp",
+        "type": "tarball",
+        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/274ae3979a0eacae422e1bbcf63b8b7a335e1114.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }

@@ -104,6 +104,14 @@ The effective cmdline can also be verified by looking at the final GRUB config:
 cat $(nix-build -E '((import ./nix/release.nix).tests.hello-world.{iso|efi}.override({kernelCmdline = "foobar";})).grubCfg')
 ```
 
+## Code Style
+
+We use `pre-commit` via [`pre-commit-hooks.nix`](https://github.com/cachix/pre-commit-hooks.nix)
+to run various style checks in CI. You can run all checks by running
+`$ nix-shell --run "pre-commit run --all-files"`. If you enter the Nix shell,
+the hooks are automatically installed and a `.pre-commit-config.yaml` is
+generated.
+
 ## Test Metadata (Nix)
 
 When consumed with Nix, each test variant carries metadata that you can use to
