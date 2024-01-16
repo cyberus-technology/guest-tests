@@ -120,17 +120,29 @@ they are not.
 ```nix
 {
   meta = {
+    # These properties give hints about the behaviour of a test when it runs on
+    # real hardware. If you run a test in a virtual machine, i.e., on virtual
+    # hardware, you might chose different values depending on your project.
+    #
+    # We use them in our (CI) test infrastructure to schedule test runs on real
+    # hardware.
     testProperties = {
-      # Test results should be cached when no test input changed.
+      # Test results can be cached safely when no test inputs have changed.
       #
       # This is usually false if the test contains timing-specific behavior
-      # or benchmarks.
+      # or benchmarks or if we suspect a hidden flakiness, which may be
+      # revealed over time.
       cacheable = <bool>;
       # The default cmdline of that test.
       defaultCmdline = <string>;
-      # Test has no expected variability on different hardware.
+      # The test behaves equally on different machines/hardware.
       #
-      # This is usually false if the test contains timing-specific behavior.
+      # This is false, if the same test produces different results on different
+      # hardware, but these differences still result in a successful test
+      # execution, and it is important that different runs on different machines
+      # all report success. Usually, this is the case if a test uses cpuid or
+      # timers, which naturally differs between various platforms of the same
+      # overall platform family.
       hardwareIndependent = <bool>;
       # SoTest-specific metadata.
       sotest = {
@@ -160,8 +172,8 @@ We run the following mandatory steps in CI:
     - via XEN PVH (in Cloud Hypervisor/kvm)
 - all tests succeed on real hardware (in SoTest)
 
-Our own virtualization solutions are supposed to schedule their own guest tests
-to run as part of their CI infrastructure. We don't test any VMMs here, except
+Our own virtualization solutions are supposed to schedule their own guest test
+runs as part of their CI infrastructure. We don't test any VMMs here, except
 for the `hello-world` test.
 
 There are also optional and manual CI steps, that are allowed to fail. They run

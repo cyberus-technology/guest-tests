@@ -40,7 +40,12 @@ let
       pname = "guest-tests";
       version = "1.0.0";
 
-      src = nix-gitignore.gitignoreSourcePure [ ] ../src;
+      src = nix-gitignore.gitignoreSourcePure [
+        # If you're testing around with the test properties, it is handy to add
+        # this exclude to see quicker results. Otherwise, the whole CMake
+        # project needs a rebuild.
+        # "tests/**/properties.toml"
+      ] ../src;
 
       nativeBuildInputs = [
         cmake
@@ -77,17 +82,17 @@ let
   # Returns the properties of a test as attribute set.
   getTestProperties =
     let
-      tomlHelpers = import ./toml-helpers.nix {
-        testDir = ./../src/tests;
-      };
+      helper = import ./properties-toml-helper.nix;
     in
     testName:
+    # Properties from properties.toml.
     {
-      cacheable = tomlHelpers.checkIsCacheable testName;
-      defaultCmdline = getDefaultCmdline testName;
-      hardwareIndependent = tomlHelpers.checkIsHardwareIndependent testName;
-      sotest = (tomlHelpers.specificSettings testName).sotest or { };
+      cacheable = helper.isCacheable testName;
+      hardwareIndependent = helper.isHardwareIndependent testName;
+      sotest = helper.getSotestMeta testName;
     }
+    # Merge with additional properties from other sources.
+    // { defaultCmdline = getDefaultCmdline testName; }
   ;
 
   # Creates an attribute set that holds all binary variants of a test.
@@ -113,8 +118,9 @@ let
       (name: variant:
         let
           testProperties = getTestProperties testName;
+          meta = (variant.meta or { }) // { inherit testProperties; };
         in
-        variant // { meta = (variant.meta or { }) // { inherit testProperties; }; }
+        variant // { inherit meta; }
       )
       base;
 
