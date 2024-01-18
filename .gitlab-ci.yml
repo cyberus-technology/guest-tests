@@ -86,7 +86,8 @@ build:cmake:nix:
   extends:
     - .nix_build_template
   script:
-    - nix-build nix/release.nix -A tests.hello-world.elf32
+    # Unit tests are tied to the CMake derivation. We manually deactivate it.
+    - nix-build -E "(import nix/release.nix {}).tests.hello-world.elf32.cmakeProj.overrideAttrs({ doCheck = false; })"
 
 build:cmake:regular_debug:
   stage: build
@@ -134,6 +135,9 @@ test:unit:nix:
     - .nix_build_template
   stage: test
   script:
+    # Build the CMake project but this time with unit tests
+    # (default behavior of the attribute)
+    - nix-build nix/release.nix -A tests.hello-world.elf32
     - nix-build nix/release.nix -A unitTests.verifyTestsAttributeStructure
     - nix-build nix/release.nix -A unitTests.kernelCmdlineOfBootItemsCanBeOverridden
 
