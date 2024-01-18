@@ -44,4 +44,4 @@ target_compile_options(
 # for first-fit-heap
 target_compile_definitions(toyos PUBLIC HEAP_FREESTANDING HEAP_ASSERT)
 
-target_link_libraries(toyos PRIVATE libcxx)
+target_link_libraries(toyos PUBLIC libcxx)
