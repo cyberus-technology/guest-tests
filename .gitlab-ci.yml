@@ -8,7 +8,16 @@ stages:
   - test
   - optional_test
 
+.common:
+  interruptible: true
+  before_script:
+    - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "git@${CI_SERVER_HOST}:"
+    - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "ssh://git@${CI_SERVER_HOST}/"
+
+
 .build_regular_template:
+  extends:
+    - .common
   stage: build
   image: ubuntu:23.10
   before_script:
@@ -47,12 +56,6 @@ stages:
       if [[ $CMAKE_DO_TESTING == "On" ]]; then
           ninja test
       fi
-
-.common:
-  interruptible: true
-  before_script:
-    - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "git@${CI_SERVER_HOST}:"
-    - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "ssh://git@${CI_SERVER_HOST}/"
 
 # Gitlab CI environment template that enables Nix on the command line,
 # including nix-build and nix-shell.
