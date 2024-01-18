@@ -1,6 +1,6 @@
-include(nostd-build)
-
 add_library(libc-tiny INTERFACE)
+
+add_nostd_compile_options(libc-tiny INTERFACE)
 
 target_include_directories(
   libc-tiny INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

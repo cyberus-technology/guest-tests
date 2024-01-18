@@ -6,7 +6,6 @@
 #include "debug_device.hpp"
 
 #include "../console/console.hpp"
-#include "../mutex.hpp"
 #include "../x86/arch.hpp"
 #include "toyos/util/interval.hpp"
 

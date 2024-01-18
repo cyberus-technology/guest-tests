@@ -6,7 +6,7 @@
 #       behavior.
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.21)
 
 # The cmake documentation says: Call the project() command near the top of the
 # top-level CMakeLists.txt, but after calling cmake_minimum_required(). It is
@@ -15,11 +15,15 @@ cmake_minimum_required(VERSION 3.20)
 # point unless absolutely necessary and justified.
 project(guest-tests CXX C ASM)
 
-set(CMAKE_CXX_STANDARD 17)
+# Must be set before including CTest so that these arguments are applied when
+# running `$ ninja test` or `$ make test`.
+set(CMAKE_CTEST_ARGUMENTS "--output-on-failure" "--output-junit" "junit.xml")
+include(CTest)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED "On")
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-
 set(default_build_type "Develop")
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -46,5 +50,12 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DRELEASE -O2")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Make function available. Doesn't change anything so far.
+include(nostd-build)
+
 add_subdirectory(lib)
 add_subdirectory(tests)
+
+if(BUILD_TESTING)
+  add_subdirectory(unittests)
+endif()

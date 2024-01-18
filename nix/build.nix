@@ -8,6 +8,7 @@
 
 { stdenv
 , callPackage
+, catch2_3
 , cyberus
 , cmake
 , gcc11
@@ -47,9 +48,12 @@ let
         # "tests/**/properties.toml"
       ] ../src;
 
+      doCheck = true;
+      checkInputs = [ catch2_3 ];
+
       nativeBuildInputs = [
         cmake
-        gcc11
+        gcc11 # keep in sync with CI file
       ];
 
       # The ELFs are standalone kernels and don't need to go through these. This
