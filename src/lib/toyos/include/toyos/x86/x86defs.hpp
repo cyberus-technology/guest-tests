@@ -938,9 +938,6 @@ namespace x86
         XSAVES,
         XRSTORS,
         NUM_EXITS,
-
-        // Hedron reports this exit reason if a call to vcpu_ctrl_run returns due to a vcpu_ctrl_poke.
-        POKED = 255,
     };
 
     enum class cpu_mode : uint32_t
