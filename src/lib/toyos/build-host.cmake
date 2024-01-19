@@ -1,6 +1,6 @@
 # Builds a host-system-testable subset of the toyos library.
 
-add_library(toyos-host STATIC src/string_util.cpp)
+add_library(toyos-host STATIC src/console_serial_util.cpp src/string_util.cpp)
 
 target_include_directories(
   toyos-host PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
