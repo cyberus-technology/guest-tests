@@ -5,10 +5,10 @@
 
 #include <assert.h>
 
-#include "toyos/util/math.hpp"
 #include <arch.h>
 #include <compiler.hpp>
 #include <toyos/util/cast_helpers.hpp>
+#include <toyos/util/math.hpp>
 
 namespace x86
 {

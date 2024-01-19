@@ -8,7 +8,16 @@ stages:
   - test
   - optional_test
 
+.common:
+  interruptible: true
+  before_script:
+    - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "git@${CI_SERVER_HOST}:"
+    - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "ssh://git@${CI_SERVER_HOST}/"
+
+
 .build_regular_template:
+  extends:
+    - .common
   stage: build
   image: ubuntu:23.10
   before_script:
@@ -48,12 +57,6 @@ stages:
           ninja test
       fi
 
-.common:
-  interruptible: true
-  before_script:
-    - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "git@${CI_SERVER_HOST}:"
-    - git config --global --add url."${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/".insteadOf "ssh://git@${CI_SERVER_HOST}/"
-
 # Gitlab CI environment template that enables Nix on the command line,
 # including nix-build and nix-shell.
 .nix_build_template:
@@ -83,7 +86,8 @@ build:cmake:nix:
   extends:
     - .nix_build_template
   script:
-    - nix-build nix/release.nix -A tests.hello-world.elf32
+    # Unit tests are tied to the CMake derivation. We manually deactivate it.
+    - nix-build -E "(import nix/release.nix {}).tests.hello-world.elf32.cmakeProj.overrideAttrs({ doCheck = false; })"
 
 build:cmake:regular_debug:
   stage: build
@@ -131,46 +135,47 @@ test:unit:nix:
     - .nix_build_template
   stage: test
   script:
+    # Build the CMake project but this time with unit tests
+    # (default behavior of the attribute)
+    - nix-build nix/release.nix -A tests.hello-world.elf32
     - nix-build nix/release.nix -A unitTests.verifyTestsAttributeStructure
     - nix-build nix/release.nix -A unitTests.kernelCmdlineOfBootItemsCanBeOverridden
 
 # All test use the same base to boot. Hence, we test here that the hello-world
 # test comes up.
 
-test:vm:hello-world-boots:multiboot1:
+.test:vm:hello-world-boots_template:
   extends:
     - .nix_build_template
   stage: test
+  # No real dependency but doesn't make sense to run without the basic tests.
+  needs:
+    - test:unit:nix
   variables:
     # For sotest-protocol-parser
     NIXPKGS_ALLOW_UNFREE: 1
+
+test:vm:hello-world-boots:multiboot1:
+  extends:
+    - .test:vm:hello-world-boots_template
   script:
     - nix-build nix/release.nix -A testRuns.qemu.kvm.multiboot.hello-world
 
 test:vm:hello-world-boots:iso:
   extends:
-    - .nix_build_template
-  stage: test
-  variables:
-    NIXPKGS_ALLOW_UNFREE: 1
+    - .test:vm:hello-world-boots_template
   script:
     - nix-build nix/release.nix -A testRuns.qemu.kvm.iso.hello-world
 
 test:vm:hello-world-boots:efi:
   extends:
-    - .nix_build_template
-  stage: test
-  variables:
-    NIXPKGS_ALLOW_UNFREE: 1
+    - .test:vm:hello-world-boots_template
   script:
     - nix-build nix/release.nix -A testRuns.qemu.kvm.efi.hello-world
 
 test:vm:hello-world-boots:xen-pvh:
   extends:
-    - .nix_build_template
-  stage: test
-  variables:
-    NIXPKGS_ALLOW_UNFREE: 1
+    - .test:vm:hello-world-boots_template
   script:
     - nix-build nix/release.nix -A testRuns.chv.kvm.xen-pvh.hello-world
 

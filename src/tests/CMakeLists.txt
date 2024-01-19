@@ -45,9 +45,7 @@ function(add_guesttest test_name)
 
   set_target_properties(${test_name} PROPERTIES SUFFIX ".elf64")
 
-  target_link_libraries(
-    ${test_name} PRIVATE libcxx toyos ${GUESTTEST_ARGS_EXTRA_LIBS}
-    )
+  target_link_libraries(${test_name} PRIVATE toyos ${GUESTTEST_ARGS_EXTRA_LIBS})
 
   target_sources(${test_name} PRIVATE ${GUESTTEST_ARGS_EXTRA_SOURCES})
 

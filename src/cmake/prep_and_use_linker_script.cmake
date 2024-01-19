@@ -2,7 +2,7 @@ function(prep_and_use_linker_script target-name source-file)
   set(resulting-ld-script ${CMAKE_CURRENT_BINARY_DIR}/${target-name}.ld)
 
   # linker script includes <config.h>
-  set(ld-includes -I ${LIB_DIR}/libc-tiny/include)
+  set(ld-includes -I ${LIB_DIR}/gtbase/include)
 
   # In order to let the build system reason about the dependencies (header
   # files) of preprocessed linker scripts, cmake needs to determine those
