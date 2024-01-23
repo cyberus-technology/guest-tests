@@ -1,11 +1,7 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <toyos/testhelper/debugport_interface.h>
-
-#include <compiler.hpp>
 #include <toyos/baretest/baretest.hpp>
-#include <toyos/testhelper/usermode.hpp>
 
 #include "helpers.hpp"
 

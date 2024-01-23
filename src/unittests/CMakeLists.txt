@@ -1,8 +1,8 @@
 find_package(Catch2 3 REQUIRED)
 
 add_executable(
-  toyos-unittests_combined toyos/cmdline.cpp toyos/console_serial_util.cpp
-                           toyos/string_util.cpp
+  toyos-unittests_combined toyos/cmdline.cpp toyos/cpuid_util.cpp
+                           toyos/console_serial_util.cpp toyos/string_util.cpp
   )
 
 target_link_libraries(
