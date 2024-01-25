@@ -3,6 +3,7 @@
 let
   # All guest tests.
   tests = pkgs.cyberus.guest-tests.tests;
+  sotest = pkgs.cyberus.guest-tests.sotests.default;
   testNames = builtins.attrNames tests;
 
   # trace = pkgs.cyberus.cbspkgs.lib.tracing.prettyVal;
@@ -132,7 +133,7 @@ let
 in
 {
   inherit pre-commit-check;
-  inherit tests;
+  inherit tests sotest;
 
   # Attribute set containing various configurations to run the guest tests in
   # a virtual machine.
@@ -185,9 +186,6 @@ in
         };
       };
     };
-
-  # SoTest bundle.
-  sotest = pkgs.callPackage ./sotest.nix { };
 
   # Each unit test is a derivation that either fails or succeeds. The output of
   # these derivations is usually empty.
