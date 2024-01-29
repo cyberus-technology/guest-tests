@@ -68,6 +68,43 @@ The following command line configurations are accepted by the test binaries:
   skipped. For example:
   To disable `TEST_CASE(foo) {}` you can pass `--disable-testcases=foo`.
 
+## Hardware Requirements
+
+This section discusses the requirements of the guests tests to run on real
+hardware. If you run them virtualized, your virtual hardware platform must
+fulfill the same requirements.
+
+All guest tests are created for x86_64 machines targeting
+[Intel westmere](https://en.wikipedia.org/wiki/Westmere_(microarchitecture)) and
+above. <!-- Keep in sync with compiler flags! -->
+Typical platform-related functionality is expected to be available as well, such
+as the LAPIC, the IOAPIC, but also legacy devices such as the serial device and
+the PIT.
+
+However, for some functionality that is not "basic enough" and whose
+availability is easily detectable at runtime, the guest tests check for their
+presence and skip relevant test cases if the conditions are not met. Examples
+for that are the availability of:
+
+- Platform (devices, MSRs):
+  - HPET
+  - x2APIC mode
+  - TSC deadline mode of LAPIC timer
+- ISA extensions:
+  - `movbe` support
+  - AVX support
+
+### Test-specific machine expectations
+
+Some guest tests have specific expectations that are only relevant to that
+single guest test.
+
+- `cpuid` test:
+  - Checks that the extended cpuid brand string prefix is one of the definitions
+    in [`cpuid/main.cpp`](/src/tests/cpuid/main.cpp).
+  - To extend that list or make the overall mechanism more flexible, please
+    submit an issue or an MR.
+
 ## Build
 
 ### Regular (Guest Tests + Unit Tests)

@@ -16,7 +16,7 @@ function(add_nostd_compile_options TARGET VISIBILITY_MODIFIER)
       -fpie
       -fvisibility=hidden
       -m64
-      -march=westmere
+      -march=westmere # Keep in sync with README!
       -mno-3dnow
       -mno-mmx
       -mno-sse

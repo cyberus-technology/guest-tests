@@ -30,6 +30,12 @@ void test_cpuid_string(std::array<std::string, N>& valid_cpu_models)
     BARETEST_ASSERT(found_valid_model);
 }
 
+/*
+ * This list is only chosen to match our own CI testing infrastructure. We can
+ * and should extend it in the future.
+ *
+ * Keep in sync with README!
+ */
 std::array<std::string, 8> valid_cpu_models{ {
     "Intel(R) Core(TM",
     "      Intel(R) C",
