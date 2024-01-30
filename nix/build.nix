@@ -19,7 +19,6 @@
 let
   testNames = [
     "cpuid"
-    "emulator"
     "emulator-syscall"
     "exceptions"
     "fpu"

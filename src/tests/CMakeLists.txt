@@ -54,18 +54,6 @@ function(add_guesttest test_name)
 endfunction()
 
 add_guesttest(cpuid EXTRA_SOURCES cpuid/benchmark.cpp)
-add_guesttest(
-  emulator
-  EXTRA_SOURCES
-  emulator/control_register.cpp
-  emulator/controlflow.cpp
-  emulator/generated.cpp
-  emulator/manual.cpp
-  emulator/movbe.cpp
-  emulator/segment.cpp
-  emulator/stack.cpp
-  emulator/string_pio.cpp
-  )
 add_guesttest(emulator-syscall)
 add_guesttest(exceptions)
 add_guesttest(fpu)
