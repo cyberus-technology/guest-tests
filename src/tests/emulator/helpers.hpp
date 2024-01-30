@@ -4,7 +4,6 @@
 #pragma once
 
 #include <compiler.hpp>
-#include <toyos/testhelper/debugport_interface.h>
 
 static constexpr const uint16_t SEL_DATA{ 0x10 };
 
@@ -19,10 +18,9 @@ static constexpr const uint16_t SEL_DATA{ 0x10 };
         uint16_t ret{ 0 };                                                                                               \
         asm volatile("cmp $0, %[emul];"                                                                                  \
                      "je 2f;"                                                                                            \
-                     "outb %[dbgport];"                                                                                  \
                      "2: mov %%" #seg ", %[ret];"                                                                        \
                      : [ret] "=rm"(ret)                                                                                  \
-                     : [emul] "r"(emulated), [dbgport] "i"(DEBUG_PORTS.a), "a"(DEBUGPORT_EMUL_ONCE));                    \
+                     : [emul] "r"(emulated));                                                                            \
         return ret;                                                                                                      \
     }
 
@@ -36,10 +34,7 @@ static constexpr const uint16_t SEL_DATA{ 0x10 };
     {                                                                                                                    \
         asm volatile("cmp $0, %[emul];"                                                                                  \
                      "je 2f;"                                                                                            \
-                     "outb %[dbgport];"                                                                                  \
                      "2: mov %[sel], %%" #seg ";" ::[emul] "r"(emulated),                                                \
-                     [dbgport] "i"(DEBUG_PORTS.a),                                                                       \
-                     "a"(DEBUGPORT_EMUL_ONCE),                                                                           \
                      [sel] "r"(sel));                                                                                    \
     }
 

@@ -66,7 +66,7 @@ add_guesttest(
   emulator/stack.cpp
   emulator/string_pio.cpp
   )
-add_guesttest(emulator-syscall EXTRA_SOURCES emulator-syscall/compat.S)
+add_guesttest(emulator-syscall)
 add_guesttest(exceptions)
 add_guesttest(fpu)
 add_guesttest(hello-world EXTRA_SOURCES hello-world/setjmp.cpp)

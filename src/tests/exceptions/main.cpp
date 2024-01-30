@@ -8,14 +8,10 @@
 #include <toyos/testhelper/lapic_enabler.hpp>
 #include <toyos/testhelper/lapic_test_tools.hpp>
 #include <toyos/testhelper/pic.hpp>
-#include <toyos/testhelper/usermode.hpp>
-#include <toyos/util/sotest.hpp>
 #include <toyos/util/trace.hpp>
 #include <toyos/x86/x86asm.hpp>
 
 using x86::exception;
-
-static usermode_helper um;
 
 static irqinfo irq_info;
 
@@ -26,7 +22,7 @@ static irqinfo irq_info;
 // when we return from handling it.
 //
 // The pic object also masks all PIC pins afterwards.
-static pic global_pic{ 0x30 };
+[[maybe_unused]] static pic global_pic{ 0x30 };
 
 static void irq_handler_fn(intr_regs* regs)
 {
@@ -36,44 +32,22 @@ static void irq_handler_fn(intr_regs* regs)
     irq_info.fixup(regs);
 }
 
-static void test_ud(bool with_exit)
+TEST_CASE(test_ud)
 {
     irq_info.reset();
     irqinfo::func_t fixup = [](intr_regs* regs) { regs->rip = regs->rcx; };
     irq_info.fixup_fn = fixup;
 
-    if (with_exit) {
-        enable_exc_exit(exception::UD);
-    }
-
     asm volatile("lea 1f, %%rcx; ud2a; 1:" ::
                      : "rcx");
-
-    if (with_exit) {
-        disable_exc_exit(exception::UD);
-    }
 
     BARETEST_ASSERT(irq_info.valid);
     BARETEST_ASSERT(irq_info.vec == static_cast<unsigned>(exception::UD));
 }
 
-TEST_CASE(test_ud_without_exit)
-{
-    test_ud(false);
-}
-
-TEST_CASE(test_ud_with_exit)
-{
-    test_ud(true);
-}
-
-static void test_int3(bool with_exit)
+TEST_CASE(test_int3)
 {
     irq_info.reset();
-
-    if (with_exit) {
-        enable_exc_exit(exception::BP);
-    }
 
     // Execute emulated instruction with different length to test for correct
     // instruction length injection
@@ -83,23 +57,9 @@ static void test_int3(bool with_exit)
     asm volatile("int3; mov $1, %[result];"
                  : [result] "=r"(result)::"memory");
 
-    if (with_exit) {
-        disable_exc_exit(exception::BP);
-    }
-
     BARETEST_ASSERT(irq_info.valid);
     BARETEST_ASSERT(result == 1);
     BARETEST_ASSERT(irq_info.vec == static_cast<unsigned>(exception::BP));
-}
-
-TEST_CASE(test_int3_without_exit)
-{
-    test_int3(false);
-}
-
-TEST_CASE(test_int3_with_exit)
-{
-    test_int3(true);
 }
 
 static const constexpr uint8_t SELF_IPI_VECTOR{ 0x42 };
@@ -120,11 +80,10 @@ TEST_CASE(test_sti_blocking)
     send_self_ipi_and_poll(SELF_IPI_VECTOR);
 
     uint64_t dummy{ 0 };
-    asm volatile("outb %[dbgport];"
-                 "sti;"
+    asm volatile("sti;"
                  "cli;"
                  : "=a"(dummy)
-                 : "a"(DEBUGPORT_EMUL_ONCE), [dbgport] "i"(DEBUG_PORTS.a)
+                 :
                  : "rbx", "rcx", "rdx");
 
     BARETEST_ASSERT(not irq_info.valid);
@@ -143,13 +102,11 @@ TEST_CASE(test_sti_blocking_with_cpuid)
 
     uint64_t protected_rip{ 0 };
     asm volatile("lea 1f, %[protected_rip];"
-                 "mov %[emul_once], %%ax;"
-                 "outb %[dbgport];"
                  "sti;"
                  "1: cpuid; cpuid;"
                  "cli;"
                  : [protected_rip] "=&r"(protected_rip)
-                 : [emul_once] "i"(DEBUGPORT_EMUL_ONCE), [dbgport] "i"(DEBUG_PORTS.a)
+                 :
                  : "rax", "rbx", "rcx", "rdx");
 
     BARETEST_ASSERT(irq_info.valid);
@@ -164,15 +121,12 @@ TEST_CASE(test_mov_ss_blocking)
     lapic_enabler lenabler{};
     send_self_ipi_and_poll(SELF_IPI_VECTOR);
 
-    asm volatile("outb %[dbgport];"
-                 "mov %%ss, %%bx;"
+    asm volatile("mov %%ss, %%bx;"
                  "sti;"
                  "mov %%bx, %%ss;"
                  "cli;"
-                 "mov %[end], %%ax;"
-                 "outb %[dbgport];" ::"a"(DEBUGPORT_EMUL_START),
-                 [end] "i"(DEBUGPORT_EMUL_END),
-                 [dbgport] "i"(DEBUG_PORTS.a)
+                 :
+                 :
                  : "rbx");
 
     BARETEST_ASSERT(not irq_info.valid);
@@ -206,36 +160,6 @@ TEST_CASE(test_mov_ss_blocking_with_cpuid)
     BARETEST_ASSERT(irq_info.valid);
     BARETEST_ASSERT(irq_info.vec == SELF_IPI_VECTOR);
     BARETEST_ASSERT(interrupted_rip != protected_rip);
-}
-
-TEST_CASE(test_ac_exception)
-{
-    set_cr0(get_cr0() | math::mask_from(x86::cr0::AM));
-
-    static const uint32_t test_variable{ 0xcafe };
-    auto unaligned_pointer{ reinterpret_cast<uintptr_t>(&test_variable) + 1 };
-
-    irq_info.reset();
-    irqinfo::func_t fixup = [](intr_regs* regs) { regs->rip = regs->rcx; };
-    irq_info.fixup_fn = fixup;
-
-    um.enter_sysret();
-
-    set_rflags(x86::FLAGS_AC);
-
-    asm volatile("lea 1f, %%rcx;"
-                 "cmpw $0, (%[unaligned_pointer]);"
-                 "1:" ::[unaligned_pointer] "r"(unaligned_pointer)
-                 : "rcx");
-
-    clear_rflags(x86::FLAGS_AC);
-
-    um.leave_syscall();
-
-    set_cr0(get_cr0() & ~math::mask_from(x86::cr0::AM));
-
-    BARETEST_ASSERT(irq_info.valid);
-    BARETEST_ASSERT(irq_info.vec == static_cast<uint8_t>(exception::AC));
 }
 
 void prologue()

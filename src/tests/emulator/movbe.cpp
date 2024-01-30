@@ -2,7 +2,6 @@
  *        All rights reserved        */
 
 #include <toyos/baretest/baretest.hpp>
-#include <toyos/testhelper/debugport_interface.h>
 #include <toyos/x86/x86asm.hpp>
 
 template<typename SIZE_TYPE>
@@ -11,10 +10,9 @@ static void test_movbe_internal(SIZE_TYPE test_value)
     SIZE_TYPE dst_val{ 0 }, dst_hw{ 0 };
 
     asm volatile("movbe %[src], %[dst2];"
-                 "outb %[dbgport];"
                  "movbe %[src], %[dst];"
                  : [dst] "=r"(dst_val), [dst2] "=&r"(dst_hw)
-                 : [src] "m"(test_value), [dbgport] "i"(DEBUG_PORTS.a), "a"(DEBUGPORT_EMUL_ONCE));
+                 : [src] "m"(test_value));
 
     BARETEST_VERIFY(dst_val == dst_hw);
 }

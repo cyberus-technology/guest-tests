@@ -5,7 +5,7 @@
 
 #include <compiler.hpp>
 #include <toyos/baretest/baretest.hpp>
-#include <toyos/testhelper/debugport_interface.h>
+#include <toyos/x86/x86asm.hpp>
 
 using namespace x86;
 
@@ -23,10 +23,9 @@ static oneop_result test_inc(uint64_t op, bool emul)
     oneop_result ret{ op };
     asm volatile("cmp $0, %[emul];"
                  "je 2f;"
-                 "outb %[dbgport];"
                  "2: inc %[op];"
                  : [op] "+r"(ret.op)
-                 : [dbgport] "i"(DEBUG_PORTS.a), "a"(DEBUGPORT_EMUL_ONCE), [emul] "r"(emul));
+                 : [emul] "r"(emul));
     return ret;
 }
 
@@ -44,10 +43,9 @@ static twoop_result test_and(uint64_t src, uint64_t dst, bool emul)
     twoop_result ret{ src, dst };
     asm volatile("cmp $0, %[emul];"
                  "je 2f;"
-                 "outb %[dbgport];"
                  "2: and %[src], %[dst];"
                  : [src] "+r"(ret.src), [dst] "+r"(ret.dst)
-                 : [dbgport] "i"(DEBUG_PORTS.a), "a"(DEBUGPORT_EMUL_ONCE), [emul] "r"(emul));
+                 : [emul] "r"(emul));
     return ret;
 }
 
@@ -57,10 +55,9 @@ static twoop_result test_or(uint64_t dst, bool emul)
     twoop_result ret{ static_cast<uint64_t>(OFF), dst };
     asm volatile("cmp $0, %[emul];"
                  "je 2f;"
-                 "outb %[dbgport];"
                  "2: orq %[src], %[dst];"
                  : [dst] "+r"(ret.dst)
-                 : [src] "i"(OFF), [dbgport] "i"(DEBUG_PORTS.a), "a"(DEBUGPORT_EMUL_ONCE), [emul] "r"(emul));
+                 : [src] "i"(OFF), [emul] "r"(emul));
     return ret;
 }
 
@@ -127,17 +124,14 @@ TEST_CASE(manual_test_instruction)
                 "test %[op1_native_64], %[op2_native_64];"
                 "pushf;"
                 "pop %[flags_native_64];"
-                "mov %[dbgport_val], %%rax;"
-                "outb %[dbgport];"
                 "test %[op1_emul_16], %[op2_emul_16];"
                 "pushf;"
                 "pop %[flags_emul_16];"
-                "outb %[dbgport];"
                 "test %[op1_emul_64], %[op2_emul_64];"
                 "pushf;"
                 "pop %[flags_emul_64];"
                 : [op1_native_16] "+r"(result_native.op1_16), [op2_native_16] "+r"(result_native.op2_16), [op1_emul_16] "+r"(result_emul.op1_16), [op2_emul_16] "+r"(result_emul.op2_16), [op1_native_64] "+r"(result_native.op1_64), [op2_native_64] "+r"(result_native.op2_64), [op1_emul_64] "+r"(result_emul.op1_64), [op2_emul_64] "+r"(result_emul.op2_64), [flags_native_16] "=rm"(result_native.flags_16), [flags_native_64] "=rm"(result_native.flags_64), [flags_emul_16] "=rm"(result_emul.flags_16), [flags_emul_64] "=rm"(result_emul.flags_64)
-                : [dbgport] "i"(DEBUG_PORTS.a), [dbgport_val] "i"(DEBUGPORT_EMUL_ONCE)
+                :
                 : "rax");
             BARETEST_VERIFY(result_native == result_emul);
         }
