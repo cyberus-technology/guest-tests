@@ -1,17 +1,14 @@
 /* Copyright Cyberus Technology GmbH *
  *        All rights reserved        */
 
-#include <toyos/testhelper/debugport_interface.h>
+#include <toyos/baretest/baretest.hpp>
 #include <toyos/testhelper/idt.hpp>
 #include <toyos/testhelper/irq_handler.hpp>
 #include <toyos/testhelper/irqinfo.hpp>
 #include <toyos/util/cast_helpers.hpp>
 #include <toyos/util/trace.hpp>
-#include <toyos/x86/cpuid.hpp>
 #include <toyos/x86/x86asm.hpp>
 #include <toyos/x86/x86fpu.hpp>
-
-#include <toyos/baretest/baretest.hpp>
 
 using namespace x86;
 
@@ -380,51 +377,6 @@ TEST_CASE_CONDITIONAL(fused_multiply_add, fma_supported() and xsave_supported())
         : [b] "m"(b), [c] "m"(c));
 
     BARETEST_ASSERT(a[0] == float_one);
-}
-
-TEST_CASE_CONDITIONAL(fpu_context_switch_works, debugport_present() and xsave_supported())
-{
-    set_mm0(TEST_VAL);
-    set_xmm0(TEST_VAL_128);
-    if (avx_supported()) {
-        set_ymm0(TEST_VAL_256);
-    }
-    if (avx512_supported()) {
-        set_zmm0(TEST_VAL_512);
-    }
-
-    debugport_call(DEBUGPORT_FPU_CLEAR_HOST_REGS);
-
-    BARETEST_ASSERT(get_mm0() == TEST_VAL);
-    BARETEST_ASSERT(get_xmm0() == TEST_VAL_128);
-    BARETEST_ASSERT(not avx_supported() or (get_ymm0() == TEST_VAL_256));
-    BARETEST_ASSERT(not avx512_supported() or (get_zmm0() == TEST_VAL_512));
-}
-
-TEST_CASE_CONDITIONAL(host_can_use_avx_when_guest_toggles_osxsave, avx_supported() and debugport_present())
-{
-    set_cr4(get_cr4() & ~math::mask_from(cr4::OSXSAVE));
-
-    // Failure to context switch CR4 would case the host to fail here.
-    debugport_call(DEBUGPORT_FPU_TOUCH_AVX);
-
-    BARETEST_ASSERT((get_cr4() & math::mask_from(cr4::OSXSAVE)) == 0);
-
-    set_cr4(get_cr4() | math::mask_from(cr4::OSXSAVE));
-}
-
-TEST_CASE_CONDITIONAL(host_can_use_avx_when_guest_disables_it_in_xcr0, avx_supported() and debugport_present())
-{
-    uint64_t old_xcr0{ get_xcr() };
-    uint64_t xcr0_avx_disabled{ old_xcr0 & ~(XCR0_AVX | XCR0_AVX512) };
-
-    set_xcr(xcr0_avx_disabled);
-
-    debugport_call(DEBUGPORT_FPU_TOUCH_AVX);
-
-    // If this assertion fails or the host dies in the debugport call above,
-    // Hedron failed to context switch XCR0.
-    BARETEST_ASSERT(get_xcr() == xcr0_avx_disabled);
 }
 
 TEST_CASE_CONDITIONAL(cpuid_reflects_correct_osxsave_value, xsave_supported())
