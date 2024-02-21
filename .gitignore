@@ -1,3 +1,4 @@
+/.direnv
 build
 result*
 # Artifacts from CLion's automatic project indexing.
