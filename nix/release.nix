@@ -70,10 +70,22 @@ let
 
       ${vmmCommand.setup}
 
+      # sotest-protocol-parser has no timeout handling and we also have some
+      # long-running tests. For now, we configure the timeouts here. If this becomes
+      # unwieldy, we need to move it to the test properties.
+      case '${testname}' in
+        timing)
+          timeout=10m
+          ;;
+        *)
+          timeout=4s
+          ;;
+      esac
+
       # We rely on that test runs perform a proper shut down under our supported
       # VMMs.
-      echo -e "$(ansi bold)Running guest test '${testname}' via ${classifier}$(ansi reset)"
-      (timeout --preserve-status --signal KILL 4s ${vmmCommand.main}) |& sotest-protocol-parser --stdin --echo
+      echo -e "$(ansi bold)Running guest test '${testname}' via ${classifier} with $timeout timeout$(ansi reset)"
+      (timeout --preserve-status --signal KILL "$timeout" ${vmmCommand.main}) |& sotest-protocol-parser --stdin --echo
 
       touch $out
     '';
