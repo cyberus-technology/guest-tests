@@ -2,7 +2,7 @@ final: _prev:
 
 let
   sotest = import ./sotest.nix { pkgs = final; };
-  addSotestMeta = final.cyberus.cbspkgs.lib.tests.addSotestMeta;
+
 in
 {
   # This is just an attribute set, so we don't use callPackage. Further, it is
@@ -20,12 +20,7 @@ in
   };
   sotests = {
     # SoTest bundle with all tests.
-    default = addSotestMeta sotest {
-      name = "guest-tests: all tests";
-    };
-    smoke = addSotestMeta sotest.singleRuns.hello-world {
-      name = "guest-tests: hello-world smoke test";
-      category = "smoke";
-    };
+    default = sotest;
+    smoke = sotest.singleRuns.hello-world;
   };
 }
