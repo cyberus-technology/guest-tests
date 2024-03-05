@@ -219,6 +219,7 @@ vmm_run:
           - pit-timer
           - sgx
           - sgx-launch-control
+          - timing
           - tsc
           - vmx
   variables:

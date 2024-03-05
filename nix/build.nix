@@ -31,6 +31,7 @@ let
     "pit-timer"
     "sgx"
     "sgx-launch-control"
+    "timing"
     "tsc"
     "vmx"
   ];
@@ -131,4 +132,3 @@ let
   testList = map (name: { inherit name; value = toVariantsAttrs name; }) testNames;
 in
 builtins.listToAttrs testList
-
