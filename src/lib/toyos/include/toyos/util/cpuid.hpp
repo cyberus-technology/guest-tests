@@ -20,7 +20,7 @@ namespace util::cpuid
      */
     inline std::string get_extended_brand_string()
     {
-        // Amount of subsequent cpuid leafs to read.
+        // Amount of subsequent cpuid leaves to read.
         static constexpr size_t LEAF_COUNT = 3;
         // Amount of registers that hold the overall string.
         static constexpr size_t REGISTER_COUNT = 4 * LEAF_COUNT;

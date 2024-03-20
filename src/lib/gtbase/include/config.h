@@ -5,7 +5,7 @@
 #include <arch.h>
 
 /** The next four macros describe the memory layout of the stack.
- * The stack is always natuarally aligned to its virtual size and
+ * The stack is always naturally aligned to its virtual size and
  * backed with anonymous memory defined by STACK_BITS_PHYS.
  *
  * TOS
