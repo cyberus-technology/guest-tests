@@ -135,6 +135,11 @@ void wait_for_interrupts(irq_handler_t handler, uint32_t irqs_expected)
 
 void drain_periodic_timer_irqs()
 {
+    // It is safe to temporarily replace any other IRQ handler that might be
+    // set (the guard takes care of that), as we just drain and do not expect
+    // a certain amount of interrupts.
+    irq_handler::guard _(lapic_irq_handler);
+
     enable_interrupts_for_single_instruction();
     while (irq_info.valid) {
         irq_info.reset();
