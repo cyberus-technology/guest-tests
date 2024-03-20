@@ -383,8 +383,6 @@ TEST_CASE(switch_from_oneshot_to_periodic_does_not_disarm_the_timer)
 
 TEST_CASE(switch_from_oneshot_to_periodic_after_oneshot_expired_does_not_rearm_timer)
 {
-    irq_handler::guard _(lapic_irq_handler);
-
     write_lvt_entry(lvt_entry::TIMER,
                     lvt_entry_t::timer(
                         MAX_VECTOR,
