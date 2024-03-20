@@ -10,6 +10,7 @@
  * The latter is only tested if it is supported by the platform.
  */
 
+#include <optional>
 #include <toyos/baretest/baretest.hpp>
 #include <toyos/testhelper/irq_handler.hpp>
 #include <toyos/testhelper/irqinfo.hpp>
@@ -87,6 +88,9 @@ void clear_irq_count()
     irq_count = 0;
 }
 
+/**
+ * Default handler that stores the latest vector and error code in `irq_info`.
+ */
 static void lapic_irq_handler(intr_regs* regs)
 {
     irq_info.record(regs->vector, regs->error_code);
@@ -113,9 +117,16 @@ static void measuring_irq_handler(intr_regs*)
 }
 
 /**
- * Waits for interrupts without performing VM exits (i.e., no HLT).
+ * Waits for timer interrupts without performing VM exits (i.e., no HLT).
+ *
+ * The function is supposed to invoke a callback that configures an interrupt
+ * source. The callback is invoked after interrupts were enabled and the timer
+ * interrupt got unmasked.
  */
-void wait_for_interrupts(irq_handler_t handler, uint32_t irqs_expected)
+void wait_for_interrupts(
+    irq_handler_t handler,
+    uint32_t irqs_expected,
+    std::function<void()>&& raise_interrupt_cb = []() {})
 {
     clear_irq_count();
 
@@ -124,7 +135,10 @@ void wait_for_interrupts(irq_handler_t handler, uint32_t irqs_expected)
     enable_interrupts();
     write_lvt_mask(lvt_entry::TIMER, lvt_mask::UNMASKED);
 
+    raise_interrupt_cb();
+
     while (irq_count < irqs_expected) {
+        // The counter is updated by the IRQ handler.
     }
 
     write_lvt_mask(lvt_entry::TIMER, lvt_mask::MASKED);
@@ -165,9 +179,13 @@ TEST_CASE(timer_mode_periodic_should_cycle)
                         lvt_timer_mode::PERIODIC));
 
     write_divide_conf(1);
-    write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
 
-    wait_for_interrupts(counting_irq_handler, EXPECTED_IRQS);
+    wait_for_interrupts(
+        counting_irq_handler,
+        EXPECTED_IRQS,
+        []() {
+            write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
+        });
 
     BARETEST_ASSERT((irq_count == EXPECTED_IRQS));
 
@@ -178,8 +196,12 @@ uint64_t measure_timer_period()
 {
     stop_lapic_timer();
 
-    write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
-    wait_for_interrupts(measuring_irq_handler, EXPECTED_IRQS);
+    wait_for_interrupts(
+        measuring_irq_handler,
+        EXPECTED_IRQS,
+        []() {
+            write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
+        });
 
     stop_lapic_timer();
     drain_periodic_timer_irqs();
@@ -389,8 +411,15 @@ TEST_CASE(switch_from_oneshot_to_periodic_after_oneshot_expired_does_not_rearm_t
                         lvt_mask::MASKED,
                         lvt_timer_mode::ONESHOT));
 
-    write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
-    wait_for_interrupts(counting_irq_handler, 1);
+    // Reset any pending timeouts (from previous tests).
+    write_to_register(LAPIC_INIT_COUNT, 0);
+
+    wait_for_interrupts(
+        counting_irq_handler,
+        1,
+        []() {
+            write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
+        });
 
     // Since the timer expired, the current count is set to 0.
     // When the value remains 0 after a mode switch, the timer did not
@@ -403,15 +432,18 @@ TEST_CASE(switch_from_oneshot_to_periodic_after_oneshot_expired_does_not_rearm_t
 TEST_CASE(switch_from_periodic_to_oneshot_eventually_stops_timer)
 {
     write_lvt_entry(lvt_entry::TIMER,
-
                     lvt_entry_t::timer(
                         MAX_VECTOR,
                         lvt_mask::MASKED,
                         lvt_timer_mode::PERIODIC));
 
     // Ensure the periodic timer ticks multiple times.
-    write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
-    wait_for_interrupts(counting_irq_handler, 2);
+    wait_for_interrupts(
+        counting_irq_handler,
+        2,
+        []() {
+            write_to_register(LAPIC_INIT_COUNT, TIMER_INIT_COUNT);
+        });
 
     // Drain interrupts to fetch any additional timer IRQs which
     // may have been triggered while the timer was unmasked.
