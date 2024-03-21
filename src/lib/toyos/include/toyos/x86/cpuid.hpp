@@ -12,7 +12,7 @@ enum
     CPUID_LEAF_SGX_CAPABILITY = 0x00000012,
     /**
      * Base leaf for the extended CPU brand string. The full name is in this
-     * leaf and the two subsequent leafs.
+     * leaf and the two subsequent leaves.
      */
     CPUID_LEAF_EXTENDED_BRAND_STRING_BASE = 0x80000002,
 
