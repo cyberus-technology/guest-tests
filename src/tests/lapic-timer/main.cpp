@@ -126,7 +126,7 @@ static void measuring_irq_handler(intr_regs*)
 void wait_for_interrupts(
     irq_handler_t handler,
     uint32_t irqs_expected,
-    std::function<void()>&& raise_interrupt_cb = []() {})
+    std::function<void()> const& raise_interrupt_cb = []() {})
 {
     clear_irq_count();
 
