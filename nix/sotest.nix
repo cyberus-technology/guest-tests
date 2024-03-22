@@ -1,6 +1,6 @@
 # Bundles all guest tests as single sotest bundle.
 
-{ pkgs }:
+{ pkgs, name, category }:
 
 let
   tests = pkgs.cyberus.guest-tests.tests;
@@ -39,16 +39,22 @@ let
             file = toString testAttrs.efi;
             params = [ ];
           };
+          load = [];
         };
       };
       extraFiles = [ ];
     };
 in
 pkgs.cyberus.linux-engineering.mkBareSotestBundle {
-  sotest.bootItems = builtins.listToAttrs (map
-    (testName: {
-      name = testName;
-      value = toBootItemDesc testName;
-    })
-    testNames);
+  sotest = {
+    run = {
+      inherit name category;
+    };
+    bootItems = builtins.listToAttrs (map
+      (testName: {
+        name = testName;
+        value = toBootItemDesc testName;
+      })
+      testNames);
+  };
 }

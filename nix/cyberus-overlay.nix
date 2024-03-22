@@ -1,7 +1,11 @@
 final: _prev:
 
 let
-  sotest = import ./sotest.nix { pkgs = final; };
+  makeSotest = { name, category }:
+    import ./sotest.nix {
+      pkgs = final;
+      inherit name category;
+    };
 
 in
 {
@@ -20,7 +24,14 @@ in
   };
   sotests = {
     # SoTest bundle with all tests.
-    default = sotest;
-    smoke = sotest.singleRuns.hello-world;
+    default = makeSotest {
+      name = "guest-tests: all tests";
+      category = "default";
+    };
+    # Single smoke test
+    smoke = (makeSotest {
+      name = "guest-tests: hello-world smoke test";
+      category = "smoke";
+    }).singleRuns.hello-world;
   };
 }
