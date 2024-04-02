@@ -8,7 +8,7 @@
     "linux-engineering": {
         "branch": "main",
         "repo": "git@gitlab.vpn.cyberus-technology.de:cyberus/engineering/linux-engineering.git",
-        "rev": "dba978aa805af71665061cccb0bcc5136f5ac3fd",
+        "rev": "f34e0e3c74733fab900222154f9022d277218890",
         "type": "git"
     },
     "pre-commit-hooks.nix": {

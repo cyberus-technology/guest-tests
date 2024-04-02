@@ -39,7 +39,7 @@ let
             file = toString testAttrs.efi;
             params = [ ];
           };
-          load = [];
+          load = [ ];
         };
       };
       extraFiles = [ ];
