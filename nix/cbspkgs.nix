@@ -8,6 +8,5 @@ import cbspkgs.nixpkgs {
 
   overlays = cbspkgs.overrideOverlaySources {
     guest-tests = vanillaPkgs.nix-gitignore.gitignoreSource [ ] ./..;
-    inherit (sources) linux-engineering;
   };
 }
