@@ -243,7 +243,7 @@ test:sotest:submit:
     - nix-build nix/release.nix -A sotest
     - RUN_SOTEST=$(nix-build nix/cbspkgs.nix -A cyberus.cbspkgs.run-sotest --no-out-link)/bin/run_sotest
     - $RUN_SOTEST http://sotest:3000 result/project-config.yaml
-      --boot_files "result/bundle.zip"
+      --boot_files "result/bundle"
       --user "$CI_PROJECT_NAMESPACE - $GITLAB_USER_LOGIN"
       --url "$CI_PROJECT_URL/commit/$CI_COMMIT_SHA"
       --name "$CI_PROJECT_NAME $CI_COMMIT_REF_SLUG"

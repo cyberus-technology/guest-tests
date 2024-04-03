@@ -1,10 +1,8 @@
 # Bundles all guest tests as single sotest bundle.
 
-{ pkgs }:
+{ pkgs, name, category }:
 
 let
-  libsotest = pkgs.cyberus.cbspkgs.lib.sotest;
-
   tests = pkgs.cyberus.guest-tests.tests;
   testNames = builtins.attrNames tests;
 
@@ -22,27 +20,41 @@ let
       name = testName;
       tags = defaultSotestTags ++ (testMeta.sotest.extraTags or [ ]);
       cacheable = testMeta.cacheable;
-      boot_item_timeout = 300; # 5 minutes; some machines boot very slowly
-      boot_item_type =
+      timeout = 300; # 5 minutes; some machines boot very slowly
+      type =
         if testMeta.hardwareIndependent
         then "any" else "all";
-      boot_source = {
+      bootSource = {
         bios = {
           # iPXE chainloads the Multiboot binary.
-          exec = testAttrs.elf32 + " " + testMeta.defaultCmdline;
-          load = [ ];
+          exec = {
+            file = toString testAttrs.elf32;
+            params = [ testMeta.defaultCmdline ];
+          };
         };
         uefi = {
           # iPXE chainloads the EFI binary. Here, the cmdline is embedded in the
           # GRUB standalone image.
-          exec = testAttrs.efi;
+          exec = {
+            file = toString testAttrs.efi;
+            params = [ ];
+          };
           load = [ ];
         };
       };
+      extraFiles = [ ];
     };
 in
-libsotest.mkProjectBundle {
-  boot_items = map
-    (testName: toBootItemDesc testName)
-    testNames;
+pkgs.cyberus.linux-engineering.mkBareSotestBundle {
+  sotest = {
+    run = {
+      inherit name category;
+    };
+    bootItems = builtins.listToAttrs (map
+      (testName: {
+        name = testName;
+        value = toBootItemDesc testName;
+      })
+      testNames);
+  };
 }

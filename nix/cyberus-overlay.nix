@@ -1,8 +1,12 @@
 final: _prev:
 
 let
-  sotest = import ./sotest.nix { pkgs = final; };
-  addSotestMeta = final.cyberus.cbspkgs.lib.tests.addSotestMeta;
+  makeSotest = { name, category }:
+    import ./sotest.nix {
+      pkgs = final;
+      inherit name category;
+    };
+
 in
 {
   # This is just an attribute set, so we don't use callPackage. Further, it is
@@ -20,12 +24,14 @@ in
   };
   sotests = {
     # SoTest bundle with all tests.
-    default = addSotestMeta sotest {
+    default = makeSotest {
       name = "guest-tests: all tests";
+      category = "default";
     };
-    smoke = addSotestMeta sotest.singleRuns.hello-world {
+    # Single smoke test
+    smoke = (makeSotest {
       name = "guest-tests: hello-world smoke test";
       category = "smoke";
-    };
+    }).singleRuns.hello-world;
   };
 }
