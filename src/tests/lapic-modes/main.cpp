@@ -11,6 +11,7 @@
 #include <toyos/testhelper/lapic_test_tools.hpp>
 #include <toyos/testhelper/pic.hpp>
 #include <toyos/util/cast_helpers.hpp>
+#include <toyos/util/cpuid.hpp>
 #include <toyos/x86/cpuid.hpp>
 #include <toyos/x86/x86asm.hpp>
 #include <toyos/x86/x86defs.hpp>
@@ -87,7 +88,15 @@ TEST_CASE(lapic_lvt_entries_when_apic_global_disabled)
     software_apic_enable();
 }
 
-TEST_CASE(lapic_lvt_entries_when_apic_software_disabled)
+// AMD Erratum 1158:
+// Description
+//   The processor unmasks local interrupts (LINT0 and LINT1) while the APIC is software disabled (Spurious-
+//   Interrupt Vector Register[APICSWEn], APICx0F0[8] = 0b). The LINT[1:0] LVT entry mask bits
+//   (APICx3[60:50] bit 16) are cleared and cannot be set.
+// Potential Effect on System
+//   Software may receive a local interrupt that was not expected, possibly leading to a system crash.
+// https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/revision-guides/55449.pdf#unique_76
+TEST_CASE_CONDITIONAL(lapic_lvt_entries_when_apic_software_disabled, !util::cpuid::is_amd_cpu())
 {
     int_guard _;
     software_apic_disable();
@@ -227,6 +236,11 @@ TEST_CASE_CONDITIONAL(x2apic_initial_preserved_values, x2apic_mode_supported())
             auto mmio_addr{ msr.mmio_addr() };
             // if it is preserved on init, there has to be an mmio register value
             BARETEST_ASSERT(mmio_addr);
+
+            // AMD doesn't have the CMCI register
+            if (util::cpuid::is_amd_cpu() and mmio_addr == LAPIC_LVT_CMCI) {
+                continue;
+            }
 
             uint32_t buffered_val{ mmio_buffer.get(msr) };
             uint64_t x2_val{ read_x2_msr(msr.addr) };
