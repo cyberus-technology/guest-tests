@@ -228,7 +228,9 @@ void test_setting_lapic_tpr_to_f_should_inhibit_all_interrupts(dest_sh sh, bool 
     lapic_set_task_priority(0xf, use_mmio);
     enable_interrupts_for_single_instruction();
     BARETEST_ASSERT(not irq_info.valid);
-    lapic_set_task_priority(0x0);
+
+    // Important: Use the same mechanism here as above (depend on use_mmio)
+    lapic_set_task_priority(0x0, use_mmio);
 
     // in this case there shouldnt be more than one interrupt
     wait_for_interrupts(1);
