@@ -36,7 +36,7 @@ void test_cpuid_string(std::array<std::string, N>& valid_cpu_models)
  *
  * Keep in sync with README!
  */
-std::array<std::string, 8> valid_cpu_models{ {
+std::array<std::string, 9> valid_cpu_models{ {
     "Intel(R) Core(TM",
     "      Intel(R) C",
     "Intel(R) Celeron",
@@ -45,6 +45,7 @@ std::array<std::string, 8> valid_cpu_models{ {
     "11th Gen Intel(R",
     "12th Gen Intel(R",
     "13th Gen Intel(R",
+    "AMD Ryzen 7 PRO ",
 } };
 
 TEST_CASE(cpuid_string_is_native)
