@@ -34,10 +34,11 @@ void __attribute__((weak)) epilogue()
 void print_environment_info()
 {
     printf("Running Guest Test\n");
-    printf("  boot   : %s\n", boot_method_name(current_boot_method.value()));
-    printf("  cmdline: %s\n", get_boot_cmdline().value_or("").c_str());
-    printf("  cpu    : %s\n", util::cpuid::get_extended_brand_string().c_str());
-    printf("           ");
+    printf("  boot      : %s\n", boot_method_name(current_boot_method.value()));
+    printf("  cmdline   : %s\n", get_boot_cmdline().value_or("").c_str());
+    printf("  cpu vendor: %s\n", util::cpuid::get_vendor_id().c_str());
+    printf("  cpu       : %s\n", util::cpuid::get_extended_brand_string().c_str());
+    printf("              ");
     if (util::cpuid::hv_bit_present()) {
         printf("Hypervisor bit set\n");
     }
