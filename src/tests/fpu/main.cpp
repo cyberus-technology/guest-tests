@@ -6,6 +6,7 @@
 #include <toyos/testhelper/irq_handler.hpp>
 #include <toyos/testhelper/irqinfo.hpp>
 #include <toyos/util/cast_helpers.hpp>
+#include <toyos/util/cpuid.hpp>
 #include <toyos/util/trace.hpp>
 #include <toyos/x86/x86asm.hpp>
 #include <toyos/x86/x86fpu.hpp>
@@ -344,7 +345,9 @@ TEST_CASE_CONDITIONAL(xsaves, xsaves_supported())
     BARETEST_ASSERT(get_mm0() == TEST_VAL);
 }
 
-TEST_CASE_CONDITIONAL(xsaves_raises_ud, not xsaves_supported())
+// AMD does not allow to automatically inject a #UD for XSAVES
+// in case the VMM does not want to expose this feature.
+TEST_CASE_CONDITIONAL(xsaves_raises_ud, not xsaves_supported() and not(util::cpuid::is_amd_cpu() and util::cpuid::hv_bit_present()))
 {
     irq_handler::guard irq_guard{ irq_handler_fn };
     irq_info.reset();
