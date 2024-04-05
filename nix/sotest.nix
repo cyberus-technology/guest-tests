@@ -49,6 +49,7 @@ pkgs.cyberus.linux-engineering.mkBareSotestBundle {
   sotest = {
     run = {
       inherit name category;
+      panicPatterns = [ "NO INTERRUPT HANDLER DEFINED" ];
     };
     bootItems = builtins.listToAttrs (map
       (testName: {
