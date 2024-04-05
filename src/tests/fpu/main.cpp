@@ -347,7 +347,8 @@ TEST_CASE_CONDITIONAL(xsaves, xsaves_supported())
 
 // AMD does not allow to automatically inject a #UD for XSAVES
 // in case the VMM does not want to expose this feature.
-TEST_CASE_CONDITIONAL(xsaves_raises_ud, not xsaves_supported() and not(util::cpuid::is_amd_cpu() and util::cpuid::hv_bit_present()))
+static bool is_virtualized_amd{ util::cpuid::is_amd_cpu() and util::cpuid::hv_bit_present() };
+TEST_CASE_CONDITIONAL(xsaves_raises_ud, not xsaves_supported() and not is_virtualized_amd)
 {
     irq_handler::guard irq_guard{ irq_handler_fn };
     irq_info.reset();
