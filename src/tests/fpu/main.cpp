@@ -344,7 +344,7 @@ TEST_CASE_CONDITIONAL(xsaves, xsaves_supported())
     BARETEST_ASSERT(get_mm0() == TEST_VAL);
 }
 
-TEST_CASE_CONDITIONAL(xsave_raises_ud, not xsaves_supported())
+TEST_CASE_CONDITIONAL(xsaves_raises_ud, not xsaves_supported())
 {
     irq_handler::guard irq_guard{ irq_handler_fn };
     irq_info.reset();
