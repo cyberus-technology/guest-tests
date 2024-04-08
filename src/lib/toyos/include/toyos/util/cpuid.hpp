@@ -25,6 +25,7 @@ namespace util::cpuid
         vendor_id_components.push_back(res.ebx);
         vendor_id_components.push_back(res.edx);
         vendor_id_components.push_back(res.ecx);
+        vendor_id_components.push_back(0);
         return { reinterpret_cast<char*>(vendor_id_components.data()) };
     }
 
@@ -51,6 +52,8 @@ namespace util::cpuid
             brand_string_components.push_back(res.ecx);
             brand_string_components.push_back(res.edx);
         }
+
+        brand_string_components.push_back(0);
 
         // Just reinterpret as all bytes are already in a proper ASCII-order.
         return { reinterpret_cast<char*>(brand_string_components.data()) };
