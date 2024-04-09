@@ -9,6 +9,7 @@
 #include <toyos/testhelper/lapic_lvt_guard.hpp>
 #include <toyos/testhelper/lapic_test_tools.hpp>
 #include <toyos/testhelper/speculation.hpp>
+#include <toyos/util/cpuid.hpp>
 #include <toyos/util/trace.hpp>
 #include <toyos/x86/x86asm.hpp>
 
@@ -108,7 +109,8 @@ TEST_CASE(rdtscp_returns_correct_tsc_aux_value_in_rcx)
     BARETEST_ASSERT(aux == aux_val);
 }
 
-TEST_CASE(platform_info_is_correctly_initialized_non_zero)
+// This MSR is Intel-specific.
+TEST_CASE_CONDITIONAL(platform_info_is_correctly_initialized_non_zero, util::cpuid::is_intel_cpu())
 {
     uint64_t platform_info{ rdmsr(MSR_PLATFORM_INFO) };
     BARETEST_ASSERT(platform_info != 0);

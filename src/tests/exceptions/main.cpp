@@ -8,6 +8,7 @@
 #include <toyos/testhelper/lapic_enabler.hpp>
 #include <toyos/testhelper/lapic_test_tools.hpp>
 #include <toyos/testhelper/pic.hpp>
+#include <toyos/util/cpuid.hpp>
 #include <toyos/util/trace.hpp>
 #include <toyos/x86/x86asm.hpp>
 
@@ -114,7 +115,13 @@ TEST_CASE(test_sti_blocking_with_cpuid)
     BARETEST_ASSERT(interrupted_rip != protected_rip);
 }
 
-TEST_CASE(test_mov_ss_blocking)
+// AMD CPUs don't inhibit interrupts throughout a sequence of
+//     STI - MOV SS - CLI
+// Even though no official documentation states this, the behavior
+// is not guaranteed and our AMD machines fail here.
+// So far, we only verified this behavior on Intel CPUs.
+// See also: https://c9x.me/x86/html/file_module_x86_id_304.html
+TEST_CASE_CONDITIONAL(test_mov_ss_blocking, util::cpuid::is_intel_cpu())
 {
     irq_info.reset();
 

@@ -49,6 +49,24 @@ pkgs.cyberus.linux-engineering.mkBareSotestBundle {
   sotest = {
     run = {
       inherit name category;
+      # If tests receive interrupts or exceptions unexpectedly,
+      # they might print the following message and just hang.
+      # To prevent long timeouts and retries, we specify this
+      # as a panic pattern to immediately cause a defined test
+      # failure.
+      panicPatterns = [ "NO INTERRUPT HANDLER DEFINED" ];
+
+      localTags = [
+        {
+          "machine_name" = "amd_m75q_gen2";
+          "local_tags" = [ "log:serial" "project:guest-tests" ];
+        }
+
+        {
+          "machine_name" = "amd_t16_gen2";
+          "local_tags" = [ "log:serial" "project:guest-tests" ];
+        }
+      ];
     };
     bootItems = builtins.listToAttrs (map
       (testName: {
