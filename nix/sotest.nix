@@ -55,18 +55,6 @@ pkgs.cyberus.linux-engineering.mkBareSotestBundle {
       # as a panic pattern to immediately cause a defined test
       # failure.
       panicPatterns = [ "NO INTERRUPT HANDLER DEFINED" ];
-
-      localTags = [
-        {
-          "machine_name" = "amd_m75q_gen2";
-          "local_tags" = [ "log:serial" "project:guest-tests" ];
-        }
-
-        {
-          "machine_name" = "amd_t16_gen2";
-          "local_tags" = [ "log:serial" "project:guest-tests" ];
-        }
-      ];
     };
     bootItems = builtins.listToAttrs (map
       (testName: {
