@@ -12,6 +12,8 @@ add_library(
   src/pml4.cpp
   src/pt.cpp
   src/string_util.cpp
+  src/tinivisor.cpp
+  src/vmxexit.S
   src/baretest/baretest.cpp
   src/baretest/baretest_config.cpp
   src/baretest/print.cpp
