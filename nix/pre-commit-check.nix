@@ -38,6 +38,7 @@ pre-commit-hooks.run {
       excludes = [
         "nix/sources.nix"
       ];
+      settings.noLambdaPatternNames = true;
     };
 
     nixpkgs-fmt = {
@@ -49,12 +50,10 @@ pre-commit-hooks.run {
 
     typos = {
       enable = true;
-    };
-  };
-
-  settings = {
-    typos = {
-      configPath = ".typos.toml";
+      # TODO Remove this, depending on the outcome of
+      # https://github.com/cachix/pre-commit-hooks.nix/pull/405
+      pass_filenames = false;
+      settings.configPath = ".typos.toml";
     };
   };
 }
