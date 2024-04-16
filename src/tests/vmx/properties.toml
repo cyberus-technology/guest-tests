@@ -1,2 +1,5 @@
 cacheable = true
 hardwareIndependent = true
+
+[sotest]
+extraTags = [ "feature:vmx" ]
