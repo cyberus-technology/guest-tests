@@ -16,7 +16,6 @@ in
     inherit (final) stdenv
       callPackage
       catch2_3
-      cyberus
       cmake
       gcc11
       nix-gitignore
