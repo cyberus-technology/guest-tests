@@ -35,6 +35,15 @@ namespace x86
 // - Configure TSS with kernel stack pointer
 [[maybe_unused]] static usermode_helper um;
 
+TEST_CASE(syscall_sysret_works)
+{
+    um.enter_sysret();
+    um.leave_syscall();
+
+    um.enter_iret();
+    um.leave_syscall();
+}
+
 // Inspired by the following blog post:
 // https://revers.engineering/patchguard-detection-of-hypervisor-based-instrospection-p1/
 //
