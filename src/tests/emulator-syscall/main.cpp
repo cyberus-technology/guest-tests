@@ -29,7 +29,10 @@ namespace x86
     }
 }  // namespace x86
 
-// Constructor has relevant side effects.
+// Constructor has relevant side effects:
+// - Enable EFER.SCE
+// - Configure STAR, LSTAR, FMASK MSRs
+// - Configure TSS with kernel stack pointer
 [[maybe_unused]] static usermode_helper um;
 
 // Inspired by the following blog post:
