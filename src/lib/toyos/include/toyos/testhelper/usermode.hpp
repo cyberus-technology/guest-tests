@@ -39,6 +39,46 @@ class usermode_helper
         current_tss->rsp0 = uintptr_t(&kernel_stack_[KERNEL_STACK_SIZE]);
     }
 
+    void enter_sysret()
+    {
+        asm volatile("lea 1f, %%rcx;"
+                     "pushf;"
+                     "pop %%r11;"
+                     "2: sysretq;"
+                     "1:"
+                     :
+                     :
+                     : "rcx", "r11", "memory");
+    }
+
+    void enter_iret(uint64_t set_flags = 0, uint64_t clear_flags = 0)
+    {
+        asm volatile("mov %%rsp, %%rbx;"
+                     "pushq $0x23;"  // Push usermode SS
+                     "pushq %%rbx;"  // Push future SP
+
+                     "pushf;"  // Push and modify FLAGS
+                     "pop %%rcx;"
+                     "or %[set_flags], %%rcx;"
+                     "and %[clear_mask], %%rcx;"
+                     "pushq %%rcx;"
+
+                     "pushq $0x2b;"  // Push 64-bit usermode CS
+                     "pushq $1f;"    // Push continuation IP
+                     "2: iretq;"
+                     "1:"
+                     :
+                     : [set_flags] "rm"(set_flags), [clear_mask] "rm"(~clear_flags)
+                     : "rbx", "rcx", "memory");
+    }
+
+    void leave_syscall()
+    {
+        // Providing syscall parameter 0 will cause the handler to stay in kernel mode
+        asm volatile("pushf; lea 1f, %%rsi; syscall; 1: popf" ::"D"(0)
+                     : "rsi", "rcx", "r11", "memory");
+    }
+
  private:
     alignas(PAGE_SIZE) uint8_t kernel_stack_[KERNEL_STACK_SIZE]{};
     void enable_sce()
