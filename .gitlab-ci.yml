@@ -63,7 +63,7 @@ stages:
   extends:
     - .common
   tags:
-    - native-nix-v2
+    - native-nix
 
 check:style:
   stage: check
