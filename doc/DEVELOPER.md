@@ -3,6 +3,13 @@
 _This documentation focuses on our internal engineering pipeline and not on
 any public read-only mirror._
 
+## General Remarks
+
+Please note that our Nix tooling is split into `nix/public` and
+`nix/cyberus/`. The latter only works if you are onboarded to our internal
+infrastructure. However, the public functionality offers build support but
+without additional convenience.
+
 ## Code Style
 
 We use `pre-commit` via [`pre-commit-hooks.nix`](https://github.com/cachix/pre-commit-hooks.nix)
@@ -10,6 +17,7 @@ to run various style checks in the CI. You can run all checks by running
 `$ nix-shell --run "pre-commit run --all-files"`. If you enter the Nix shell,
 the hooks are automatically installed and a `.pre-commit-config.yaml` is
 generated.
+
 
 ## Regular Build (Guest Tests + Unit Tests)
 
@@ -31,6 +39,7 @@ ninja test
 ```
 
 You can also use `make` instead of `ninja`.
+
 
 ## Nix Build (Guest Tests + Unit Tests)
 
@@ -57,6 +66,7 @@ The effective cmdline can also be verified by looking at the final GRUB config:
 ```shell
 cat $(nix-build -E '((import ./nix/release.nix).tests.hello-world.{iso|efi}.override({kernelCmdline = "foobar";})).grubCfg')
 ```
+
 
 ## Test Metadata (Nix)
 
@@ -111,12 +121,14 @@ they are not.
 }
 ```
 
+
 ## Unit Tests and Integration Tests
 
 ### libtoyos Unit Tests
 
 We have unit tests for libtoyos, the base of our Guest Tests. Please head to the
 build section above to see how to build and run them.
+
 
 ### Guest Tests
 
@@ -142,6 +154,7 @@ each test in existing stock VMMs. This helps us to easily detect where we are
 and also to fix upstream bugs, if we ever want to. These runs are purely
 informative.
 
+
 #### Running Guest Tests
 
 ##### Regular (in QEMU)
@@ -161,6 +174,7 @@ informative.
       `-chardev stdio,id=hostserial -device pci-serial,chardev=hostserial`
     - Output via the debugcon device: add
       `-debugcon file:debugcon_console.txt` (can be combined with a serial device)
+
 
 ##### Nix
 
