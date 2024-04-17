@@ -247,7 +247,7 @@ test:sotest:submit:
     - test:unit:cmake_release
   script:
     - nix-build nix/release.nix -A sotest
-    - RUN_SOTEST=$(nix-build nix/cbspkgs.nix -A cyberus.cbspkgs.run-sotest --no-out-link)/bin/run_sotest
+    - RUN_SOTEST=$(nix-build nix/cyberus/cbspkgs.nix -A cyberus.cbspkgs.run-sotest --no-out-link)/bin/run_sotest
     - $RUN_SOTEST http://sotest:3000 result/project-config.yaml
       --boot_files "result/bundle"
       --user "$CI_PROJECT_NAMESPACE - $GITLAB_USER_LOGIN"
@@ -271,7 +271,7 @@ test:sotest:poll:
     - test:sotest:submit
   timeout: 12h
   script:
-    - POLL_SOTEST=$(nix-build nix/cbspkgs.nix -A cyberus.cbspkgs.run-sotest --no-out-link)/bin/poll_sotest
+    - POLL_SOTEST=$(nix-build nix/cyberus/cbspkgs.nix -A cyberus.cbspkgs.run-sotest --no-out-link)/bin/poll_sotest
     - $POLL_SOTEST http://sotest:3000
       --id "$(cat sotest_testrun_id.txt)"
       --junit-xml sotest-report.xml

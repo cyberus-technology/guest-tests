@@ -5,6 +5,18 @@
         "rev": "bb218b583be1d2c1182fa70fa5e4ddf81a57f579",
         "type": "git"
     },
+    "nixpkgs": {
+        "branch": "nixos-23.11",
+        "description": "Nix Packages collection & NixOS",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "53a2c32bc66f5ae41a28d7a9a49d321172af621e",
+        "sha256": "0yqbwqbripb1bbhlwjfbqmg9qb0lai2fc0k1vfh674d6rrc8igwv",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/53a2c32bc66f5ae41a28d7a9a49d321172af621e.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "nixpkgs-unstable": {
         "branch": "nixpkgs-unstable",
         "description": "Nix Packages collection & NixOS",
