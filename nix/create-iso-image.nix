@@ -4,7 +4,8 @@
 # References:
 # -  https://github.com/limine-bootloader/limine/blob/053fc0ff708bcf7aa7b749b3d0176237ed3fe417/README.md
 
-{ runCommand
+{ lib
+, runCommand
 , writeTextFile
 
 , limine
@@ -73,7 +74,10 @@ let
     runCommand "${kernel.name}-multiboot2-hybrid-iso"
       {
         nativeBuildInputs = [ limine xorriso ];
-        passthru = { inherit bootItems limineCfg; };
+        passthru = {
+          inherit bootItems;
+          bootloaderCfg = limineCfg;
+        };
       } ''
       mkdir -p filesystem/EFI/BOOT
       install -m 0644 ${limine}/share/limine/limine-bios.sys filesystem

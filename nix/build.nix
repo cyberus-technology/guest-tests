@@ -93,7 +93,7 @@ let
     // { defaultCmdline = getDefaultCmdline testName; }
   ;
 
-  createIsoImage =
+  createIsoImage = lib.makeOverridable (
     let
       sources = import ./sources.nix;
       pkgsUnstable = import sources.nixpkgs-unstable { };
@@ -101,7 +101,8 @@ let
     callPackage ./create-iso-image.nix {
       # TODO: Limine will be in NixOS 24.05 stable.
       inherit (pkgsUnstable) limine;
-    };
+    }
+  );
 
   # Creates an attribute set that holds all binary variants of a test.
   toVariantsAttrs = testName:

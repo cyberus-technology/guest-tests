@@ -128,14 +128,13 @@ let
     '';
 
   # Tests that the kernel command line can be overridden for the given
-  # derivation. The verification happens by looking at the effective GRUB
-  # config which is provided as passthru attribute.
+  # derivation.
   cmdlineCanBeOverridden = oldDrv:
     let
       newCmdline = "--foobar-lorem-ipsum-best-cmdline-ever";
-      readGrubCfg = drv: builtins.readFile drv.passthru.grubCfg;
+      readBootloaderCfg = drv: builtins.readFile drv.passthru.bootloaderCfg;
       overriddenDrv = oldDrv.override ({ kernelCmdline = newCmdline; });
-      hasCmdline = drv: pkgs.lib.hasInfix newCmdline (readGrubCfg drv);
+      hasCmdline = drv: pkgs.lib.hasInfix newCmdline (readBootloaderCfg drv);
       oldDrvHasNotNewCmdline = !(hasCmdline oldDrv);
       newDrvHasNewCmdline = hasCmdline overriddenDrv;
     in

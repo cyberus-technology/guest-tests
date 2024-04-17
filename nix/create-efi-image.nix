@@ -23,7 +23,7 @@ runCommand name
 {
   nativeBuildInputs = [ grub2_efi ];
   passthru = {
-    inherit grubCfg;
+    bootloaderCfg = grubCfg;
   };
 } ''
   # make a memdisk-based GRUB image
