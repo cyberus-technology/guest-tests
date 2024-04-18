@@ -75,10 +75,11 @@ let
         nativeBuildInputs = [ limine xorriso ];
         passthru = { inherit bootItems limineCfg; };
       } ''
-      mkdir filesystem
+      mkdir -p filesystem/EFI/BOOT
       install -m 0644 ${limine}/share/limine/limine-bios.sys filesystem
       install -m 0644 ${limine}/share/limine/limine-bios-cd.bin filesystem
       install -m 0644 ${limine}/share/limine/limine-uefi-cd.bin filesystem
+      install -m 0644 ${limine}/share/limine/BOOTX64.EFI filesystem/EFI/BOOT
       cp ${limineCfg} filesystem/limine.cfg
       ${builtins.concatStringsSep "\n" copyBootitemsLines}
       xorriso -as mkisofs -b limine-bios-cd.bin \
