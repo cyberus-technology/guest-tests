@@ -3,15 +3,20 @@
 
 [files]
 extend-exclude = [
-  "src/lib/libc-tiny", # Not our code
-  "src/lib/libcxx", # Not our code
-  "src/lib/toyos/include/toyos/optionparser.h", # Not our code
+  # Exclude stuff that is not our code.
+  "src/lib/libc-tiny",
+  "src/lib/libcxx",
+  "src/lib/toyos/include/toyos/optionparser.h",
+  "src/lib/toyos/include/toyos/x86/arch.hpp",
 ]
 
 [default]
 extend-ignore-identifiers-re = [
   "BARs",
   "set_ist\\(*",
+  "pn2addr",
+  "addr2pn",
+  "bda_pn_range",
 ]
 
 [default.extend-identifiers]
