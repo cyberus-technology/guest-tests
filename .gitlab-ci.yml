@@ -167,6 +167,12 @@ test:vm:hello-world-boots:iso:
   script:
     - nix-build nix/release.nix -A testRuns.qemu.kvm.iso.hello-world
 
+test:vm:hello-world-boots:iso-uefi:
+  extends:
+    - .test:vm:hello-world-boots_template
+  script:
+    - nix-build nix/release.nix -A testRuns.qemu.kvm.iso-uefi.hello-world
+
 test:vm:hello-world-boots:efi:
   extends:
     - .test:vm:hello-world-boots_template

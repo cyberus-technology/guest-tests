@@ -1,12 +1,15 @@
 { pkgs ? import ./cbspkgs.nix }:
 
 let
-  # All guest tests.
-  tests = pkgs.cyberus.guest-tests.tests;
+  lib = pkgs.lib;
+  # We don't use callPackage here, as we do not want `override` and
+  # `overrideAttrs`. Otherwise, `builtins.attrNames` doesn't only return
+  # all test names.
+  tests = import ./build.nix {
+    inherit pkgs;
+  };
   sotest = pkgs.cyberus.guest-tests.sotests.default;
   testNames = builtins.attrNames tests;
-
-  # trace = pkgs.cyberus.cbspkgs.lib.tracing.prettyVal;
 
   # Creates a QEMU command.
   createQemuCommand =
@@ -18,26 +21,29 @@ let
     }:
     let
       qemu = "${pkgs.qemu}/bin/qemu-system-x86_64";
-      base = "${qemu} --machine q35,accel=kvm -no-reboot -display none -cpu host -serial stdio -nodefaults";
+      baseCmd = "${qemu} --machine q35,accel=kvm -no-reboot -display none -cpu host -serial stdio -nodefaults";
+      bootEfiFile = bootEfi && !bootIso;
     in
-    if bootMultiboot then {
-      setup = "${qemu} --version";
-      main = "${base} -kernel ${tests.${testname}.elf32} -append '${cmdline}'";
+    assert
+    (bootMultiboot -> !(bootIso || bootEfi));
+    {
+      # Setup script lines.
+      setup = builtins.concatStringsSep "\n"
+        (
+          [ "${qemu} --version" ] ++
+          lib.optional bootEfiFile ''
+            mkdir -p uefi/EFI/BOOT
+            install -m 0644 ${tests.${testname}.efi} uefi/EFI/BOOT/BOOTX64.EFI
+          ''
+        );
+      # VMM command (oneline).
+      main = "${baseCmd}"
+        + (lib.optionalString bootMultiboot " -kernel ${tests.${testname}.elf32} -append ${cmdline}")
+        + (lib.optionalString bootIso " -cdrom ${tests.${testname}.iso}")
+        + (lib.optionalString bootEfi " -bios ${pkgs.OVMF.fd}/FV/OVMF.fd")
+        + (lib.optionalString bootEfiFile " -drive format=raw,file=fat:rw:./uefi")
+      ;
     }
-    else if bootIso then {
-      setup = "${qemu} --version";
-      main = "${base} -cdrom ${tests.${testname}.iso}";
-    }
-    else if bootEfi then {
-      setup = ''
-        mkdir -p uefi/EFI/BOOT
-        install -m 0644 ${tests.${testname}.efi} uefi/EFI/BOOT/BOOTX64.EFI
-
-        ${qemu} --version
-      '';
-      main = "${base} -bios ${pkgs.OVMF.fd}/FV/OVMF.fd -drive format=raw,file=fat:rw:./uefi";
-    }
-    else abort "You must specify one boot variant!"
   ;
 
   # Creates a Cloud Hypervisor command.
@@ -128,14 +134,13 @@ let
     '';
 
   # Tests that the kernel command line can be overridden for the given
-  # derivation. The verification happens by looking at the effective GRUB
-  # config which is provided as passthru attribute.
+  # derivation.
   cmdlineCanBeOverridden = oldDrv:
     let
       newCmdline = "--foobar-lorem-ipsum-best-cmdline-ever";
-      readGrubCfg = drv: builtins.readFile drv.passthru.grubCfg;
+      readBootloaderCfg = drv: builtins.readFile drv.passthru.bootloaderCfg;
       overriddenDrv = oldDrv.override ({ kernelCmdline = newCmdline; });
-      hasCmdline = drv: pkgs.lib.hasInfix newCmdline (readGrubCfg drv);
+      hasCmdline = drv: lib.hasInfix newCmdline (readBootloaderCfg drv);
       oldDrvHasNotNewCmdline = !(hasCmdline oldDrv);
       newDrvHasNewCmdline = hasCmdline overriddenDrv;
     in
@@ -176,6 +181,18 @@ in
             (testname: createQemuCommand {
               inherit testname;
               bootIso = true;
+              cmdline = getDefaultCmdline testname;
+            });
+          # Booting the hybrid ISO in an UEFI environment.
+          # In NixOS 23.11, OVMF has the Compatibility Support Module (CSM), to
+          # also boot ISOs without any EFI file in it. However, starting with
+          # NixOS 24.05, this is a real EFI boot from an ISO file.
+          # See: https://github.com/NixOS/nixpkgs/commit/4631f2e1ed2b66d099948665209409f2e8fc37ec
+          iso-uefi = createTestRuns "qemu-kvm_iso-uefi"
+            (testname: createQemuCommand {
+              inherit testname;
+              bootIso = true;
+              bootEfi = true;
               cmdline = getDefaultCmdline testname;
             });
           # UEFI environment.

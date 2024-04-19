@@ -34,6 +34,7 @@ void __attribute__((weak)) epilogue()
 void print_environment_info()
 {
     printf("Running Guest Test\n");
+    printf("  load addr : %#x\n", load_addr());
     printf("  boot      : %s\n", boot_method_name(current_boot_method.value()));
     printf("  cmdline   : %s\n", get_boot_cmdline().value_or("").c_str());
     printf("  cpu vendor: %s\n", util::cpuid::get_vendor_id().c_str());

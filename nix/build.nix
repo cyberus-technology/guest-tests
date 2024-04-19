@@ -1,22 +1,12 @@
 # Builds the CMake project and makes each test accessible in multiple binary
-# variants: ELF32, ELF64, ISO, ELF. Further, via nested passthru attributes,
-# we export each individual test variant via one single common and combined
-# top-level `tests` attribute:
-# - `tests`:                      All tests in all variants
-# - `tests.<testname>`:           Test in all variants
-# - `tests.<testname>.<variant>`: Test in given variant
+# variants (ELF32, ELF64, ISO, ELF) using the following attribute structure:
+# `tests.<testname>.<variant>`.
 
-{ stdenv
-, callPackage
-, catch2_3
-, cyberus
-, cmake
-, gcc11
-, nix-gitignore
-, runCommand
-}:
+{ pkgs }:
 
 let
+  lib = pkgs.lib;
+
   testNames = [
     "cpuid"
     "emulator-syscall"
@@ -36,36 +26,11 @@ let
     "vmx"
   ];
 
-  cmakeProj =
-    stdenv.mkDerivation {
-      pname = "guest-tests";
-      version = "1.0.0";
-
-      src = nix-gitignore.gitignoreSourcePure [
-        # If you're testing around with the test properties, it is handy to add
-        # this exclude to see quicker results. Otherwise, the whole CMake
-        # project needs a rebuild.
-        # "tests/**/properties.toml"
-      ] ../src;
-
-      doCheck = true;
-      checkInputs = [ catch2_3 ];
-
-      nativeBuildInputs = [
-        cmake
-        gcc11 # keep in sync with CI file
-      ];
-
-      # The ELFs are standalone kernels and don't need to go through these. This
-      # reduces the number of warnings that scroll by during build.
-      dontPatchELF = true;
-      dontFixup = true;
-    };
-
+  cmakeProj = pkgs.callPackage ./build-cmake-project.nix { };
 
   # Extracts a single binary variant of a test.
   # The result is a direct symlink to the boot item.
-  extractBinaryFromCmakeBuild = testName: suffix: runCommand "cmake-build-variant-${testName}-${suffix}"
+  extractBinaryFromCmakeBuild = testName: suffix: pkgs.runCommandLocal "cmake-build-variant-${testName}-${suffix}"
     {
       passthru = {
         inherit cmakeProj;
@@ -99,18 +64,28 @@ let
     // { defaultCmdline = getDefaultCmdline testName; }
   ;
 
+  createIsoImage = lib.makeOverridable (
+    let
+      sources = import ./sources.nix;
+      pkgsUnstable = import sources.nixpkgs-unstable { };
+    in
+    pkgs.callPackage ./create-iso-image.nix {
+      # TODO: Limine will be in NixOS 24.05 stable.
+      inherit (pkgsUnstable) limine;
+    }
+  );
+
   # Creates an attribute set that holds all binary variants of a test.
   toVariantsAttrs = testName:
     let
-      base = {
+      base = rec {
         elf32 = extractBinaryFromCmakeBuild testName "elf32";
         elf64 = extractBinaryFromCmakeBuild testName "elf64";
-        iso = cyberus.cbspkgs.lib.images.createIsoMultiboot {
-          name = "guest-test-${testName}-iso";
-          kernel = "${toString cmakeProj}/${testName}.elf32";
+        iso = createIsoImage {
+          kernel = elf64;
           kernelCmdline = getDefaultCmdline testName;
         };
-        efi = callPackage ./create-efi-image.nix {
+        efi = pkgs.callPackage ./create-efi-image.nix {
           name = "guest-test-${testName}-efi";
           kernel = "${cmakeProj}/${testName}.elf64";
           kernelCmdline = getDefaultCmdline testName;

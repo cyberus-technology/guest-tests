@@ -20,8 +20,12 @@
 
 using namespace x86;
 
-// If we set this too low we might collide with our own heap or data sections.
-const lin_addr_t TEST_ADDR{ lin_addr_t(uintptr_t(0xc00000)) };
+/**
+ * Target memory page we use for PT modifications in this tests.
+ */
+alignas(2_MiB) uint8_t _HUGEPAGE[2_MiB];
+
+const lin_addr_t TEST_ADDR{ lin_addr_t(uintptr_t(_HUGEPAGE)) };
 
 static irqinfo irq_info;
 jmp_buf jump_buffer;

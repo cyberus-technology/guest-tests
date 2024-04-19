@@ -11,11 +11,14 @@ PHDRS
     note  PT_NOTE;
 }
 
+/** From our testing and experience, this address works on a variety of
+    real and virtual platforms with different firmware. Libtoyos is currently
+    not relocatable in physical address space. */
+PROVIDE(LOAD_ADDR = 12M);
+
 SECTIONS
 {
-    . = 8 * 1024 * 1024;
-    . += SIZEOF_HEADERS;
-    .text (8*1024*1024) : ALIGN(PAGE_SIZE) {
+    .text (LOAD_ADDR) : ALIGN(PAGE_SIZE) {
         KEEP(*(.multiboot));
         PROVIDE(code = .);
         KEEP(*(.text))
