@@ -1,14 +1,11 @@
 { pkgs ? import ./cbspkgs.nix }:
 
 let
+  # We don't use callPackage here, as we do not want `override` and
+  # `overrideAttrs`. Otherwise, `builtins.attrNames` doesn't only return
+  # all test names.
   tests = import ./build.nix {
-    inherit (pkgs) stdenv
-      callPackage
-      catch2_3
-      cmake
-      gcc11
-      nix-gitignore
-      runCommand;
+    inherit pkgs;
   };
   sotest = pkgs.cyberus.guest-tests.sotests.default;
   testNames = builtins.attrNames tests;

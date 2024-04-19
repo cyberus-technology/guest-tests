@@ -2,16 +2,11 @@
 # variants (ELF32, ELF64, ISO, ELF) using the following attribute structure:
 # `tests.<testname>.<variant>`.
 
-{ stdenv
-, callPackage
-, catch2_3
-, cmake
-, gcc11
-, nix-gitignore
-, runCommand
-}:
+{ pkgs }:
 
 let
+  lib = pkgs.lib;
+
   testNames = [
     "cpuid"
     "emulator-syscall"
@@ -32,11 +27,11 @@ let
   ];
 
   cmakeProj =
-    stdenv.mkDerivation {
+    pkgs.stdenv.mkDerivation {
       pname = "guest-tests";
       version = "1.0.0";
 
-      src = nix-gitignore.gitignoreSourcePure [
+      src = pkgs.nix-gitignore.gitignoreSourcePure [
         # If you're testing around with the test properties, it is handy to add
         # this exclude to see quicker results. Otherwise, the whole CMake
         # project needs a rebuild.
@@ -44,11 +39,11 @@ let
       ] ../src;
 
       doCheck = true;
-      checkInputs = [ catch2_3 ];
+      checkInputs = [ pkgs.catch2_3 ];
 
       nativeBuildInputs = [
-        cmake
-        gcc11 # keep in sync with CI file
+        pkgs.cmake
+        pkgs.gcc11 # keep in sync with CI file
       ];
 
       # The ELFs are standalone kernels and don't need to go through these. This
@@ -59,7 +54,7 @@ let
 
   # Extracts a single binary variant of a test.
   # The result is a direct symlink to the boot item.
-  extractBinaryFromCmakeBuild = testName: suffix: runCommand "cmake-build-variant-${testName}-${suffix}"
+  extractBinaryFromCmakeBuild = testName: suffix: pkgs.runCommandLocal "cmake-build-variant-${testName}-${suffix}"
     {
       passthru = {
         inherit cmakeProj;
@@ -98,7 +93,7 @@ let
       sources = import ./sources.nix;
       pkgsUnstable = import sources.nixpkgs-unstable { };
     in
-    callPackage ./create-iso-image.nix {
+    pkgs.callPackage ./create-iso-image.nix {
       # TODO: Limine will be in NixOS 24.05 stable.
       inherit (pkgsUnstable) limine;
     }
@@ -114,7 +109,7 @@ let
           kernel = elf64;
           kernelCmdline = getDefaultCmdline testName;
         };
-        efi = callPackage ./create-efi-image.nix {
+        efi = pkgs.callPackage ./create-efi-image.nix {
           name = "guest-test-${testName}-efi";
           kernel = "${cmakeProj}/${testName}.elf64";
           kernelCmdline = getDefaultCmdline testName;
