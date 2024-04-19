@@ -1,8 +1,15 @@
 { pkgs ? import ./cbspkgs.nix }:
 
 let
-  # All guest tests.
-  tests = pkgs.cyberus.guest-tests.tests;
+  tests = import ./build.nix {
+    inherit (pkgs) stdenv
+      callPackage
+      catch2_3
+      cmake
+      gcc11
+      nix-gitignore
+      runCommand;
+  };
   sotest = pkgs.cyberus.guest-tests.sotests.default;
   testNames = builtins.attrNames tests;
 
