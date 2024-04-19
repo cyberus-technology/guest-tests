@@ -6,8 +6,8 @@
 }:
 
 stdenv.mkDerivation {
-  pname = "guest-tests";
-  version = "1.0.0";
+  pname = "cyberus-guest-tests";
+  version = "0.0.0-dev";
 
   src = nix-gitignore.gitignoreSourcePure [
     # If you're testing around with the test properties, it is handy to add
