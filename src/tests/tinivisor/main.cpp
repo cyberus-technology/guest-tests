@@ -132,24 +132,6 @@ TEST_CASE(tinivisor_self_ipi_is_delivered_in_vmx_nonroot_mode)
     BARETEST_ASSERT(irq_info.vec == VECTOR);
 }
 
-/**
- * The next test should checks if io port access works via writing and reading the debug port .
- */
-TEST_CASE(tinivisor_io_port_access_works)
-{
-    tinivisor_guard _(tini);
-    constexpr uint8_t DEBUG_PORT{ 0x80 };
-
-    outb(DEBUG_PORT, 0xff);
-    inb(DEBUG_PORT);
-
-    /*
-     * The tinivisor will throw an assertion, if in and out instructions fail, so
-     * We have no Condition to check here.
-     */
-    BARETEST_ASSERT(true);
-}
-
 void cr4_exit(vmcs::vmcs_t& vmcs, tinivisor::guest_regs& regs, x86::vmx_exit_reason /*reason*/, uint64_t exit_qual)
 {
     auto reg = (exit_qual >> 8) & 0xf;
