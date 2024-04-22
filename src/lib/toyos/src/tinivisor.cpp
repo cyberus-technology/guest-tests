@@ -48,21 +48,6 @@ void tinivisor::default_exit_handler(vmcs::vmcs_t& /*vmcs*/, tinivisor::guest_re
     __UNREACHED__;
 }
 
-/**
- * \brief Disable VMX.
- *
- * Last step in the tinivisor shutdown path.
- * Called in VMX root mode guest registers and stack pointer have been restored.
- * At the top of the stack is the return address for the call of tinivisor::stop.
- */
-EXTERN_C void disable_vmx()
-{
-    // function calls adhere to calling conventions and will not overwrite the previously register state
-    vmxoff();
-    set_cr4(get_cr4() & ~math::mask_from(x86::cr4::VMXE));
-    // returning from this function "jumps" back to the caller of tinivisor::stop
-}
-
 void tinivisor::start()
 {
     lock_feature_control_msr();

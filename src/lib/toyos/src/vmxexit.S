@@ -59,8 +59,6 @@ exit_handler_low_level:
 
     vmresume
 
-.extern disable_vmx
-
 // void restore_arch_state_and_jump(guest_regs& regs, uint64_t rsp);
 // @param rsp stack pointer value
 //
@@ -90,6 +88,18 @@ restore_arch_state_and_jump:
 
     // Restore RDI last because it points to the saved registers
     mov  64(%rdi), %rdi
-    jmp disable_vmx
+
+    // Leave VMX operation
+    vmxoff
+
+    // Clear CR4.VMXE because we enabled it during tinivisor startup.
+    push %rax
+    mov %cr4, %rax
+    btr $13, %rax
+    mov %rax, %cr4
+    pop %rax
+
+    // At the top of the stack is the return address for the call of tinivisor::stop.
+    ret
 
 .section .note.GNU-stack, "", %progbits
