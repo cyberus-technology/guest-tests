@@ -4,7 +4,7 @@
 #pragma once
 
 #include <toyos/x86/segmentation.hpp>
-#include <toyos/x86/vmxasm>.hpp>
+#include <toyos/x86/vmxasm.hpp>
 #include <toyos/x86/x86defs.hpp>
 
 namespace vmcs

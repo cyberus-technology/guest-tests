@@ -23,6 +23,7 @@ let
     "sgx-launch-control"
     "timing"
     "tsc"
+    "tinivisor"
     "vmx"
   ];
 
