@@ -38,7 +38,7 @@ let
         );
       # VMM command (oneline).
       main = "${baseCmd}"
-        + (lib.optionalString bootMultiboot " -kernel ${tests.${testname}.elf32} -append ${cmdline}")
+        + (lib.optionalString bootMultiboot " -kernel ${tests.${testname}.elf32} -append '${cmdline}'")
         + (lib.optionalString bootIso " -cdrom ${tests.${testname}.iso}")
         + (lib.optionalString bootEfi " -bios ${pkgs.OVMF.fd}/FV/OVMF.fd")
         + (lib.optionalString bootEfiFile " -drive format=raw,file=fat:rw:./uefi")
