@@ -75,9 +75,10 @@ namespace baretest
                 failure(name);
                 return false;
             case result_t::SKIPPED:
-            default:
                 skip();
                 return false;
+            default:
+                PANIC("Unexpected test case result: %#x", res);
         }
     }
 
