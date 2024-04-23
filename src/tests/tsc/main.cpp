@@ -1,5 +1,6 @@
-/* Copyright Cyberus Technology GmbH *
- *        All rights reserved        */
+// Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+//
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <toyos/baretest/baretest.hpp>
 #include <toyos/testhelper/lapic_enabler.hpp>

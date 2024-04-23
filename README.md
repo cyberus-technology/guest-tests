@@ -124,3 +124,8 @@ Currently, you only can build the Guest Tests from source. Please refer to our
 Please look at [/doc/DEVELOPER.md](/doc/DEVELOPER.md). This document mainly
 focuses on Cyberus employees with access to our internal network and
 infrastructure.
+
+
+## License
+
+GPLv2. See [LICENSE file](./LICENSE).

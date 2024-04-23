@@ -1,3 +1,9 @@
+/*
+ * Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
 #include <config.h>
 ENTRY(_startup)
 OUTPUT_FORMAT("elf64-x86-64")

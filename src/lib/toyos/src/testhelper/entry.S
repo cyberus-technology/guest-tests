@@ -1,7 +1,6 @@
-/* Copyright Cyberus Technology GmbH *
- *        All rights reserved        */
-
-.code64
+// Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+//
+// SPDX-License-Identifier: GPL-2.0-or-later.code64
 
 .globl syscall_entry, irq_handlers;
 .weak syscall_handler;

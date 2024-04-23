@@ -1,3 +1,7 @@
+# Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 function(prep_and_use_linker_script target-name source-file)
   set(resulting-ld-script ${CMAKE_CURRENT_BINARY_DIR}/${target-name}.ld)
 

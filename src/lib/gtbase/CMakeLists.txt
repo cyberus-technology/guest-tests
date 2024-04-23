@@ -1,3 +1,7 @@
+# Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 # gtbase: Guest Tests Base Library
 #
 # Header-only library with definitions that we need in our custom nostd-friendly

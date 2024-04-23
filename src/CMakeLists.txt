@@ -1,3 +1,7 @@
+# Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 # Let cmake try to build a static library to check if the compiler is working.
 # The default method is to compile a complete app for the chosen architecture,
 # which might fail when cross-compiling (e.g., on mac). For our purposes,
