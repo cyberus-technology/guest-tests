@@ -195,4 +195,4 @@ The SoTest bundle can be obtained by running
 `$ nix-build nix/release.nix -A sotest`.
 
 Note that you can modify the sotest run by using one of the various modifiers
-available as passthru attributes. See [cbspkgs for reference](https://gitlab.vpn.cyberus-technology.de/infrastructure/cbspkgs/-/blob/4d38d483167d09fbe95f99886010776e736e250b/lib/README.md).
+available as passthru attributes ([reference](http://cyberus.doc.vpn.cyberus-technology.de/engineering/linux-engineering/nixos-modules/sotest.html#sotestpassthruattributes)).
