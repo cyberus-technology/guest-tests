@@ -1,12 +1,9 @@
-# This file must be in nix/cyberus-overlay.nix by convention for the cbspkgs
-# pipeline.
-
 final: _prev:
 
 let
-  publicProject = import ./public/release.nix { pkgs = final; };
+  publicProject = import ../public/release.nix { pkgs = final; };
   makeSotest = { name, category }:
-    import ./cyberus/sotest.nix {
+    import ./sotest.nix {
       pkgs = final;
       inherit name category;
     };

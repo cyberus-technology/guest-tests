@@ -1,7 +1,7 @@
 let
-  pkgs = import ./nix/cbspkgs.nix;
-  cmakeDrv = pkgs.cyberus.guest-tests.tests.hello-world.elf32.cmakeProj;
+  pkgs = import ./nix/public/nixpkgs.nix;
   release = import ./nix/release.nix { inherit pkgs; };
+  cmakeDrv = release.tests.hello-world.elf32.cmakeProj;
 in
 pkgs.mkShell rec {
   inputsFrom = [

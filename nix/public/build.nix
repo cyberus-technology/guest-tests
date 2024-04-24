@@ -67,7 +67,7 @@ let
 
   createIsoImage = lib.makeOverridable (
     let
-      sources = import ./sources.nix;
+      sources = import ../sources.nix;
       pkgsUnstable = import sources.nixpkgs-unstable { };
     in
     pkgs.callPackage ./create-iso-image.nix {
