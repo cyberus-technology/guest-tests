@@ -1,3 +1,7 @@
+# Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 # Options affecting the build output. Removing all references to the default
 # standard libraries and enabling/disabling relevant CPU features, as well as
 # special linker configurations.

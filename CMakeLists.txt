@@ -1,3 +1,7 @@
+# Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 # This top-level CMakeLists.txt helps the CLion IDE and other tooling to
 # properly index the project. It is not part of the Nix closure.
 

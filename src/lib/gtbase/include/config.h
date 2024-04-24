@@ -1,5 +1,6 @@
-/* Copyright Cyberus Technology GmbH *
- *        All rights reserved        */
+// Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+//
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 /* These constants have to be macros because they are included from assembly files and linker scripts. */
 #include <arch.h>

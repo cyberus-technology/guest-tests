@@ -124,3 +124,11 @@ Currently, you only can build the Guest Tests from source. Please refer to our
 Please look at [/doc/DEVELOPER.md](/doc/DEVELOPER.md). This document mainly
 focuses on Cyberus employees with access to our internal network and
 infrastructure.
+
+
+## License
+
+This repository is licensed under GPLv2. Files under `src/contrib` are licensed
+under their corresponding license in the file header.
+
+See [LICENSE file](./LICENSE).

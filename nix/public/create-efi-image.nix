@@ -1,3 +1,9 @@
+/*
+ * Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
 # Embeds a guest test as Multiboot2 ELF in GRUB as EFI-loader.
 # The result is a direct symlink to the boot item.
 

@@ -1,12 +1,14 @@
+# Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 # Configuration for the typos spell checker utility.
 # See <https://github.com/crate-ci/typos>.
 
 [files]
 extend-exclude = [
-  # Exclude stuff that is not our code.
+  "src/contrib",
   "src/lib/libc-tiny",
-  "src/lib/libcxx",
-  "src/lib/toyos/include/toyos/optionparser.h",
   "src/lib/toyos/include/toyos/x86/arch.hpp",
 ]
 

@@ -1,3 +1,9 @@
+/*
+ * Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
 # Builds the CMake project and makes each test accessible in multiple binary
 # variants (ELF32, ELF64, ISO, ELF) using the following attribute structure:
 # `tests.<testname>.<variant>`.

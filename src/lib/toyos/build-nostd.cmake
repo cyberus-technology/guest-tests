@@ -46,4 +46,4 @@ target_compile_options(
 # for first-fit-heap
 target_compile_definitions(toyos PUBLIC HEAP_FREESTANDING HEAP_ASSERT)
 
-target_link_libraries(toyos PUBLIC libcxx)
+target_link_libraries(toyos PUBLIC libcxx pprintpp optionparser first-fit-heap)

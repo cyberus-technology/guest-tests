@@ -2,10 +2,9 @@
 /*
  * Copyright (c) 2016, Citrix Systems, Inc.
  */
-/* Copyright Cyberus Technology GmbH *
- *        All rights reserved        */
-
-// File taken from https://xenbits.xen.org/docs/unstable/hypercall/x86_64/include,public,arch-x86,hvm,start_info.h.html
+// Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+//
+// SPDX-License-Identifier: GPL-2.0-or-later// File taken from https://xenbits.xen.org/docs/unstable/hypercall/x86_64/include,public,arch-x86,hvm,start_info.h.html
 // with minor adjustments.
 
 #pragma once

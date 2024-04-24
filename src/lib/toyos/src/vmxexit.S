@@ -1,7 +1,6 @@
-/* Copyright Cyberus Technology GmbH *
- *        All rights reserved        */
-
-.text
+// Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+//
+// SPDX-License-Identifier: GPL-2.0-or-later.text
 
 // void exit_handler_low_level();
 //

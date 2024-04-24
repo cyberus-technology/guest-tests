@@ -1,3 +1,9 @@
+/*
+ * Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
 # Creates a hybrid-bootable x86 image using Limine as bootloader. Limine boots
 # the binary with Multiboot2 in legacy BIOS as well as UEFI environments.
 #

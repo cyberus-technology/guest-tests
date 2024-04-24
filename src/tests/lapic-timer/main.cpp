@@ -1,14 +1,11 @@
-/* Copyright Cyberus Technology GmbH *
- *        All rights reserved        */
+// Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+//
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 /**
- * LAPIC timer tests. Tests the three timer modes
- * - oneshot,
- * - periodic, and
- * - TSC deadline.
- *
- * The latter is only tested if it is supported by the platform.
- */
+*LAPIC timer tests.Tests the three timer modes
+    * -oneshot,
+    *-periodic, and*-TSC deadline.**The latter is only tested if it is supported by the platform.*/
 
 #include <optional>
 #include <toyos/baretest/baretest.hpp>
