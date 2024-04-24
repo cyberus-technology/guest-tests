@@ -9,7 +9,7 @@
 extend-exclude = [
   # Exclude stuff that is not our code.
   "src/lib/libc-tiny",
-  "src/lib/libcxx",
+  "src/contrib/lib/libcxx",
   "src/lib/toyos/include/toyos/optionparser.h",
   "src/lib/toyos/include/toyos/x86/arch.hpp",
 ]

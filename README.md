@@ -128,4 +128,7 @@ infrastructure.
 
 ## License
 
-GPLv2. See [LICENSE file](./LICENSE).
+This repository is licensed under GPLv2. Files under `src/contrib` are licensed
+under their corresponding license in the file header.
+
+See [LICENSE file](./LICENSE).
