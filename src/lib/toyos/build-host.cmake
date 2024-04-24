@@ -7,7 +7,7 @@ target_include_directories(
                     $<INSTALL_INTERFACE:include>
   )
 
-target_link_libraries(toyos-host PUBLIC gtbase)
+target_link_libraries(toyos-host PUBLIC gtbase pprintpp)
 
 # Tell the pre-processor that the code is build for the host system.
 target_compile_definitions(toyos-host PUBLIC HOSTED)
