@@ -1,4 +1,5 @@
 add_subdirectory(gtbase)
+add_subdirectory(../contrib/lib/first-fit-heap first-fit-heap)
 add_subdirectory(../contrib/lib/libcxx libcxx)
 add_subdirectory(../contrib/lib/pprintpp pprintpp)
 add_subdirectory(../contrib/lib/optionparser optionparser)

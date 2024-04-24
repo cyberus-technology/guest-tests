@@ -18,7 +18,6 @@
 #include <toyos/console/console_serial.hpp>
 #include <toyos/console/console_serial_util.hpp>
 #include <toyos/console/xhci_console.hpp>
-#include <toyos/first-fit-heap/heap.hpp>
 #include <toyos/memory/buddy.hpp>
 #include <toyos/memory/simple_buddy.hpp>
 #include <toyos/multiboot/multiboot.hpp>
@@ -32,6 +31,8 @@
 #include <toyos/x86/segmentation.hpp>
 #include <toyos/xen-pvh.hpp>
 #include <toyos/xhci/debug_device.hpp>
+
+#include <first-fit-heap/heap.hpp>
 
 extern int main();
 
