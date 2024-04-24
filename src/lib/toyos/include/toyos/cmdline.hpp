@@ -8,10 +8,11 @@
 #include <string>
 #include <vector>
 
-#include <toyos/optionparser.h>
 #include <toyos/util/algorithm.hpp>
 #include <toyos/util/string.hpp>
 #include <toyos/util/trace.hpp>
+
+#include <optionparser/optionparser.h>
 
 namespace cmdline
 {
