@@ -23,7 +23,7 @@ stages:
   extends:
     - .common
   stage: build
-  image: ubuntu:23.10
+  image: ubuntu:24.04
   before_script:
     - apt-get update && apt-get install -y git gcc-11 g++-11 cmake ninja-build
   script:
