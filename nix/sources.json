@@ -2,7 +2,7 @@
     "cbspkgs": {
         "branch": "main",
         "repo": "git@gitlab.vpn.cyberus-technology.de:cyberus/engineering/cbspkgs.git",
-        "rev": "bb218b583be1d2c1182fa70fa5e4ddf81a57f579",
+        "rev": "082f590c57b258b95f3bddd00eed736fd3f24961",
         "type": "git"
     },
     "nixpkgs": {
@@ -11,10 +11,22 @@
         "homepage": "",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "53a2c32bc66f5ae41a28d7a9a49d321172af621e",
-        "sha256": "0yqbwqbripb1bbhlwjfbqmg9qb0lai2fc0k1vfh674d6rrc8igwv",
+        "rev": "bceda8911e7386a3843cfeb673b581799ca782ef",
+        "sha256": "0cq9wlgnwp3ksg8i35isaip83x61p53giyxsdc7yd0b8c3sm6jrd",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/53a2c32bc66f5ae41a28d7a9a49d321172af621e.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/bceda8911e7386a3843cfeb673b581799ca782ef.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgs-23.11": {
+        "branch": "nixos-23.11",
+        "description": "Nix Packages collection & NixOS",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "9ddcaffecdf098822d944d4147dd8da30b4e6843",
+        "sha256": "1w1r95a2zw5y64gwpy4jncap8c6syjhlm5ffa76l0vb48hxbd7n6",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/9ddcaffecdf098822d944d4147dd8da30b4e6843.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-unstable": {

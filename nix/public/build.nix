@@ -33,7 +33,12 @@ let
     "vmx"
   ];
 
-  cmakeProj = pkgs.callPackage ./build-cmake-project.nix { };
+  cmakeProj =
+    let
+      sources = import ../sources.nix;
+      pkgs-23-11 = import sources."nixpkgs-23.11" { };
+    in
+    pkgs.callPackage ./build-cmake-project.nix { inherit pkgs-23-11; };
 
   # Extracts a single binary variant of a test.
   # The result is a direct symlink to the boot item.

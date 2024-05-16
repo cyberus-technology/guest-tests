@@ -32,6 +32,7 @@ pre-commit-hooks.run {
       excludes = [
         "lib/libc-tiny"
         "lib/libcxx"
+        "src/contrib"
       ];
     };
 
