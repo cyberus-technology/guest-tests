@@ -29,18 +29,6 @@
         "url": "https://github.com/NixOS/nixpkgs/archive/9ddcaffecdf098822d944d4147dd8da30b4e6843.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "nixpkgs-unstable": {
-        "branch": "nixpkgs-unstable",
-        "description": "Nix Packages collection & NixOS",
-        "homepage": "",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "2fd19c8be2551a61c1ddc3d9f86d748f4db94f00",
-        "sha256": "1rrxpj0n6ywhvy4nc8178a77gsn8fjnc6rdvi5rnw76vy2qlhdni",
-        "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/2fd19c8be2551a61c1ddc3d9f86d748f4db94f00.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "pre-commit-hooks.nix": {
         "branch": "master",
         "description": "Seamless integration of https://pre-commit.com git hooks with Nix.",
