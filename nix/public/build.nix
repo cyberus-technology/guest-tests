@@ -77,14 +77,7 @@ let
   ;
 
   createIsoImage = lib.makeOverridable (
-    let
-      sources = import ../sources.nix;
-      pkgsUnstable = import sources.nixpkgs-unstable { };
-    in
-    pkgs.callPackage ./create-iso-image.nix {
-      # TODO: Limine will be in NixOS 24.05 stable.
-      inherit (pkgsUnstable) limine;
-    }
+    pkgs.callPackage ./create-iso-image.nix { }
   );
 
   # Creates an attribute set that holds all binary variants of a test.

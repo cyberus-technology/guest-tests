@@ -52,7 +52,7 @@ let
     }:
     {
       setup = "${pkgs.cloud-hypervisor}/bin/cloud-hypervisor --version";
-      main = "${pkgs.cloud-hypervisor}/bin/cloud-hypervisor --memory size=256M --serial tty --console off --kernel ${tests.${testname}.elf64} --cmdline '${cmdline}'";
+      main = "${pkgs.cloud-hypervisor}/bin/cloud-hypervisor --memory='size=256M' --serial=tty --console=off --kernel=${tests.${testname}.elf64} --cmdline='${cmdline}'";
     };
 
 
@@ -90,6 +90,7 @@ let
       # We rely on that test runs perform a proper shut down under our supported
       # VMMs.
       echo -e "$(ansi bold)Running guest test '${testname}' via ${classifier} with $timeout timeout$(ansi reset)"
+      echo "Executing \"${vmmCommand.main}\""
       (timeout --preserve-status --signal KILL "$timeout" ${vmmCommand.main}) |& sotest-protocol-parser --stdin --echo
 
       touch $out
