@@ -96,7 +96,7 @@ let
           };
           efi = pkgs.callPackage ./create-efi-image.nix {
             name = "guest-test-${testName}-efi";
-            kernel = "${cmakeProj}/${testName}.elf64";
+            kernel = elf64;
             kernelCmdline = getDefaultCmdline testName;
           };
         };
