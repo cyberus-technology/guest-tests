@@ -83,19 +83,23 @@ let
   # Creates an attribute set that holds all binary variants of a test.
   toVariantsAttrs = testName:
     let
-      base = rec {
-        elf32 = extractBinaryFromCmakeBuild testName "elf32";
-        elf64 = extractBinaryFromCmakeBuild testName "elf64";
-        iso = createIsoImage {
-          kernel = elf64;
-          kernelCmdline = getDefaultCmdline testName;
+      base =
+        let
+          elf32 = extractBinaryFromCmakeBuild testName "elf32";
+          elf64 = extractBinaryFromCmakeBuild testName "elf64";
+        in
+        {
+          inherit elf32 elf64;
+          iso = createIsoImage {
+            kernel = elf64;
+            kernelCmdline = getDefaultCmdline testName;
+          };
+          efi = pkgs.callPackage ./create-efi-image.nix {
+            name = "guest-test-${testName}-efi";
+            kernel = "${cmakeProj}/${testName}.elf64";
+            kernelCmdline = getDefaultCmdline testName;
+          };
         };
-        efi = pkgs.callPackage ./create-efi-image.nix {
-          name = "guest-test-${testName}-efi";
-          kernel = "${cmakeProj}/${testName}.elf64";
-          kernelCmdline = getDefaultCmdline testName;
-        };
-      };
     in
     # Add meta data to each variant.
     builtins.mapAttrs
