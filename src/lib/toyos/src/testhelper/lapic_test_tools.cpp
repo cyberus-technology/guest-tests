@@ -280,22 +280,23 @@ void lapic_test_tools::send_self_ipi(uint8_t vector, dest_sh sh, dest_mode dest,
 
     wait_until_ready_for_ipi();
 
-    uint64_t icr_entry = 0;
+    uint32_t icr_entry_lo = 0;
+    uint32_t icr_entry_hi = 0;
 
-    icr_entry |= static_cast<uint32_t>(dlv) << ICR_DLV_MODE_SHIFT;
-    icr_entry |= static_cast<uint32_t>(dest) << ICR_DEST_MODE_SHIFT;
-    icr_entry |= level::ASSERT << ICR_LEVEL_SHIFT;
-    icr_entry |= sh << ICR_DEST_SH_SHIFT;
+    icr_entry_lo |= static_cast<uint32_t>(dlv) << ICR_DLV_MODE_SHIFT;
+    icr_entry_lo |= static_cast<uint32_t>(dest) << ICR_DEST_MODE_SHIFT;
+    icr_entry_lo |= level::ASSERT << ICR_LEVEL_SHIFT;
+    icr_entry_lo |= sh << ICR_DEST_SH_SHIFT;
 
     if (sh == dest_sh::NO_SH) {
         uint32_t apic_id = (read_from_register(LAPIC_ID) >> LAPIC_ID_SHIFT) & LAPIC_ID_MASK;
-        icr_entry |= apic_id << ICR_DEST_SHIFT;
+        icr_entry_hi |= apic_id << ICR_DEST_SHIFT;
     }
 
-    icr_entry |= vector;
+    icr_entry_lo |= vector;
 
-    write_to_register(LAPIC_ICR_HIGH, icr_entry >> 32);
-    write_to_register(LAPIC_ICR_LOW, icr_entry);
+    write_to_register(LAPIC_ICR_HIGH, icr_entry_hi);
+    write_to_register(LAPIC_ICR_LOW, icr_entry_lo);
 
     wait_until_ready_for_ipi();
 }
