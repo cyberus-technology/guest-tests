@@ -24,6 +24,8 @@
 }@args:
 
 let
+  limineX = limine.override ({ enableAll = true; });
+
   # Creates a Limine config for a Multiboot kernel.
   createLimineMultibootCfg =
     {
@@ -39,21 +41,24 @@ let
     }:
     let
       moduleLines = map
-        (elem: "MODULE_PATH boot:///${builtins.baseNameOf elem.file}\nMODULE_CMDLINE${elem.cmdline}")
+        (elem: "    module_path: boot:///${builtins.baseNameOf elem.file}\nMODULE_CMDLINE${elem.cmdline}")
         bootModules;
     in
     (writeTextFile {
-      name = "${kernel.name}-limine.cfg";
+      name = "${kernel.name}-limine.conf";
       text = ''
-        TIMEOUT=0
-        SERIAL=yes
-        VERBOSE=yes
-        INTERFACE_BRANDING=${kernel.name}
-        :${baseNameOf kernel}
-        PROTOCOL=multiboot${toString multibootVersion}
-        KERNEL_PATH=boot:///${baseNameOf kernel}
-        KERNEL_CMDLINE=${kernelCmdline}
-        ${builtins.concatStringsSep "\n" moduleLines}
+        default_entry: 1
+        timeout: 0
+        serial: yes
+        verbose: yes
+
+        interface_branding: ${kernel.name}
+        /Boot ${baseNameOf kernel}
+            comment: Boot ${baseNameOf kernel} via Multiboot${toString multibootVersion}
+            protocol: multiboot${toString multibootVersion}
+            kernel_path: boot():/${baseNameOf kernel}
+            kernel_cmdline: ${kernelCmdline}
+            ${builtins.concatStringsSep "\n" moduleLines}
       '';
     });
 
@@ -79,18 +84,18 @@ let
     in
     runCommand "${kernel.name}-multiboot2-hybrid-iso"
       {
-        nativeBuildInputs = [ limine xorriso ];
+        nativeBuildInputs = [ limineX xorriso ];
         passthru = {
           inherit bootItems;
           bootloaderCfg = limineCfg;
         };
       } ''
       mkdir -p filesystem/EFI/BOOT
-      install -m 0644 ${limine}/share/limine/limine-bios.sys filesystem
-      install -m 0644 ${limine}/share/limine/limine-bios-cd.bin filesystem
-      install -m 0644 ${limine}/share/limine/limine-uefi-cd.bin filesystem
-      install -m 0644 ${limine}/share/limine/BOOTX64.EFI filesystem/EFI/BOOT
-      cp ${limineCfg} filesystem/limine.cfg
+      install -m 0644 ${limineX}/share/limine/limine-bios.sys filesystem
+      install -m 0644 ${limineX}/share/limine/limine-bios-cd.bin filesystem
+      install -m 0644 ${limineX}/share/limine/limine-uefi-cd.bin filesystem
+      install -m 0644 ${limineX}/share/limine/BOOTX64.EFI filesystem/EFI/BOOT
+      cp ${limineCfg} filesystem/limine.conf
       ${builtins.concatStringsSep "\n" copyBootitemsLines}
       xorriso -as mkisofs -b limine-bios-cd.bin \
               -no-emul-boot -boot-load-size 4 -boot-info-table \
