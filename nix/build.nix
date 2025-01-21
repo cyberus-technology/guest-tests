@@ -1,8 +1,8 @@
 /*
- * Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
- *
- * SPDX-License-Identifier: GPL-2.0-or-later
- */
+  Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+
+  SPDX-License-Identifier: GPL-2.0-or-later
+*/
 
 # Builds the CMake project and makes each test accessible in multiple binary
 # variants (ELF32, ELF64, ISO, ELF) using the following attribute structure:
@@ -42,23 +42,27 @@ let
 
   # Extracts a single binary variant of a test.
   # The result is a direct symlink to the boot item.
-  extractBinaryFromCmakeBuild = testName: suffix: pkgs.runCommandLocal "cmake-build-variant-${testName}-${suffix}"
-    {
-      passthru = {
-        inherit cmakeProj;
-      };
-    } ''
-    ln -s ${cmakeProj}/${testName}.${suffix} $out
-  '';
+  extractBinaryFromCmakeBuild =
+    testName: suffix:
+    pkgs.runCommandLocal "cmake-build-variant-${testName}-${suffix}"
+      {
+        passthru = {
+          inherit cmakeProj;
+        };
+      }
+      ''
+        ln -s ${cmakeProj}/${testName}.${suffix} $out
+      '';
 
   # Returns the default command line for each test.
-  getDefaultCmdline = testName:
+  getDefaultCmdline =
+    testName:
     let
       dict = {
         hello-world = "--disable-testcases=test_case_is_skipped_by_cmdline";
       };
     in
-      dict.${testName} or "";
+    dict.${testName} or "";
 
   # Returns the properties of a test as attribute set.
   getTestProperties =
@@ -73,15 +77,15 @@ let
       sotest = helper.getSotestMeta testName;
     }
     # Merge with additional properties from other sources.
-    // { defaultCmdline = getDefaultCmdline testName; }
-  ;
+    // {
+      defaultCmdline = getDefaultCmdline testName;
+    };
 
-  createIsoImage = lib.makeOverridable (
-    pkgs.callPackage ./create-iso-image.nix { }
-  );
+  createIsoImage = lib.makeOverridable (pkgs.callPackage ./create-iso-image.nix { });
 
   # Creates an attribute set that holds all binary variants of a test.
-  toVariantsAttrs = testName:
+  toVariantsAttrs =
+    testName:
     let
       base =
         let
@@ -102,17 +106,21 @@ let
         };
     in
     # Add meta data to each variant.
-    builtins.mapAttrs
-      (_name: variant:
-        let
-          testProperties = getTestProperties testName;
-          meta = (variant.meta or { }) // { inherit testProperties; };
-        in
-        variant // { inherit meta; }
-      )
-      base;
+    builtins.mapAttrs (
+      _name: variant:
+      let
+        testProperties = getTestProperties testName;
+        meta = (variant.meta or { }) // {
+          inherit testProperties;
+        };
+      in
+      variant // { inherit meta; }
+    ) base;
 
   # List of (name, value) pairs.
-  testList = map (name: { inherit name; value = toVariantsAttrs name; }) testNames;
+  testList = map (name: {
+    inherit name;
+    value = toVariantsAttrs name;
+  }) testNames;
 in
 builtins.listToAttrs testList

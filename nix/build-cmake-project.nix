@@ -1,16 +1,17 @@
 /*
- * Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
- *
- * SPDX-License-Identifier: GPL-2.0-or-later
- */
+  Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
 
-{ catch2_3
-, cmake
-, nix-gitignore
-, pkgs-23-11
-, stdenv
-, wrapBintoolsWith
-, wrapCCWith
+  SPDX-License-Identifier: GPL-2.0-or-later
+*/
+
+{
+  catch2_3,
+  cmake,
+  nix-gitignore,
+  pkgs-23-11,
+  stdenv,
+  wrapBintoolsWith,
+  wrapCCWith,
 }:
 let
   # With nixpkgs 24.05, our unit tests fails during runtime with a segmentation
@@ -19,15 +20,14 @@ let
   # In nixpkgs 24.05, the glibc version 2.39 is introduced which does not
   # work with catch2 version 3 thus we downgrade the glibc version to
   # 2.38 (from nixpkgs 23.11) again to keep our code compiling
-  patchedGcc = wrapCCWith
-    {
-      cc = pkgs-23-11.gcc-unwrapped;
+  patchedGcc = wrapCCWith {
+    cc = pkgs-23-11.gcc-unwrapped;
+    libc = pkgs-23-11.glibc;
+    bintools = wrapBintoolsWith {
+      bintools = pkgs-23-11.bintools-unwrapped;
       libc = pkgs-23-11.glibc;
-      bintools = wrapBintoolsWith {
-        bintools = pkgs-23-11.bintools-unwrapped;
-        libc = pkgs-23-11.glibc;
-      };
     };
+  };
 in
 stdenv.mkDerivation {
   pname = "cyberus-guest-tests";

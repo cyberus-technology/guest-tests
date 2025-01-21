@@ -1,8 +1,8 @@
 /*
- * Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
- *
- * SPDX-License-Identifier: GPL-2.0-or-later
- */
+  Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+
+  SPDX-License-Identifier: GPL-2.0-or-later
+*/
 
 # Style and quality checks.
 #
@@ -28,7 +28,10 @@ pre-commit-hooks.run {
     clang-format = {
       enable = true;
       # Without mkForce this is appended and not replaced.
-      types_or = lib.mkForce [ "c" "c++" ];
+      types_or = lib.mkForce [
+        "c"
+        "c++"
+      ];
       excludes = [
         "lib/libc-tiny"
         "lib/libcxx"
@@ -48,7 +51,7 @@ pre-commit-hooks.run {
       settings.noLambdaPatternNames = true;
     };
 
-    nixpkgs-fmt = {
+    nixfmt-rfc-style = {
       enable = true;
       excludes = [
         "nix/sources.nix"

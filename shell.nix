@@ -13,6 +13,7 @@ pkgs.mkShell rec {
     argc
     fd
     niv
+    nixfmt-rfc-style
 
     # Not strictly needed, but some developers prefer it to make.
     ninja

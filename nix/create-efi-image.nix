@@ -1,19 +1,20 @@
 /*
- * Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
- *
- * SPDX-License-Identifier: GPL-2.0-or-later
- */
+  Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+
+  SPDX-License-Identifier: GPL-2.0-or-later
+*/
 
 # Embeds a guest test as Multiboot2 ELF in GRUB as EFI-loader.
 # The result is a direct symlink to the boot item.
 
-{ grub2_efi
-, runCommand
-, writeText
+{
+  grub2_efi,
+  runCommand,
+  writeText,
 
-, name
-, kernel
-, kernelCmdline ? "--serial"
+  name,
+  kernel,
+  kernelCmdline ? "--serial",
 }:
 
 let
@@ -26,23 +27,24 @@ let
   '';
 in
 runCommand name
-{
-  nativeBuildInputs = [ grub2_efi ];
-  passthru = {
-    bootloaderCfg = grubCfg;
-  };
-} ''
-  # make a memdisk-based GRUB image
+  {
+    nativeBuildInputs = [ grub2_efi ];
+    passthru = {
+      bootloaderCfg = grubCfg;
+    };
+  }
+  ''
+    # make a memdisk-based GRUB image
 
-  cp ${kernel} kernel
+    cp ${kernel} kernel
 
-  grub-mkstandalone \
-    --format x86_64-efi \
-    --output $out \
-    --directory ${grub2_efi}/lib/grub/x86_64-efi \
-    "/boot/grub/grub.cfg=${grubCfg}" \
-    "/boot/kernel=./kernel"
-    # ^ This is poorly documented, but the tool allows to specify key-value
-    # pairs where the value on the right, a file, will be embedded into the
-    # "(memdisk)" volume inside the grub image. -> "Graft point syntax"
-''
+    grub-mkstandalone \
+      --format x86_64-efi \
+      --output $out \
+      --directory ${grub2_efi}/lib/grub/x86_64-efi \
+      "/boot/grub/grub.cfg=${grubCfg}" \
+      "/boot/kernel=./kernel"
+      # ^ This is poorly documented, but the tool allows to specify key-value
+      # pairs where the value on the right, a file, will be embedded into the
+      # "(memdisk)" volume inside the grub image. -> "Graft point syntax"
+  ''
