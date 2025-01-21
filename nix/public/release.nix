@@ -72,7 +72,7 @@ in
     # Tests that the kernel cmdline of the ISO and EFI images can be overridden
     # so that downstream projects can change the way these tests run easily.
     kernelCmdlineOfBootItemsCanBeOverridden = pkgs.symlinkJoin {
-      name = "Kernel Command Line of Boot Items can be Overridden";
+      name = "Kernel Command Line of Boot Items can be overridden";
       paths = [
         (testResultToDrv "cmdline of iso drv can be overridden" (cmdlineCanBeOverridden tests.hello-world.iso))
         (testResultToDrv "cmdline of efi drv can be overridden" (cmdlineCanBeOverridden tests.hello-world.efi))
