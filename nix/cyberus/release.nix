@@ -68,16 +68,15 @@ let
       {
         nativeBuildInputs = [
           pkgs.ansi
-          pkgs.cyberus.sotest.apps.sotest-protocol-parser
         ];
       } ''
       set -euo pipefail
 
       ${vmmCommand.setup}
 
-      # sotest-protocol-parser has no timeout handling and we also have some
-      # long-running tests. For now, we configure the timeouts here. If this becomes
-      # unwieldy, we need to move it to the test properties.
+      # We have some long-running tests. For now, we configure the timeouts
+      # here. If this becomes unwieldy, we need to move it to the test
+      # properties.
       case '${testname}' in
         timing)
           timeout=10m
@@ -91,7 +90,7 @@ let
       # VMMs.
       echo -e "$(ansi bold)Running guest test '${testname}' via ${classifier} with $timeout timeout$(ansi reset)"
       echo "Executing \"${vmmCommand.main}\""
-      (timeout --preserve-status --signal KILL "$timeout" ${vmmCommand.main}) |& sotest-protocol-parser --stdin --echo
+      timeout --preserve-status --signal KILL "$timeout" ${vmmCommand.main}
 
       touch $out
     '';
