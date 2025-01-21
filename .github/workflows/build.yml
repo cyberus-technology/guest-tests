@@ -10,6 +10,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check_style:
+    name: "Check Style (pre-commit)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v30
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - run: nix-build nix/release.nix -A pre-commit-check
+
   build_regular:
     name: "Regular Build + Run Unit Tests"
     runs-on: ubuntu-latest
