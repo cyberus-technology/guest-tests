@@ -15,6 +15,10 @@ let
     inherit pkgs;
   };
 
+  testRuns = import ./local-test-runs.nix {
+    inherit pkgs tests;
+  };
+
   # Script that tests if the structure of the "tests" attribute is compliant to
   # the promised structure in the README.
   verifyTestsAttributeStructure = pkgs.runCommandLocal "verify-tests-structure"
@@ -59,6 +63,7 @@ in
 {
   inherit pre-commit-check;
   inherit tests;
+  inherit testRuns;
 
   # Each unit test is a derivation that either fails or succeeds. The output of
   # these derivations is usually empty.
