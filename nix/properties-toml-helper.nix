@@ -7,7 +7,7 @@
 # Helpers to access properties of a test from it's properties.toml.
 
 let
-  testsDir = ../../src/tests;
+  testsDir = ../src/tests;
 
   getTestProperties = testName:
     let

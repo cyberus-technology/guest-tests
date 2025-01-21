@@ -15,11 +15,11 @@
 
 let
   lib = pkgs.lib;
-  sources = import ../sources.nix;
+  sources = import ./sources.nix;
   pre-commit-hooks = import sources."pre-commit-hooks.nix";
 in
 pre-commit-hooks.run {
-  src = pkgs.nix-gitignore.gitignoreSource [ ] ../../.;
+  src = pkgs.nix-gitignore.gitignoreSource [ ] ../.;
 
   # Set the pkgs to get the tools for the hooks from.
   tools = pkgs;

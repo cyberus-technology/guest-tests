@@ -38,7 +38,7 @@ stdenv.mkDerivation {
     # this exclude to see quicker results. Otherwise, the whole CMake
     # project needs a rebuild.
     # "tests/**/properties.toml"
-  ] ../../src;
+  ] ../src;
 
   doCheck = true;
   checkInputs = [ catch2_3 ];

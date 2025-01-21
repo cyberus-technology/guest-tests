@@ -1,5 +1,5 @@
 let
-  pkgs = import ./nix/public/nixpkgs.nix;
+  pkgs = import ./nix/nixpkgs.nix;
   release = import ./nix/release.nix { inherit pkgs; };
   cmakeDrv = release.tests.hello-world.elf32.cmakeProj;
 in

@@ -35,7 +35,7 @@ let
 
   cmakeProj =
     let
-      sources = import ../sources.nix;
+      sources = import ./sources.nix;
       pkgs-23-11 = import sources."nixpkgs-23.11" { };
     in
     pkgs.callPackage ./build-cmake-project.nix { inherit pkgs-23-11; };
