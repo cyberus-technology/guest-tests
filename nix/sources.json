@@ -1,10 +1,4 @@
 {
-    "cbspkgs": {
-        "branch": "nixos24.11",
-        "repo": "git@gitlab.vpn.cyberus-technology.de:mmesser/cbspkgs.git",
-        "rev": "0fe4bc5a1e7195aa834282790dc13dacb8a31355",
-        "type": "git"
-    },
     "nixpkgs": {
         "branch": "nixos-24.11",
         "description": "Nix Packages collection & NixOS",
