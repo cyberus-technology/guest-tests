@@ -1,5 +1,5 @@
 let
-  pkgs = import ./nix/public/nixpkgs.nix;
+  pkgs = import ./nix/nixpkgs.nix;
   release = import ./nix/release.nix { inherit pkgs; };
   cmakeDrv = release.tests.hello-world.elf32.cmakeProj;
 in
@@ -13,6 +13,7 @@ pkgs.mkShell rec {
     argc
     fd
     niv
+    nixfmt-rfc-style
 
     # Not strictly needed, but some developers prefer it to make.
     ninja

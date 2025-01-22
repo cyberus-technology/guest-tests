@@ -1,10 +1,4 @@
 {
-    "cbspkgs": {
-        "branch": "nixos24.11",
-        "repo": "git@gitlab.vpn.cyberus-technology.de:mmesser/cbspkgs.git",
-        "rev": "0fe4bc5a1e7195aa834282790dc13dacb8a31355",
-        "type": "git"
-    },
     "nixpkgs": {
         "branch": "nixos-24.11",
         "description": "Nix Packages collection & NixOS",
@@ -35,10 +29,10 @@
         "homepage": "",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "cc4d466cb1254af050ff7bdf47f6d404a7c646d1",
-        "sha256": "1gl1bdnv533jyvj12dfyg8q5haprapswnn7hbpikb2qbnnwc2xzd",
+        "rev": "9364dc02281ce2d37a1f55b6e51f7c0f65a75f17",
+        "sha256": "1n2qlj5l8c4g7gm5v6rvc4hff3ka8ljv7y62inybli093bd2ypa7",
         "type": "tarball",
-        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/cc4d466cb1254af050ff7bdf47f6d404a7c646d1.tar.gz",
+        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/9364dc02281ce2d37a1f55b6e51f7c0f65a75f17.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }

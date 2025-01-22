@@ -1,0 +1,80 @@
+name: Build
+
+on:
+  merge_group:
+  pull_request:
+  push:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check_style:
+    name: "Check Style (pre-commit)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v30
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - run: nix-build nix/release.nix -A pre-commit-check
+
+  build_regular:
+    name: "Regular Build + Run Unit Tests"
+    runs-on: ubuntu-latest
+    env:
+      CC: gcc-11
+      CXX: g++-11
+    steps:
+      - uses: actions/checkout@v4
+      - name: install pre-requisites
+        run: sudo apt-get update && sudo apt-get install -y catch2 cmake gcc-11 g++-11
+      - name: Build
+        run: |
+          mkdir build_dev
+          cd build_dev
+          cmake .. \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DBUILD_TESTING=On
+          make -j $(nproc)
+          make -j $(nproc) test
+          cd -
+      - name: Build (Release)
+        run: |
+          mkdir build_release
+          cd build_release
+          cmake .. \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DBUILD_TESTING=On
+          make -j $(nproc)
+          make -j $(nproc) test
+          cd -
+
+  nix_shell:
+    name: "nix shell works"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v30
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - run: nix-shell --run "echo hi"
+
+  # Transitively builds the CMake project in Nix and executes the specified
+  # local VMM test runs.
+  nix_mandatory_local_test_runs:
+    name: "Run hello-world in all variants"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v30
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: "Test run: hello-world, efi, qemu"
+        run: nix-build nix/release.nix -A testRuns.qemu.kvm.efi.hello-world
+      - name: "Test run: hello-world, iso-uefi, qemu"
+        run: nix-build nix/release.nix -A testRuns.qemu.kvm.iso-uefi.hello-world
+      - name: "Test run: hello-world, iso, qemu"
+        run: nix-build nix/release.nix -A testRuns.qemu.kvm.iso.hello-world
+      - name: "Test run: hello-world, multiboot, qemu"
+        run: nix-build nix/release.nix -A testRuns.qemu.kvm.multiboot.hello-world
+      - name: "Test run: hello-world, xen-pvh, qemu"
+        run: nix-build nix/release.nix -A testRuns.chv.kvm.xen-pvh.hello-world

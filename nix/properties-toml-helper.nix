@@ -1,15 +1,16 @@
 /*
- * Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
- *
- * SPDX-License-Identifier: GPL-2.0-or-later
- */
+  Copyright © 2024 Cyberus Technology GmbH <contact@cyberus-technology.de>
+
+  SPDX-License-Identifier: GPL-2.0-or-later
+*/
 
 # Helpers to access properties of a test from it's properties.toml.
 
 let
-  testsDir = ../../src/tests;
+  testsDir = ../src/tests;
 
-  getTestProperties = testName:
+  getTestProperties =
+    testName:
     let
       path = "${testsDir}/${testName}/properties.toml";
       content = builtins.readFile path;

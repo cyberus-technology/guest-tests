@@ -4,4 +4,7 @@
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import ./nix/release.nix
+let
+  sources = import ./sources.nix;
+in
+import sources.nixpkgs { }
