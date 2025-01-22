@@ -4,24 +4,16 @@
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-# Style and quality checks.
-#
-# See here for help with configuration:
-# - https://github.com/cachix/pre-commit-hooks.nix
-# - https://github.com/cachix/pre-commit-hooks.nix/blob/master/modules/pre-commit.nix
-# - https://github.com/cachix/pre-commit-hooks.nix/blob/master/modules/hooks.nix
+# Style and quality checks using pre-commit as centralized component
 
-{ pkgs }:
+{ pkgs, pre-commit-hooks }:
 
 let
   lib = pkgs.lib;
-  sources = import ./sources.nix;
-  pre-commit-hooks = import sources."pre-commit-hooks.nix";
 in
 pre-commit-hooks.run {
   src = pkgs.nix-gitignore.gitignoreSource [ ] ../.;
 
-  # Set the pkgs to get the tools for the hooks from.
   tools = pkgs;
 
   hooks = {

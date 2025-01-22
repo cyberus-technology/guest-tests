@@ -6,6 +6,8 @@
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     nixpkgs-23-11.url = "github:nixos/nixpkgs/nixos-23.11";
+    pre-commit-hooks.url = "github:cachix/git-hooks.nix";
+    pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -30,13 +32,25 @@
           };
         in
         {
+          checks = {
+            pre-commit = import ./nix/pre-commit-check.nix {
+              pre-commit-hooks = inputs.pre-commit-hooks.lib.${system};
+              inherit pkgs;
+            };
+          };
           devShells = {
             # Shell for this repository.
             default = pkgs.mkShell {
               inputsFrom = builtins.attrValues self.packages.${system};
-              packages = with pkgs; [
-                ninja
-              ];
+              packages =
+                with pkgs;
+                [
+                  ninja
+                ]
+                ++ self.checks.${system}.pre-commit.enabledPackages;
+              shellHook = ''
+                ${self.checks.${system}.pre-commit.shellHook}
+              '';
             };
           };
           formatter = pkgs.nixfmt-rfc-style;

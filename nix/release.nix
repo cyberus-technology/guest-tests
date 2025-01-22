@@ -94,13 +94,10 @@ let
       newDrvHasNewCmdline = hasCmdline overriddenDrv;
     in
     oldDrvHasNotNewCmdline && newDrvHasNewCmdline;
-
-  pre-commit-check = import ./pre-commit-check.nix { inherit pkgs; };
 in
 {
   inherit
     guest-tests
-    pre-commit-check
     testRuns
     tests
     ;
