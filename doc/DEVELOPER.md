@@ -43,14 +43,25 @@ You can also use `make` instead of `ninja`.
 
 ## Nix Build (Guest Tests + Unit Tests)
 
-To build a Guest Test, run:
+We provide a Nix flake entry (`nix build`) but also a traditional `nix-build`
+entry via `default.nix`.
+
+To simply get all guest tests, run:
+
+```shell
+nix build .#guest-tests
+```
+
+This also builds and runs the unit tests of the CMake project. To get a specific
+test, you have to use the traditional way, as these are not exported by the
+flake:
 
 ```shell
 nix-build -A tests.<name>.{elf32|elf64|iso|efi}
 ```
 
-This also builds and runs the unit tests. `./result` is a symlink to the
-corresponding boot item.
+This also builds and runs the unit tests of the CMake project. `./result` is a
+symlink to the corresponding boot item.
 
 The `iso` and `efi` attributes are high-level variants including a bootloader
 chainloading the test via Multiboot with a corresponding `cmdline`. It is

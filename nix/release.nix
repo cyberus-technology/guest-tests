@@ -5,17 +5,46 @@
 */
 
 {
-  pkgs ? import ./nixpkgs.nix,
+  pkgs,
+  pkgs-23-11,
 }:
 
 let
   lib = pkgs.lib;
 
+  # Nested structure with one test file in the given variant.
+  #
   # We don't use callPackage here, as we do not want `override` and
   # `overrideAttrs` in the returned attrset.
   tests = import ./build.nix {
-    inherit pkgs;
+    inherit pkgs pkgs-23-11;
   };
+
+  testNames = builtins.attrNames tests;
+
+  # All tests in all variants combined.
+  guest-tests =
+    let
+      variants = builtins.attrNames tests.hello-world;
+      unflattenTest =
+        name: variant:
+        unflattenDrv {
+          drv = tests.${name}.${variant};
+          artifactPath = "${name}.${variant}";
+        };
+      unflattenDrv = import ./unflatten-drv.nix { inherit (pkgs) runCommandLocal; };
+    in
+    # For symlink join, we can't use flat derivations. We need unflattened ones.
+    # Therefore, we map each test variant derivation to a new derivation in
+    # unflattened form and then put those unflattened ones in a list.
+    pkgs.symlinkJoin {
+      name = "all-guest-tests";
+      paths = pkgs.lib.flatten (
+        map (name: [
+          (map (variant: unflattenTest name variant) variants)
+        ]) testNames
+      );
+    };
 
   testRuns = import ./local-test-runs.nix {
     inherit pkgs tests;
@@ -69,9 +98,12 @@ let
   pre-commit-check = import ./pre-commit-check.nix { inherit pkgs; };
 in
 {
-  inherit pre-commit-check;
-  inherit tests;
-  inherit testRuns;
+  inherit
+    guest-tests
+    pre-commit-check
+    testRuns
+    tests
+    ;
 
   # Each unit test is a derivation that either fails or succeeds. The output of
   # these derivations is usually empty.

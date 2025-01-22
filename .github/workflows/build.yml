@@ -57,7 +57,23 @@ jobs:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@v30
       - uses: DeterminateSystems/magic-nix-cache-action@main
-      - run: nix-shell --run "echo hi"
+      - run: nix shell --command bash -c "echo hi"
+
+  nix_build_tests_flake:
+    name: "Nix Flake: Build all Guest Tests"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v30
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: "Test run: hello-world, efi, qemu"
+        run: nix build .#guest-tests
+      - name: Verify tests exist in all variants
+        run: |
+          test -f result/hello-world.efi
+          test -f result/hello-world.elf32
+          test -f result/hello-world.elf64
+          test -f result/hello-world.iso
 
   # Transitively builds the CMake project in Nix and executes the specified
   # local VMM test runs.
