@@ -8,7 +8,7 @@
 # variants (ELF32, ELF64, ISO, ELF) using the following attribute structure:
 # `tests.<testname>.<variant>`.
 
-{ pkgs }:
+{ pkgs, pkgs-23-11 }:
 
 let
   lib = pkgs.lib;
@@ -33,12 +33,7 @@ let
     "vmx"
   ];
 
-  cmakeProj =
-    let
-      sources = import ./sources.nix;
-      pkgs-23-11 = import sources."nixpkgs-23.11" { };
-    in
-    pkgs.callPackage ./build-cmake-project.nix { inherit pkgs-23-11; };
+  cmakeProj = pkgs.callPackage ./build-cmake-project.nix { inherit pkgs-23-11; };
 
   # Extracts a single binary variant of a test.
   # The result is a direct symlink to the boot item.

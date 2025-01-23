@@ -43,14 +43,25 @@ You can also use `make` instead of `ninja`.
 
 ## Nix Build (Guest Tests + Unit Tests)
 
-To build a Guest Test, run:
+We provide a Nix flake entry (`nix build`) but also a traditional `nix-build`
+entry via `default.nix`.
+
+To simply get all guest tests, run:
+
+```shell
+nix build .#guest-tests
+```
+
+This also builds and runs the unit tests of the CMake project. To get a specific
+test, you have to use the traditional way, as these are not exported by the
+flake:
 
 ```shell
 nix-build -A tests.<name>.{elf32|elf64|iso|efi}
 ```
 
-This also builds and runs the unit tests. `./result` is a symlink to the
-corresponding boot item.
+This also builds and runs the unit tests of the CMake project. `./result` is a
+symlink to the corresponding boot item.
 
 The `iso` and `efi` attributes are high-level variants including a bootloader
 chainloading the test via Multiboot with a corresponding `cmdline`. It is
@@ -58,13 +69,13 @@ possible to override the cmdline of those attributes using `override`. For
 example:
 
 ```shell
-nix-build -E '(import ./nix/release.nix).tests.hello-world.{iso|efi}.override({kernelCmdline = "foobar";})'
+nix-build -E '(import ./default.nix).tests.hello-world.{iso|efi}.override({kernelCmdline = "foobar";})'
 ```
 
 The effective cmdline can also be verified by looking at the final GRUB config:
 
 ```shell
-cat $(nix-build -E '((import ./nix/release.nix).tests.hello-world.{iso|efi}.override({kernelCmdline = "foobar";})).grubCfg')
+cat $(nix-build -E '((import ./default.nix).tests.hello-world.{iso|efi}.override({kernelCmdline = "foobar";})).grubCfg')
 ```
 
 
@@ -178,21 +189,18 @@ informative.
 
 ##### Nix
 
-The `release.nix` file exports a rich `testRuns` attribute that runs tests
-in virtual machines with various VMMs and different boot strategies. Example
-invocations are:
+The `default.nix` file exports a rich nested `testRuns` attribute set. It is
+structured in the following way:
+
+1. VMM
+1. Hypervisor / VMM backend
+1. Boot method of guest test
+1. The guest test to boot
+
+To build the attributes, you can use:
 
 ```
-# For sotest-protocol-parser:
-$ export NIXPKGS_ALLOW_UNFREE=1
-$ nix-build nix/release.nix -A testRuns.qemu.kvm.default.hello-world
-$ nix-build nix/release.nix -A testRuns.qemu.kvm.multiboot.hello-world
-$ nix-build nix/release.nix -A testRuns.chv.kvm.xen-pvh.hello-world
+$ nix-build -A testRuns.qemu.kvm.default.hello-world
+$ nix-build -A testRuns.qemu.kvm.multiboot.hello-world
+$ nix-build -A testRuns.chv.kvm.xen-pvh.hello-world
 ```
-
-The SoTest bundle can be obtained by running
-
-`$ nix-build nix/release.nix -A sotest`.
-
-Note that you can modify the sotest run by using one of the various modifiers
-available as passthru attributes ([reference](http://cyberus.doc.vpn.cyberus-technology.de/engineering/linux-engineering/nixos-modules/sotest.html#sotestpassthruattributes)).
