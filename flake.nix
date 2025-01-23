@@ -18,6 +18,12 @@
       systems = inputs.nixpkgs.lib.systems.flakeExposed;
       perSystem =
         { pkgs, system, ... }:
+        let
+          project = import ./nix/release.nix {
+            inherit pkgs;
+            pkgs-23-11 = import inputs.nixpkgs-23-11 { inherit system; };
+          };
+        in
         {
           devShells = {
             # Shell for this repository.

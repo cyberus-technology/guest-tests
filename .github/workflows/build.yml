@@ -85,12 +85,12 @@ jobs:
       - uses: cachix/install-nix-action@v30
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: "Test run: hello-world, efi, qemu"
-        run: nix-build nix/release.nix -A testRuns.qemu.kvm.efi.hello-world
+        run: nix-build -A testRuns.qemu.kvm.efi.hello-world
       - name: "Test run: hello-world, iso-uefi, qemu"
-        run: nix-build nix/release.nix -A testRuns.qemu.kvm.iso-uefi.hello-world
+        run: nix-build -A testRuns.qemu.kvm.iso-uefi.hello-world
       - name: "Test run: hello-world, iso, qemu"
-        run: nix-build nix/release.nix -A testRuns.qemu.kvm.iso.hello-world
+        run: nix-build -A testRuns.qemu.kvm.iso.hello-world
       - name: "Test run: hello-world, multiboot, qemu"
-        run: nix-build nix/release.nix -A testRuns.qemu.kvm.multiboot.hello-world
+        run: nix-build -A testRuns.qemu.kvm.multiboot.hello-world
       - name: "Test run: hello-world, xen-pvh, qemu"
-        run: nix-build nix/release.nix -A testRuns.chv.kvm.xen-pvh.hello-world
+        run: nix-build -A testRuns.chv.kvm.xen-pvh.hello-world
