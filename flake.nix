@@ -17,7 +17,12 @@
       # No artificially limit here. If it builds, it builds.
       systems = inputs.nixpkgs.lib.systems.flakeExposed;
       perSystem =
-        { pkgs, system, ... }:
+        {
+          pkgs,
+          lib,
+          system,
+          ...
+        }:
         let
           project = import ./nix/release.nix {
             inherit pkgs;
@@ -37,15 +42,27 @@
           formatter = pkgs.nixfmt-rfc-style;
           packages =
             let
-              project = import ./default.nix {
-                inherit pkgs;
-                pkgs-23-11 = import inputs.nixpkgs-23-11 { inherit system; };
-              };
+              # Flattens a nested attribute set recursively, by constructing a
+              # new flat attribute key from the whole path.
+              flattenAttrsByName =
+                attrSet: prefix: sep:
+                lib.concatMapAttrs (
+                  key: value:
+                  let
+                    fullKey = "${prefix}${sep}${key}";
+                  in
+                  if lib.isAttrs value && !lib.isDerivation value then
+                    flattenAttrsByName value fullKey sep
+                  else
+                    { ${fullKey} = value; }
+                ) attrSet;
+              flattenedTestRuns = flattenAttrsByName project.testRuns "testRun" "_";
             in
             {
               inherit (project) guest-tests;
               default = project.guest-tests;
-            };
+            }
+            // flattenedTestRuns;
         };
     };
 }
