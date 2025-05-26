@@ -45,6 +45,7 @@
               packages =
                 with pkgs;
                 [
+                  clang-tools # format and tidy
                   ninja
                 ]
                 ++ self.checks.${system}.pre-commit.enabledPackages;
