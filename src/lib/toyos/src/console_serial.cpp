@@ -12,7 +12,7 @@ void console_serial_base::putc(char c)
 {
     unsigned retry_count{ 100000 };
     while (not(inb(base + LSR) & THB_EMPTY)) {
-        if (not --retry_count) {
+        if (--retry_count == 0) {
             return;
         }
     }

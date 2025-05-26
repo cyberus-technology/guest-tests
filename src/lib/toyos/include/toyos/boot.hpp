@@ -30,5 +30,5 @@ extern uint32_t LOAD_ADDR;
 static uint32_t load_addr()
 {
     // This is true as long as libtoyos is not relocatable in physical memory.
-    return (uint32_t) reinterpret_cast<uint64_t>(&LOAD_ADDR);
+    return (uint32_t)reinterpret_cast<uint64_t>(&LOAD_ADDR);
 }
