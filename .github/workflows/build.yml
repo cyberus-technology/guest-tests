@@ -14,7 +14,7 @@ jobs:
     name: "nix flake check (evaluation, style)"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v31
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - run: nix flake check
@@ -26,7 +26,7 @@ jobs:
       CC: gcc-11
       CXX: g++-11
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: install pre-requisites
         run: sudo apt-get update && sudo apt-get install -y catch2 cmake gcc-11 g++-11
       - name: Build
@@ -54,7 +54,7 @@ jobs:
     name: "nix shell works"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v31
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - run: nix develop . --command bash -c "echo hi"
@@ -63,7 +63,7 @@ jobs:
     name: "Nix Flake: Build all Guest Tests"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v31
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: "Test run: hello-world, efi, qemu"
@@ -81,7 +81,7 @@ jobs:
     name: "Run hello-world in all variants"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v31
       - name: "Test run: hello-world, efi, qemu"
         run: |
