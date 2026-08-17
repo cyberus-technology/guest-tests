@@ -43,7 +43,7 @@ pre-commit-hooks.run {
       settings.noLambdaPatternNames = true;
     };
 
-    nixfmt-rfc-style = {
+    nixfmt = {
       enable = true;
       excludes = [
         "nix/sources.nix"
