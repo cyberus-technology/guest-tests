@@ -24,7 +24,7 @@ void PML4E::set_present(bool pres, tlb_invalidation invl)
     access_helper(pres, PR_MASK, invl);
 }
 
-void PML4E::set_writeable(bool wr, tlb_invalidation invl)
+void PML4E::set_writable(bool wr, tlb_invalidation invl)
 {
     access_helper(wr, RW_MASK, invl);
 }

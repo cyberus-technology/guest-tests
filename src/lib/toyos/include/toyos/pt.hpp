@@ -47,7 +47,7 @@ class PTE : public paging_entry_base
     explicit PTE(const pt_entry_t& config);
 
     void set_present(bool pres, tlb_invalidation invl);
-    void set_writeable(bool wr, tlb_invalidation invl);
+    void set_writable(bool wr, tlb_invalidation invl);
     void set_usermode(bool mode, tlb_invalidation invl);
     void set_pwt(bool pwt, tlb_invalidation invl);
     void set_pcd(bool pcd, tlb_invalidation invl);

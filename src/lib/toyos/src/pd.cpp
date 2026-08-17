@@ -52,7 +52,7 @@ void PDE::set_present(bool pres, tlb_invalidation invl)
     access_helper(pres, PR_MASK, invl);
 }
 
-void PDE::set_writeable(bool wr, tlb_invalidation invl)
+void PDE::set_writable(bool wr, tlb_invalidation invl)
 {
     access_helper(wr, RW_MASK, invl);
 }
