@@ -6,7 +6,6 @@
 
 {
   pkgs,
-  pkgs-23-11,
 }:
 
 let
@@ -17,7 +16,7 @@ let
   # We don't use callPackage here, as we do not want `override` and
   # `overrideAttrs` in the returned attrset.
   tests = import ./build.nix {
-    inherit pkgs pkgs-23-11;
+    inherit pkgs;
   };
 
   testNames = builtins.attrNames tests;

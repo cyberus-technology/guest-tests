@@ -21,10 +21,8 @@ let
       sha256 = node.narHash;
     };
   pkgsSrc = fetchInput "nixpkgs";
-  pkgs-23-11Src = fetchInput "nixpkgs-23-11";
   pkgs = import pkgsSrc { system = "x86_64-linux"; };
-  pkgs-23-11 = import pkgs-23-11Src { system = "x86_64-linux"; };
 in
 import ./nix/release.nix {
-  inherit pkgs pkgs-23-11;
+  inherit pkgs;
 }
