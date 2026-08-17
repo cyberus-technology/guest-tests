@@ -44,6 +44,8 @@
                 with pkgs;
                 [
                   clang-tools # format and tidy
+                  cmake # needed for the setup hook that will then add catch2
+                  catch2_3
                   ninja
                 ]
                 ++ self.checks.${system}.pre-commit.enabledPackages;
