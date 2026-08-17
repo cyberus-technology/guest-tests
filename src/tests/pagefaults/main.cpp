@@ -89,7 +89,7 @@ TEST_CASE(writing_to_unwriteable_page_with_cr0_wp_unset_should_not_cause_a_pagef
     PDE& pde = memory_manager::pd_entry(TEST_ADDR);
     pde_guard pdeg(pde);
 
-    pde.set_writeable(false, tlb_invalidation::yes);
+    pde.set_writable(false, tlb_invalidation::yes);
 
     if (setjmp(jump_buffer) == 0) {
         *num_to_ptr<uint64_t>(TEST_ADDR) = 42;
@@ -109,7 +109,7 @@ TEST_CASE(writing_to_unwriteable_page_with_cr0_wp_set_should_cause_a_pagefault)
     PDE& pde = memory_manager::pd_entry(TEST_ADDR);
     pde_guard pdeg(pde);
 
-    pde.set_writeable(false, tlb_invalidation::yes);
+    pde.set_writable(false, tlb_invalidation::yes);
 
     if (setjmp(jump_buffer) == 0) {
         *num_to_ptr<uint64_t>(TEST_ADDR) = 42;
@@ -132,7 +132,7 @@ TEST_CASE(reading_from_unwriteable_page_should_not_cause_a_pagefault)
     pde_guard pdeg(pde);
 
     *num_to_ptr<uint64_t>(TEST_ADDR) = 42;
-    pde.set_writeable(false, tlb_invalidation::yes);
+    pde.set_writable(false, tlb_invalidation::yes);
 
     if (setjmp(jump_buffer) == 0) {
         BARETEST_ASSERT(*num_to_ptr<uint64_t>(TEST_ADDR) == 42);

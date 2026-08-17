@@ -23,8 +23,26 @@ function(prep_and_use_linker_script target-name source-file)
       OUTPUT ${resulting-ld-script}
       MAIN_DEPENDENCY ${source-file}
       DEPFILE ${resulting-ld-script}.d
-      COMMAND ${CMAKE_CXX_COMPILER} ARGS -x c -E ${source-file} -P -o
-              ${resulting-ld-script} ${ld-includes}
+      # Keep included linker-script headers in Ninja's dependency graph.
+      # -MF names the depfile and -MT names the generated script target.
+      COMMAND
+        ${CMAKE_CXX_COMPILER} ARGS
+        # Treat the linker script as C preprocessor input.
+        -x c
+        # Preprocess only and emit header dependencies.
+        -E -MMD
+        # Write dependencies to the declared depfile.
+        -MF ${resulting-ld-script}.d
+        # Associate the dependencies with the generated linker script.
+        -MT ${resulting-ld-script}
+        # Preprocess this linker-script source.
+        ${source-file}
+        # Suppress preprocessor line markers.
+        -P
+        # Write the preprocessed linker script here.
+        -o ${resulting-ld-script}
+        # Add the directory containing linker-script headers.
+        ${ld-includes}
       )
   endif()
   if(CMAKE_GENERATOR STREQUAL "Unix Makefiles")

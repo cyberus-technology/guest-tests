@@ -5,8 +5,11 @@ on:
   pull_request:
   push:
 
+# Cancel CI jobs when a new push invalidates an old pipeline. Merge queue
+# runs are never cancelled because each entry gets a unique ref, giving
+# them a unique concurrency group key.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:

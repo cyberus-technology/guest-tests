@@ -52,7 +52,7 @@ void PDPTE::set_present(bool pres, tlb_invalidation invl)
     access_helper(pres, PR_MASK, invl);
 }
 
-void PDPTE::set_writeable(bool wr, tlb_invalidation invl)
+void PDPTE::set_writable(bool wr, tlb_invalidation invl)
 {
     access_helper(wr, RW_MASK, invl);
 }

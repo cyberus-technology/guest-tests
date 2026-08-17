@@ -306,8 +306,7 @@ int snprintf(char* buff, unsigned long n, const char* fmt, ...)
 #if defined(__clang__)
 __attribute__((no_sanitize("undefined")))
 #endif
-int
-vsnprintf(char* buff, unsigned long n, const char* fmt, va_list arp)
+int vsnprintf(char* buff, unsigned long n, const char* fmt, va_list arp)
 {
     char* outptr = buff;
     char* snprintf_limit = buff + n - (n ? 1 : 0);

@@ -276,7 +276,7 @@ TEST_CASE_CONDITIONAL(x2apic_write_readonly_raises_gpe, x2apic_mode_supported())
     x2apic_mode_guard guard;
     static constexpr uint64_t VALUE{ 0 };
     for (const auto& msr : x2apic_msrs) {
-        if (not msr.is_writeable()) {
+        if (not msr.is_writable()) {
             BARETEST_ASSERT(write_x2msr_raises_gpe(msr, VALUE));
         }
     }
@@ -304,7 +304,7 @@ TEST_CASE_CONDITIONAL(x2apic_write_high_32bit_raises_gpe, x2apic_mode_supported(
     // 64 bit value with one of the higher 32 bit set to 1
     static constexpr uint64_t HIGH_VALUE{ 1ul << 32u };
     for (const auto& msr : x2apic_msrs) {
-        if (msr.is_32bit() and msr.is_writeable()) {
+        if (msr.is_32bit() and msr.is_writable()) {
             BARETEST_ASSERT(write_x2msr_raises_gpe(msr, HIGH_VALUE));
         }
     }

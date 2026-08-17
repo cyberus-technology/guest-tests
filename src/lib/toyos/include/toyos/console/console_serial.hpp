@@ -128,8 +128,12 @@ struct bda_serial_config
 inline uint16_t find_serial_port_in_bda()
 {
     bda_serial_config* bda{ reinterpret_cast<bda_serial_config*>(bda_serial_config::BDA_SERIAL_ADDR) };
-    return find_if_or(
-        bda->ports, [](auto p) { return p; }, SERIAL_PORT_DEFAULT);
+    for (const auto port : bda->ports) {
+        if (port) {
+            return port;
+        }
+    }
+    return SERIAL_PORT_DEFAULT;
 }
 
 /**

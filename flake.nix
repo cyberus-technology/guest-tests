@@ -4,8 +4,7 @@
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-    nixpkgs-23-11.url = "github:nixos/nixpkgs/nixos-23.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     pre-commit-hooks.url = "github:cachix/git-hooks.nix";
     pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -28,7 +27,6 @@
         let
           project = import ./nix/release.nix {
             inherit pkgs;
-            pkgs-23-11 = import inputs.nixpkgs-23-11 { inherit system; };
           };
         in
         {
@@ -46,6 +44,8 @@
                 with pkgs;
                 [
                   clang-tools # format and tidy
+                  cmake # needed for the setup hook that will then add catch2
+                  catch2_3
                   ninja
                 ]
                 ++ self.checks.${system}.pre-commit.enabledPackages;
@@ -54,7 +54,7 @@
               '';
             };
           };
-          formatter = pkgs.nixfmt-rfc-style;
+          formatter = pkgs.nixfmt-tree;
           packages =
             let
               # Flattens a nested attribute set recursively, by constructing a

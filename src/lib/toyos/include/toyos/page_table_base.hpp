@@ -61,7 +61,7 @@ class paging_entry_base
     {
         return raw() & PR_MASK;
     }
-    bool is_writeable() const
+    bool is_writable() const
     {
         return is_present() and (raw() & RW_MASK);
     }

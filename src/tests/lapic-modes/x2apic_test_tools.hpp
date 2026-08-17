@@ -63,7 +63,7 @@ namespace x2apic_test_tools
         {
             return (mode & READ) == READ;
         };
-        bool is_writeable() const
+        bool is_writable() const
         {
             return (mode & WRITE) == WRITE;
         };
