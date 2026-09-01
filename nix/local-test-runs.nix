@@ -86,7 +86,10 @@ let
         # VMMs.
         echo -e "$(ansi bold)Running guest test '${testname}' via ${classifier} with $timeout timeout$(ansi reset)"
         echo "Executing \"${vmmCommand.main}\""
-        timeout --preserve-status --signal KILL "$timeout" ${vmmCommand.main}
+        # The guest prints CRLF line endings on the serial console. Strip the
+        # CRs, as Nix >= 2.34 truncates displayed log lines at the last CR,
+        # which renders them as blank lines.
+        timeout --preserve-status --signal KILL "$timeout" ${vmmCommand.main} | stdbuf -oL tr -d '\r'
 
         touch $out
       '';
